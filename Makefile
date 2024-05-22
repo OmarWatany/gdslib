@@ -16,8 +16,8 @@ GSTACK_HFILES := $(wildcard $(INC)/*stack*.h)
 LLIST_HFILES  := $(wildcard $(INC)/*list*.h) 
 NODE_HFILES   := $(wildcard $(INC)/*node*.h)
 
-C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES)
-H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES)
+C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(NODE_CFILES)
+H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(NODE_HFILES)
 
 TEST_FILES := $(wildcard $(TEST_D)/*.c)
 OBJ_FILES := $(wildcard $(OBJ_D)/*.o)
@@ -41,6 +41,9 @@ alist: lib
 
 astack: lib
 	$(CC) $(CFLAGS) $(TEST_D)/test_garraystack.c $(LIB) -o ./bin/astack
+
+gnode: lib
+	$(CC) $(CFLAGS) $(TEST_D)/test_gnode.c $(LIB) -o ./bin/node
 
 obj: $(C_FILES) $(H_FILES)
 	$(CC) $(CFLAGS) -c -fPIC  $(C_FILES) 

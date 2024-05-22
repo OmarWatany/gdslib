@@ -2,11 +2,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-struct node_t {
-    gdata_t data;
-    size_t  link;
-};
-
 struct llist_t {
     node_t *head, *tail;
     void (*allocate_data)(node_t *, gdata_t data);
@@ -53,16 +48,16 @@ node_t *next(list_iterator_t *iterator) {
         } else
             return NULL;
     }
-    if (from->link == 0) {
+    if (node_link(from) == 0) {
         return NULL;
     } else if (from == iterator->list->head) {
-        iterator->next_node = iterator->list->head->link;
+        iterator->next_node = node_link(iterator->list->head);
     } else {
-        iterator->next_node = iterator->prev_node ^ from->link;
+        iterator->next_node = iterator->prev_node ^ node_link(from);
     }
     iterator->prev_node = (size_t)from;
     iterator->from      = (node_t *)iterator->next_node;
-    iterator->next_node = iterator->prev_node ^ from->link;
+    iterator->next_node = iterator->prev_node ^ node_link(from);
     return iterator->from;
 }
 
@@ -74,16 +69,16 @@ node_t *prev(list_iterator_t *iterator) {
         } else
             return NULL;
     }
-    if (from->link == 0) {
+    if (node_link(from) == 0) {
         return NULL;
     } else if (from == iterator->list->tail) {
-        iterator->prev_node = iterator->list->tail->link;
+        iterator->prev_node = node_link(iterator->list->tail);
     } else {
-        iterator->prev_node = iterator->next_node ^ from->link;
+        iterator->prev_node = iterator->next_node ^ node_link(from);
     }
     iterator->next_node = (size_t)from;
     iterator->from      = (node_t *)iterator->prev_node;
-    iterator->prev_node = iterator->next_node ^ from->link;
+    iterator->prev_node = iterator->next_node ^ node_link(from);
     return iterator->from;
 }
 
@@ -95,29 +90,30 @@ node_t *itr_end(list_iterator_t *iterator) {
 }
 
 int16_t push_front(llist_t *list, gdata_t data) {
-    node_t *new_node = (node_t *)malloc(sizeof(node_t));
+    node_t *new_node = create_node();
     list->allocate_data(new_node, data);
     if (new_node == NULL)
         return EXIT_FAILURE;
     if (list->head == NULL) {
-        new_node->link = 0;
-        list->tail     = new_node;
+        node_set_link(new_node, 0);
+        list->tail = new_node;
     } else {
-        new_node->link = (size_t)list->head;
-        list->head->link ^= (size_t)new_node;
+        node_set_link(new_node, (size_t)list->head);
+        node_set_link(list->head, node_link(list->head) ^ (size_t)new_node);
     }
     list->head = new_node;
     return EXIT_SUCCESS;
 }
 
 int16_t push_back(llist_t *list, gdata_t data) {
-    node_t *new_node = (node_t *)malloc(sizeof(node_t));
+    node_t *new_node = create_node();
     list->allocate_data(new_node, data);
     if (new_node == NULL)
         return EXIT_FAILURE;
     if (list->tail != NULL) {
-        new_node->link = (size_t)list->tail;
-        list->tail->link ^= (size_t)new_node;
+        node_set_link(new_node, (size_t)list->tail);
+        node_set_link(list->tail, node_link(list->tail) ^ (size_t)new_node);
+
         list->tail = new_node;
     } else {
         push_front(list, data);
@@ -125,22 +121,12 @@ int16_t push_back(llist_t *list, gdata_t data) {
     return EXIT_SUCCESS;
 }
 
-void node_set_data(node_t *node, gdata_t data) {
-    node->data = data;
-};
-
-gdata_t node_data(node_t *node) {
-    if (node == NULL)
-        return NULL;
-    return node->data;
-}
-
 gdata_t peak_front(llist_t *list) {
-    return list->head->data;
+    return node_data(list->head);
 }
 
 gdata_t peak_back(llist_t *list) {
-    return list->tail->data;
+    return node_data(list->tail);
 }
 
 int16_t pop_front(llist_t *list) {
@@ -156,9 +142,8 @@ int16_t pop_front(llist_t *list) {
     if (list->head == NULL) {
         list->tail = NULL;
     } else
-        list->head->link ^= (size_t)old_head;
-    free(old_head->data);
-    free(old_head);
+        node_set_link(list->head, node_link(list->head) ^ (size_t)old_head);
+    destroy_node(&old_head);
     free(it);
     return EXIT_SUCCESS;
 }
@@ -180,10 +165,9 @@ int16_t pop_back(llist_t *list) {
     node_t *old_tail = list->tail;
     list->tail       = prev(it);
     if (list->tail != NULL)
-        list->tail->link ^= (size_t)old_tail;
+        node_set_link(list->tail, node_link(list->tail) ^ (size_t)old_tail);
 
-    free(old_tail->data);
-    free(old_tail);
+    destroy_node(&old_tail);
     free(it);
     return EXIT_SUCCESS;
 }
@@ -233,7 +217,7 @@ int16_t dump_list(llist_t *list, void (*print_data)(gdata_t)) {
         return EXIT_FAILURE;
 
     while (temp != NULL) {
-        print_data(temp->data);
+        print_data(node_data(temp));
         temp = next(it);
     }
     free(it);
@@ -251,7 +235,7 @@ int16_t reverse_dump_list(llist_t *list, void (*print_data)(gdata_t)) {
     if (it == NULL)
         return EXIT_FAILURE;
     while (temp != NULL) {
-        print_data(temp->data);
+        print_data(node_data(temp));
         temp = prev(it);
     }
     free(it);
