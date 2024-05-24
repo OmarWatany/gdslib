@@ -20,12 +20,11 @@ C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(NODE_CFILES)
 H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(NODE_HFILES)
 
 TEST_FILES := $(wildcard $(TEST_D)/*.c)
-OBJ_FILES := $(wildcard $(OBJ_D)/*.o)
 ALL := $(H_FILES) $(C_FILES) $(TEST_FILES)
 
 CC := gcc
 
-all: queue stack alist astack linkedlist lib
+all:  stack queue linkedlist alist astack 
 
 stack: lib
 	$(CC) $(CFLAGS) $(TEST_D)/test_gstack.c $(LIB) -o ./bin/stack 
@@ -45,14 +44,13 @@ astack: lib
 gnode: lib
 	$(CC) $(CFLAGS) $(TEST_D)/test_gnode.c $(LIB) -o ./bin/node
 
-obj: $(C_FILES) $(H_FILES)
-	$(CC) $(CFLAGS) -c -fPIC  $(C_FILES) 
-	mv *.o ./objects/
-
 lib: obj 
-	ar rcs ./lib/libgdslib.a $(OBJ_FILES)
+	ar rcs ./lib/libgdslib.a $(wildcard ./objects/*.o)
 	# gcc -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
-	# cp ./lib/libgdslib.so ./bin/
+
+obj: $(C_FILES) $(H_FILES)
+	$(CC) $(CFLAGS) -c $(C_FILES) 
+	mv *.o ./objects/
 
 clean :
 	rm ./objects/*
