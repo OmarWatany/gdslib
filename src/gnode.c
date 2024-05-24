@@ -1,5 +1,6 @@
 #include "../include/gnode.h"
 #include <stdlib.h>
+#include <string.h>
 
 struct node_t {
     gdata_t data;
@@ -31,10 +32,13 @@ gdata_t node_data(node_t *node) {
     return node->data;
 }
 
-void node_set_data(node_t *node, gdata_t data) {
-    if (node == NULL)
-        return;
-    node->data = data;
+int16_t node_set_data(node_t *node, size_t item_size, gdata_t data) {
+    gdata_t temp = malloc(item_size);
+    if (!node || !temp || !memcpy(temp, data, item_size))
+        return EXIT_FAILURE;
+
+    node->data = temp;
+    return EXIT_SUCCESS;
 };
 
 void destroy_node(node_t **node) {

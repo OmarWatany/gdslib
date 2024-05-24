@@ -64,19 +64,8 @@ int main() {
     return 0;
 }
 
-void __allocate_int(node_t *node, void *data) {
-    int *temp = (int *)malloc(sizeof(int));
-    *temp     = *((int *)data);
-    node_set_data(node, temp);
-}
-
 void __print_int(void *data) {
     printf("%d ,", *(int *)data);
-}
-
-void __allocate_s(node_t *node, void *data) {
-    void *temp = strdup(data);
-    node_set_data(node, temp);
 }
 
 void __print_s(void *data) {

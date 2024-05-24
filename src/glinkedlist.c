@@ -91,11 +91,9 @@ node_t *itr_end(list_iterator_t *iterator) {
 }
 
 int16_t push_front(llist_t *list, gdata_t data) {
-    node_t  *new_node = create_node();
-    gdata_t *temp     = malloc(list->item_size);
-    if (!new_node || !temp || !memcpy(temp, data, list->item_size))
+    node_t *new_node = create_node();
+    if (!new_node || node_set_data(new_node, list->item_size, data) == EXIT_FAILURE)
         return EXIT_FAILURE;
-    node_set_data(new_node, temp);
 
     if (list->head == NULL) {
         node_set_link(new_node, 0);
@@ -109,11 +107,9 @@ int16_t push_front(llist_t *list, gdata_t data) {
 }
 
 int16_t push_back(llist_t *list, gdata_t data) {
-    node_t  *new_node = create_node();
-    gdata_t *temp     = malloc(list->item_size);
-    if (!new_node || !temp || !memcpy(temp, data, list->item_size))
+    node_t *new_node = create_node();
+    if (!new_node || node_set_data(new_node, list->item_size, data) == EXIT_FAILURE)
         return EXIT_FAILURE;
-    node_set_data(new_node, temp);
 
     if (list->tail) {
         node_set_link(new_node, (size_t)list->tail);

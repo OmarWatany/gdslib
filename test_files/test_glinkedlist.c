@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 
-void _allocate_str(node_t *node, void *data);
-void _allocate_int(node_t *node, void *data);
 void _print_str(void *data);
 void _print_int(void *data);
 
@@ -31,9 +29,6 @@ static inline void dump_int_list(llist_t *x) {
 }
 
 int main() {
-
-    // llist_t *lst      = create_list(_allocate_str);
-    // llist_t *new_list = create_list(_allocate_int);
 
     llist_t *lst      = create_list(sizeof(char *));
     llist_t *new_list = create_list(sizeof(int));
@@ -81,17 +76,6 @@ int main() {
     destroy_list(&lst);
 
     return 0;
-}
-
-void _allocate_str(node_t *node, void *data) {
-    char *temp = strdup((char *)data);
-    node_set_data(node, temp);
-}
-
-void _allocate_int(node_t *node, void *data) {
-    int *temp = (int *)malloc(sizeof(int));
-    *temp     = *(int *)data;
-    node_set_data(node, temp);
 }
 
 void _print_str(void *data) {
