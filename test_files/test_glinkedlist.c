@@ -32,8 +32,11 @@ static inline void dump_int_list(llist_t *x) {
 
 int main() {
 
-    llist_t *lst      = create_list(_allocate_str);
-    llist_t *new_list = create_list(_allocate_int);
+    // llist_t *lst      = create_list(_allocate_str);
+    // llist_t *new_list = create_list(_allocate_int);
+
+    llist_t *lst      = create_list(sizeof(char *));
+    llist_t *new_list = create_list(sizeof(int));
 
     push_front_i(new_list, 3);
     push_front_i(new_list, 2);

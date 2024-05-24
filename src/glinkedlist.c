@@ -1,10 +1,11 @@
 #include "../include/glinkedlist.h"
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct llist_t {
     node_t *head, *tail;
-    void (*allocate_data)(node_t *, gdata_t data);
+    size_t  item_size;
 };
 
 struct list_iterator_t {
@@ -13,11 +14,11 @@ struct list_iterator_t {
     size_t   prev_node, next_node;
 };
 
-llist_t *create_list(void (*allocate_data)(node_t *, gdata_t data)) {
-    llist_t *new_list       = (llist_t *)malloc(sizeof(llist_t));
-    new_list->head          = NULL;
-    new_list->tail          = NULL;
-    new_list->allocate_data = allocate_data;
+llist_t *create_list(size_t item_size) {
+    llist_t *new_list   = (llist_t *)malloc(sizeof(llist_t));
+    new_list->head      = NULL;
+    new_list->tail      = NULL;
+    new_list->item_size = item_size;
     return new_list;
 }
 
@@ -90,10 +91,12 @@ node_t *itr_end(list_iterator_t *iterator) {
 }
 
 int16_t push_front(llist_t *list, gdata_t data) {
-    node_t *new_node = create_node();
-    list->allocate_data(new_node, data);
-    if (new_node == NULL)
+    node_t  *new_node = create_node();
+    gdata_t *temp     = malloc(list->item_size);
+    if (!new_node || !temp || !memcpy(temp, data, list->item_size))
         return EXIT_FAILURE;
+    node_set_data(new_node, temp);
+
     if (list->head == NULL) {
         node_set_link(new_node, 0);
         list->tail = new_node;
@@ -106,14 +109,15 @@ int16_t push_front(llist_t *list, gdata_t data) {
 }
 
 int16_t push_back(llist_t *list, gdata_t data) {
-    node_t *new_node = create_node();
-    list->allocate_data(new_node, data);
-    if (new_node == NULL)
+    node_t  *new_node = create_node();
+    gdata_t *temp     = malloc(list->item_size);
+    if (!new_node || !temp || !memcpy(temp, data, list->item_size))
         return EXIT_FAILURE;
-    if (list->tail != NULL) {
+    node_set_data(new_node, temp);
+
+    if (list->tail) {
         node_set_link(new_node, (size_t)list->tail);
         node_set_link(list->tail, node_link(list->tail) ^ (size_t)new_node);
-
         list->tail = new_node;
     } else {
         push_front(list, data);

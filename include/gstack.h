@@ -10,7 +10,7 @@ extern "C" {
 
 typedef struct stack_t stack_t;
 
-stack_t *create_stack(void (*_allocate_data)(node_t *, gdata_t data));
+stack_t *create_stack(size_t item_size);
 
 int16_t stack_push(stack_t *stack, gdata_t data);
 void    stack_pop(stack_t *stack);

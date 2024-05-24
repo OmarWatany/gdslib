@@ -7,11 +7,11 @@ struct queue_t {
     size_t   length;
 };
 
-queue_t *create_queue(void (*add_data)(node_t *, gdata_t data)) {
+queue_t *create_queue(size_t item_size) {
     queue_t *queue = (queue_t *)malloc(sizeof(queue_t));
     if (queue == NULL)
         return NULL;
-    queue->list = create_list(add_data);
+    queue->list = create_list(item_size);
     if (queue->list == NULL)
         return NULL;
     queue->length = 0;
@@ -46,7 +46,6 @@ gdata_t queue_front(queue_t *queue) {
     if (queue == NULL || queue->list == NULL)
         return NULL;
     return peak_back(queue->list);
-    // return node_data(list_tail(queue->list));
 }
 
 gdata_t queue_back(queue_t *queue) {

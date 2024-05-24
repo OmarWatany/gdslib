@@ -16,9 +16,9 @@ bool q_search_s(node_t *node, void *data) {
 }
 
 int main() {
-    queue_t *cards_deck      = create_queue(__allocate_int);
-    queue_t *discarded_cards = create_queue(__allocate_int);
-    queue_t *names           = create_queue(__allocate_s);
+    queue_t *cards_deck      = create_queue(sizeof(int));
+    queue_t *discarded_cards = create_queue(sizeof(int));
+    queue_t *names           = create_queue(sizeof(char *));
     enqueue(names, "hello");
     enqueue(names, "world");
     enqueue(names, "!");

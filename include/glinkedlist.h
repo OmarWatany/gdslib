@@ -8,12 +8,12 @@ extern "C" {
 #include "gnode.h"
 #include <stdlib.h>
 
-typedef void                  *gdata_t;
-typedef struct node_t          node_t;
 typedef struct llist_t         llist_t;
+typedef struct list_allocator  list_allocator;
 typedef struct list_iterator_t list_iterator_t;
 
-llist_t         *create_list(void (*allocate_data)(node_t *, gdata_t data));
+// llist_t         *create_list(void (*allocate_data)(node_t *, gdata_t data));
+llist_t         *create_list(size_t item_size);
 list_iterator_t *create_list_iterator(llist_t *list);
 
 node_t *list_head(llist_t *list);
@@ -40,6 +40,8 @@ llist_t *itr_list(list_iterator_t *iterator);
 
 int16_t dump_list(llist_t *list, void (*print_data)(gdata_t));
 int16_t reverse_dump_list(llist_t *list, void (*print_data)(gdata_t));
+
+int16_t gallocate(list_allocator alloc);
 
 #ifdef __cplusplus
 }

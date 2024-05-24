@@ -11,7 +11,7 @@ extern "C" {
 
 typedef struct queue_t queue_t;
 
-queue_t *create_queue(void (*add_data)(node_t *, gdata_t data));
+queue_t *create_queue(size_t item_size);
 
 int16_t enqueue(queue_t *queue, gdata_t data);
 int16_t dequeue(queue_t *queue);

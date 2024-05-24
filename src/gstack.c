@@ -5,9 +5,9 @@ struct stack_t {
     llist_t *list;
 };
 
-stack_t *create_stack(void (*add_data)(node_t *, gdata_t data)) {
+stack_t *create_stack(size_t item_size) {
     stack_t *stack = (stack_t *)malloc(sizeof(stack_t));
-    stack->list    = create_list(add_data);
+    stack->list    = create_list(item_size);
     return stack;
 }
 

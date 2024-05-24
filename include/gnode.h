@@ -8,7 +8,8 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 
-typedef void         *gdata_t;
+typedef void *gdata_t;
+
 typedef struct node_t node_t;
 
 node_t *create_node();
