@@ -12,7 +12,7 @@ typedef void *gdata_t;
 
 typedef struct astack_t astack_t;
 
-astack_t *create_astack(size_t element_size, void (*_allocate_data)(gdata_t *node, gdata_t data));
+astack_t *create_astack(size_t element_size);
 
 int16_t astack_push(astack_t *stack, gdata_t data);
 int16_t astack_pop(astack_t *stack);

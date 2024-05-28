@@ -12,7 +12,9 @@ typedef void *gdata_t;
 
 typedef struct alist_t alist_t;
 
-alist_t *create_alist(size_t element_size, void (*_allocate_data)(gdata_t *node, gdata_t data));
+alist_t *create_alist(size_t item_size);
+int16_t  alist_push(alist_t *list, gdata_t data);
+int16_t  alist_pop(alist_t *list);
 int16_t  alist_set_at(alist_t *list, size_t pos, gdata_t data);
 int16_t  alist_rm_at(alist_t *list, size_t pos);
 gdata_t  alist_at(alist_t *list, size_t pos);

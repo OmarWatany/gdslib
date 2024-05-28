@@ -8,22 +8,18 @@ struct astack_t {
     size_t  *top;
 };
 
-astack_t *create_astack(size_t element_size, void (*add_data)(gdata_t *node, gdata_t data)) {
+astack_t *create_astack(size_t element_size) {
     astack_t *stack = (astack_t *)malloc(sizeof(astack_t));
-    stack->buf      = create_alist(element_size, add_data);
+    stack->buf      = create_alist(element_size);
     return stack;
 }
 
 int16_t astack_push(astack_t *astack, gdata_t data) {
-    if (!astack)
-        return EXIT_FAILURE;
-    return alist_set_at(astack->buf, alist_size(astack->buf), data);
+    return alist_push(astack->buf, data);
 }
 
 int16_t astack_pop(astack_t *astack) {
-    if (!astack)
-        return EXIT_FAILURE;
-    return alist_rm_at(astack->buf, alist_size(astack->buf) - 1);
+    return alist_pop(astack->buf);
 }
 
 gdata_t astack_peak(astack_t *astack) {

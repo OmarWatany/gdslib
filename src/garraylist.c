@@ -5,19 +5,28 @@
 struct alist_t {
     gdata_t *buf;
     size_t   item_size, capacity, size;
-    void     (*allocate_data)(gdata_t *, gdata_t);
 };
 
 void expand(alist_t *alist, size_t size);
 
-alist_t *create_alist(size_t item_size, void (*_allocate_data)(gdata_t *node, gdata_t data)) {
-    alist_t *alist       = (alist_t *)malloc(sizeof(alist_t));
-    alist->allocate_data = _allocate_data;
-    alist->item_size     = item_size;
-    alist->capacity      = 2;
-    alist->size          = 0;
-    alist->buf           = (gdata_t *)malloc(item_size * alist->capacity * sizeof(gdata_t));
+alist_t *create_alist(size_t item_size) {
+    alist_t *alist   = (alist_t *)malloc(sizeof(alist_t));
+    alist->item_size = item_size;
+    alist->capacity  = 2;
+    alist->size      = 0;
+    alist->buf       = (gdata_t *)malloc(item_size * alist->capacity * sizeof(gdata_t));
     return alist;
+}
+
+int16_t alist_push(alist_t *list, gdata_t data) {
+    if (!list)
+        return EXIT_FAILURE;
+    return alist_set_at(list, alist_size(list), data);
+}
+int16_t alist_pop(alist_t *list) {
+    if (!list)
+        return EXIT_FAILURE;
+    return alist_rm_at(list, alist_size(list) - 1);
 }
 
 int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
@@ -27,8 +36,8 @@ int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
         expand(alist, pos - alist->capacity + 1);
     if (alist->size == alist->capacity)
         expand(alist, 5);
-    gdata_t temp = NULL;
-    alist->allocate_data(&temp, data);
+    gdata_t temp = malloc(alist->item_size);
+    memcpy(temp, data, alist->item_size);
     *(alist->buf + alist->size * alist->item_size) = temp;
     alist->size++;
     return EXIT_SUCCESS;
