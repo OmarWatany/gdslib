@@ -1,10 +1,11 @@
 #include "../include/gnode.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 struct node_t {
-    gdata_t data;
-    size_t  link;
+    gdata_t *data;
+    size_t   link;
 };
 
 node_t *create_node() {
@@ -27,22 +28,27 @@ void node_set_link(node_t *node, size_t new_link) {
 }
 
 gdata_t node_data(node_t *node) {
-    if (node == NULL)
+    if (!node)
         return NULL;
-    return node->data;
+    return *node->data;
 }
 
 int16_t node_set_data(node_t *node, size_t item_size, gdata_t data) {
     gdata_t temp = malloc(item_size);
-    if (!node || !temp || !memcpy(temp, data, item_size))
+    if (!node || !temp)
         return EXIT_FAILURE;
 
-    node->data = temp;
+    if (!memcpy(temp, data, item_size))
+        return EXIT_FAILURE;
+
+    node->data  = malloc(sizeof(gdata_t *));
+    *node->data = temp;
     return EXIT_SUCCESS;
 };
 
 void destroy_node(node_t **node) {
+    free(*(*node)->data);
     free((*node)->data);
     free(*node);
-    *node = NULL;
+    // *node = NULL;
 }

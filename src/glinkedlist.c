@@ -33,6 +33,10 @@ list_iterator_t *create_list_iterator(llist_t *list) {
     return it;
 }
 
+size_t list_item_size(llist_t *list) {
+    return list->item_size;
+}
+
 node_t *list_head(llist_t *list) {
     return list->head;
 }

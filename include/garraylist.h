@@ -11,6 +11,12 @@ extern "C" {
 typedef void *gdata_t;
 
 typedef struct alist_t alist_t;
+typedef struct anode_t anode_t;
+
+anode_t *create_anode();
+gdata_t  anode_data(anode_t *node);
+int16_t  anode_set_data(anode_t *node, size_t item_size, gdata_t data);
+void     destroy_anode(anode_t *node);
 
 alist_t *create_alist(size_t item_size);
 int16_t  alist_push(alist_t *list, gdata_t data);

@@ -10,12 +10,14 @@ static inline void push_front_i(llist_t *x, int y) {
     push_front(x, &i);
 }
 
-static inline void push_front_s(llist_t *x, const void *s) {
-    push_front(x, (char *)s);
+static inline void push_front_s(llist_t *x, const char *s) {
+    if (strlen(s) <= list_item_size(x))
+        push_front(x, (void *)s);
 }
 
-static inline void push_back_s(llist_t *x, const void *s) {
-    push_back(x, (char *)s);
+static inline void push_back_s(llist_t *x, const char *s) {
+    if (strlen(s) <= list_item_size(x))
+        push_back(x, (void *)s);
 }
 
 static inline void dump_str_list(llist_t *x) {
@@ -30,26 +32,25 @@ static inline void dump_int_list(llist_t *x) {
 
 int main() {
 
-    llist_t *lst      = create_list(sizeof(char *));
-    llist_t *new_list = create_list(sizeof(int));
+    llist_t *strings  = create_list(30);
+    llist_t *integers = create_list(sizeof(int));
 
-    push_front_i(new_list, 3);
-    push_front_i(new_list, 2);
-    push_front_i(new_list, 7);
-    dump_int_list(new_list);
-    destroy_list(&new_list);
+    push_front_i(integers, 3);
+    push_front_i(integers, 2);
+    push_front_i(integers, 7);
+    dump_int_list(integers);
 
     for (int i = 0; i < 7; i++) {
-        push_front_s(lst, "world");
-        push_front_s(lst, "hello");
-        push_front_s(lst, "print");
-        push_back_s(lst, "!");
+        push_front_s(strings, "world");
+        push_front_s(strings, "hello");
+        push_front_s(strings, "print");
+        push_back_s(strings, "!");
     }
 
-    dump_str_list(lst);
+    dump_str_list(strings);
 
-    list_iterator_t *fast_it = create_list_iterator(lst);
-    list_iterator_t *slow_it = create_list_iterator(lst);
+    list_iterator_t *fast_it = create_list_iterator(strings);
+    list_iterator_t *slow_it = create_list_iterator(strings);
 
     node_t *fast = itr_begin(fast_it);
     node_t *slow = itr_begin(slow_it);
@@ -73,7 +74,8 @@ int main() {
     free(fast_it);
     free(slow_it);
 
-    destroy_list(&lst);
+    destroy_list(&strings);
+    destroy_list(&integers);
 
     return 0;
 }
