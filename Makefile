@@ -1,48 +1,54 @@
 SRC_D  := ./src
 OBJ_D  := ./objects
-TEST_D := ./test_files
+EXAMPLE_D := ./example_files
 INC    := ./include
-LIB := -L./lib -lgdslib
+LIB := -L./lib -l:libgdslib.a
 
 CFLAGS=-Wall -Wextra -g -I$(INC)
 
+GQUEUE_HFILES := $(wildcard $(INC)/*queue*.h)
 GQUEUE_CFILES := $(wildcard $(SRC_D)/*queue*.c)
-GSTACK_CFILES := $(wildcard $(SRC_D)/*stack*.c)
+
+LLIST_HFILES  := $(wildcard $(INC)/*list*.h) 
 LLIST_CFILES  := $(wildcard $(SRC_D)/*list*.c)
+
+GSTACK_HFILES := $(wildcard $(INC)/*stack*.h)
+GSTACK_CFILES := $(wildcard $(SRC_D)/*stack*.c)
+
+NODE_HFILES   := $(wildcard $(INC)/*node*.h)
 NODE_CFILES   := $(wildcard $(SRC_D)/*node*.c)
 
-GQUEUE_HFILES := $(wildcard $(INC)/*queue*.h)
-GSTACK_HFILES := $(wildcard $(INC)/*stack*.h)
-LLIST_HFILES  := $(wildcard $(INC)/*list*.h) 
-NODE_HFILES   := $(wildcard $(INC)/*node*.h)
+NODE_HFILES   := $(wildcard $(INC)/*allocator*.h)
+NODE_CFILES   := $(wildcard $(SRC_D)/*allocator*.c)
+
 
 C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(NODE_CFILES)
 H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(NODE_HFILES)
 
-TEST_FILES := $(wildcard $(TEST_D)/*.c)
-ALL := $(H_FILES) $(C_FILES) $(TEST_FILES)
+EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)
+ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
 
 CC := gcc
 
-all:  stack queue linkedlist alist astack 
+all:  stack queue linkedlist alist astack $(EXAMPLE_D)
 
 stack: lib
-	$(CC) $(CFLAGS) $(TEST_D)/test_gstack.c $(LIB) -o ./bin/stack 
+	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gstack.c $(LIB) -o ./bin/stack 
 
 queue: lib
-	$(CC) $(CFLAGS) $(TEST_D)/test_gqueue.c $(LIB) -o ./bin/queue
+	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gqueue.c $(LIB) -o ./bin/queue
 
 linkedlist: lib
-	$(CC) $(CFLAGS) $(TEST_D)/test_glinkedlist.c $(LIB) -o ./bin/list
+	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_glinkedlist.c $(LIB) -o ./bin/list
 
 alist: lib
-	$(CC) $(CFLAGS) $(TEST_D)/test_garraylist.c $(LIB) -o ./bin/alist
+	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_garraylist.c $(LIB) -o ./bin/alist
 
 astack: lib
-	$(CC) $(CFLAGS) $(TEST_D)/test_garraystack.c $(LIB) -o ./bin/astack
+	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_garraystack.c $(LIB) -o ./bin/astack
 
 gnode: lib
-	$(CC) $(CFLAGS) $(TEST_D)/test_gnode.c $(LIB) -o ./bin/node
+	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gnode.c $(LIB) -o ./bin/node
 
 lib: obj 
 	ar rcs ./lib/libgdslib.a $(wildcard ./objects/*.o)

@@ -1,19 +1,13 @@
 #include "../include/garraylist.h"
 #include <string.h>
 
-typedef struct {
-    gdata_t data;
-    size_t  item_size;
-} allocator_data_t;
-
 struct alist_t {
     anode_t **buf;
     size_t    item_size, capacity, size;
     gdata_t (*allocator_fun)(gdata_t data);
 };
 
-void    expand(alist_t *alist, size_t size);
-gdata_t default_allocator(gdata_t allocator_data);
+void expand(alist_t *alist, size_t size);
 
 alist_t *create_alist(size_t item_size) {
     alist_t *alist = (alist_t *)malloc(sizeof(alist_t));
@@ -83,7 +77,7 @@ void alist_set_allocator(alist_t *alist, gdata_t (*allocator_fun)(gdata_t data))
     alist->allocator_fun = allocator_fun;
 }
 
-bool alist_is_empty(alist_t *alist) {
+bool alist_empty(alist_t *alist) {
     if (alist == NULL || alist->buf == NULL || alist->size == 0) return true;
     return 0;
 }
@@ -116,12 +110,4 @@ void clear_alist(alist_t *alist) {
     }
 
     free(alist->buf);
-}
-
-gdata_t default_allocator(gdata_t allocator_data) {
-    size_t  item_size = ((allocator_data_t *)allocator_data)->item_size;
-    gdata_t data = ((allocator_data_t *)allocator_data)->data;
-
-    gdata_t *temp = malloc(item_size);
-    return memcpy(temp, data, item_size);
 }

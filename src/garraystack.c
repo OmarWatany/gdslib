@@ -27,7 +27,7 @@ gdata_t astack_peak(astack_t *astack) {
 }
 
 bool astack_is_empty(astack_t *astack) {
-    return alist_is_empty(astack->buf);
+    return alist_empty(astack->buf);
 }
 
 void destroy_astack(astack_t **astack) {

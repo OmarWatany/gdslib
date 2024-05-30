@@ -1,6 +1,5 @@
 #include "../include/garraylist.h"
 #include <stdio.h>
-#include <string.h>
 
 typedef struct {
     size_t x, y;
@@ -8,10 +7,6 @@ typedef struct {
 
 point *alist_pt_at(alist_t *list, size_t pos) {
     return alist_at(list, pos);
-}
-
-gdata_t string_allocator(gdata_t str) {
-    return strdup((char *)str);
 }
 
 point create_point(int x, int y) {
@@ -29,10 +24,17 @@ void points_list() {
     a->x = 9;
     a->y = 5;
 
+    // save point 'p'
     alist_push(points, &p);
+    // save the point refrenced by a
+    alist_push(points, a);
+    // save the 'a' pointer
     alist_push(p_refs, &a);
 
     p = *alist_pt_at(points, 0);
+    printf("%ld - %ld\n", p.x, p.y);
+
+    p = *alist_pt_at(points, 1);
     printf("%ld - %ld\n", p.x, p.y);
 
     p = **(point **)alist_at(p_refs, 0);
@@ -46,9 +48,9 @@ void points_list() {
 void dyn_strings() {
     printf("__ dynamic size strings list __\n");
     alist_t *dyn_strings_sizes = create_alist(4);
-    alist_set_allocator(dyn_strings_sizes, string_allocator);
+    alist_set_allocator(dyn_strings_sizes, str_allocator);
 
-    printf("%ld - %ld \n", alist_size(dyn_strings_sizes), alist_capacity(dyn_strings_sizes));
+    printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes), alist_capacity(dyn_strings_sizes));
     alist_reserve(dyn_strings_sizes, 5);
     alist_push(dyn_strings_sizes, "hello");
     alist_push(dyn_strings_sizes, "world");
@@ -61,7 +63,7 @@ void dyn_strings() {
     for (size_t i = 0; i < alist_size(dyn_strings_sizes); i++) {
         printf("%s\n", (char *)alist_at(dyn_strings_sizes, i));
     }
-    printf("%ld - %ld \n", alist_size(dyn_strings_sizes), alist_capacity(dyn_strings_sizes));
+    printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes), alist_capacity(dyn_strings_sizes));
     destroy_alist(&dyn_strings_sizes);
 }
 
@@ -69,7 +71,7 @@ void fixed_strings() {
     printf("__ fixed size strings list __\n");
     // each list element has 30 bytes
     alist_t *strings = create_alist(30);
-    printf("%ld - %ld \n", alist_size(strings), alist_capacity(strings));
+    printf("size %ld - capacity %ld \n", alist_size(strings), alist_capacity(strings));
 
     alist_reserve(strings, 5);
     alist_push(strings, "hello");
@@ -84,7 +86,7 @@ void fixed_strings() {
         printf("%s\n", (char *)alist_at(strings, i));
     }
 
-    printf("%ld - %ld \n", alist_size(strings), alist_capacity(strings));
+    printf("size %ld - capacity %ld \n", alist_size(strings), alist_capacity(strings));
     destroy_alist(&strings);
 }
 

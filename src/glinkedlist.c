@@ -3,11 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
-    gdata_t data;
-    size_t  item_size;
-} allocator_data_t;
-
 struct llist_t {
     node_t *head, *tail;
     size_t  item_size;
@@ -19,8 +14,6 @@ struct list_iterator_t {
     node_t  *from, *begin, *end;
     size_t   prev_node, next_node;
 };
-
-gdata_t default_allocator(gdata_t allocator_data);
 
 llist_t *create_list(size_t item_size) {
     llist_t *new_list = (llist_t *)malloc(sizeof(llist_t));
@@ -216,7 +209,7 @@ void destroy_list(llist_t **list) {
     *list = NULL;
 }
 
-void alist_set_allocator(llist_t *list, gdata_t (*allocator_fun)(gdata_t data)) {
+void llist_set_allocator(llist_t *list, gdata_t (*allocator_fun)(gdata_t data)) {
     list->allocator_fun = allocator_fun;
 }
 
@@ -265,12 +258,4 @@ int16_t reverse_dump_list(llist_t *list, void (*print_data)(gdata_t)) {
     }
     free(it);
     return EXIT_SUCCESS;
-}
-
-gdata_t default_allocator(gdata_t allocator_data) {
-    size_t  item_size = ((allocator_data_t *)allocator_data)->item_size;
-    gdata_t data = ((allocator_data_t *)allocator_data)->data;
-
-    gdata_t *temp = malloc(item_size);
-    return memcpy(temp, data, item_size);
 }
