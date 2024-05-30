@@ -10,7 +10,7 @@ struct astack_t {
 
 astack_t *create_astack(size_t element_size) {
     astack_t *stack = (astack_t *)malloc(sizeof(astack_t));
-    stack->buf      = create_alist(element_size);
+    stack->buf = create_alist(element_size);
     return stack;
 }
 

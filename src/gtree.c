@@ -46,13 +46,13 @@ void tr_display_int_node(Tnode **root) {
 void allocate_str_data(void *data, Tnode **node) {
     Tnode *temp = malloc(sizeof(Tnode));
     temp->value = (char *)data;
-    *node       = temp;
+    *node = temp;
 }
 
 int main() {
     int   arr[] = {8, 5, 7, 10, 9, 3, 10, 5, 2, 11, 4};
-    int  *data  = arr;
-    Tree *tree  = tr_create_tree(allocate_str_data);
+    int  *data = arr;
+    Tree *tree = tr_create_tree(allocate_str_data);
     for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++)
         tr_bst_add(tree, data);
     // tnode_bst_add(&tree->root, data);
@@ -80,7 +80,7 @@ void tnode_bst_add(Tnode **root, int value) {
         Tnode *temp = malloc(sizeof(Tnode));
         memset(temp, 0, sizeof(Tnode));
         temp->value = value;
-        *root       = temp;
+        *root = temp;
     }
     if (value < (*root)->value) {
         tnode_bst_add(&(*root)->left, value);
@@ -89,24 +89,21 @@ void tnode_bst_add(Tnode **root, int value) {
 }
 
 void tnode_in_traverse(Tnode **root, void (*do_something)(Tnode **root)) {
-    if (*root == NULL)
-        return;
+    if (*root == NULL) return;
     tnode_in_traverse(&(*root)->left, do_something);
     do_something(root);
     tnode_in_traverse(&(*root)->right, do_something);
 }
 
 void tnode_post_traverse(Tnode **root, void (*do_something)(Tnode **root)) {
-    if (*root == NULL)
-        return;
+    if (*root == NULL) return;
     tnode_post_traverse(&(*root)->left, do_something);
     tnode_post_traverse(&(*root)->right, do_something);
     do_something(root);
 }
 
 void tnode_pre_traverse(Tnode **root, void (*do_something)(Tnode **root)) {
-    if (*root == NULL)
-        return;
+    if (*root == NULL) return;
     do_something(root);
     tnode_pre_traverse(&(*root)->left, do_something);
     tnode_pre_traverse(&(*root)->right, do_something);

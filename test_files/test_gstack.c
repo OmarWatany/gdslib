@@ -5,8 +5,7 @@ int16_t push_int(stack_t *stack, int value);
 
 int stack_peak_i(stack_t *s) {
     int *top = (int *)stack_peak(s);
-    if (top != NULL)
-        return *top;
+    if (top != NULL) return *top;
     return 0;
 }
 

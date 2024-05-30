@@ -7,7 +7,7 @@ struct stack_t {
 
 stack_t *create_stack(size_t item_size) {
     stack_t *stack = (stack_t *)malloc(sizeof(stack_t));
-    stack->list    = create_list(item_size);
+    stack->list = create_list(item_size);
     return stack;
 }
 

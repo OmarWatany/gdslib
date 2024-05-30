@@ -7,19 +7,17 @@ struct anode_t {
 
 anode_t *create_anode() {
     anode_t *new_node = (anode_t *)malloc(sizeof(anode_t));
-    new_node->data    = NULL;
+    new_node->data = NULL;
     return new_node;
 }
 
 gdata_t anode_data(anode_t *node) {
-    if (!node)
-        return NULL;
+    if (!node) return NULL;
     return node->data;
 }
 
 int16_t anode_set_data(anode_t *node, gdata_t data) {
-    if (!node)
-        return EXIT_FAILURE;
+    if (!node) return EXIT_FAILURE;
 
     node->data = data;
     return EXIT_SUCCESS;

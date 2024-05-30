@@ -102,8 +102,7 @@ void int_list() {
     }
     for (size_t i = 0; i < alist_capacity(intlist); i++) {
         gdata_t temp = alist_at(intlist, i);
-        if (temp)
-            printf("%d\n", *(int *)temp);
+        if (temp) printf("%d\n", *(int *)temp);
     }
     destroy_alist(&intlist);
 }
