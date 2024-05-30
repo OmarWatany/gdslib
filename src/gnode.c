@@ -33,16 +33,12 @@ gdata_t node_data(node_t *node) {
     return *node->data;
 }
 
-int16_t node_set_data(node_t *node, size_t item_size, gdata_t data) {
-    gdata_t temp = malloc(item_size);
-    if (!node || !temp)
-        return EXIT_FAILURE;
-
-    if (!memcpy(temp, data, item_size))
+int16_t node_set_data(node_t *node, gdata_t data) {
+    if (!node)
         return EXIT_FAILURE;
 
     node->data  = malloc(sizeof(gdata_t *));
-    *node->data = temp;
+    *node->data = data;
     return EXIT_SUCCESS;
 };
 
@@ -50,5 +46,5 @@ void destroy_node(node_t **node) {
     free(*(*node)->data);
     free((*node)->data);
     free(*node);
-    // *node = NULL;
+    *node = NULL;
 }

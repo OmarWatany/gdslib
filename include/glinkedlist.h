@@ -31,6 +31,7 @@ gdata_t peak_back(llist_t *list);
 
 void clear_list(llist_t *list);
 void destroy_list(llist_t **list);
+void alist_set_allocator(llist_t *list, gdata_t (*allocator_fun)(gdata_t data));
 void itr_set_from(list_iterator_t *iterator, node_t *from);
 void itr_set_begin(list_iterator_t *iterator, node_t *begin_node);
 void itr_set_end(list_iterator_t *iterator, node_t *end_node);

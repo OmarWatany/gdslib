@@ -3,9 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+    gdata_t data;
+    size_t  item_size;
+} allocator_data_t;
+
 struct llist_t {
     node_t *head, *tail;
     size_t  item_size;
+    gdata_t (*allocator_fun)(gdata_t data);
 };
 
 struct list_iterator_t {
@@ -14,11 +20,15 @@ struct list_iterator_t {
     size_t   prev_node, next_node;
 };
 
+gdata_t default_allocator(gdata_t allocator_data);
+
 llist_t *create_list(size_t item_size) {
     llist_t *new_list   = (llist_t *)malloc(sizeof(llist_t));
     new_list->head      = NULL;
     new_list->tail      = NULL;
     new_list->item_size = item_size;
+
+    new_list->allocator_fun = NULL;
     return new_list;
 }
 
@@ -96,8 +106,22 @@ node_t *itr_end(list_iterator_t *iterator) {
 
 int16_t push_front(llist_t *list, gdata_t data) {
     node_t *new_node = create_node();
-    if (!new_node || node_set_data(new_node, list->item_size, data) == EXIT_FAILURE)
+    if (!new_node)
         return EXIT_FAILURE;
+
+    gdata_t temp = NULL;
+    if (list->allocator_fun) {
+        // use custom allocator
+        temp = list->allocator_fun(data);
+    } else {
+        // use default allocator
+        allocator_data_t t = {
+            data,
+            list->item_size,
+        };
+        temp = default_allocator(&t);
+    }
+    node_set_data(new_node, temp);
 
     if (list->head == NULL) {
         node_set_link(new_node, 0);
@@ -112,8 +136,22 @@ int16_t push_front(llist_t *list, gdata_t data) {
 
 int16_t push_back(llist_t *list, gdata_t data) {
     node_t *new_node = create_node();
-    if (!new_node || node_set_data(new_node, list->item_size, data) == EXIT_FAILURE)
+    if (!new_node)
         return EXIT_FAILURE;
+
+    gdata_t temp = NULL;
+    if (list->allocator_fun) {
+        // use custom allocator
+        temp = list->allocator_fun(data);
+    } else {
+        // use default allocator
+        allocator_data_t t = {
+            data,
+            list->item_size,
+        };
+        temp = default_allocator(&t);
+    }
+    node_set_data(new_node, temp);
 
     if (list->tail) {
         node_set_link(new_node, (size_t)list->tail);
@@ -192,6 +230,10 @@ void destroy_list(llist_t **list) {
     *list = NULL;
 }
 
+void alist_set_allocator(llist_t *list, gdata_t (*allocator_fun)(gdata_t data)) {
+    list->allocator_fun = allocator_fun;
+}
+
 llist_t *itr_list(list_iterator_t *iterator) {
     return iterator->list;
 }
@@ -244,4 +286,12 @@ int16_t reverse_dump_list(llist_t *list, void (*print_data)(gdata_t)) {
     }
     free(it);
     return EXIT_SUCCESS;
+}
+
+gdata_t default_allocator(gdata_t allocator_data) {
+    size_t  item_size = ((allocator_data_t *)allocator_data)->item_size;
+    gdata_t data      = ((allocator_data_t *)allocator_data)->data;
+
+    gdata_t *temp = malloc(item_size);
+    return memcpy(temp, data, item_size);
 }
