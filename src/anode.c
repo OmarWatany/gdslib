@@ -2,29 +2,28 @@
 #include <string.h>
 
 struct anode_t {
-    gdata_t data;
+    size_t data_address;
 };
 
 anode_t *create_anode() {
     anode_t *new_node = (anode_t *)malloc(sizeof(anode_t));
-    new_node->data = NULL;
+    new_node->data_address = 0;
     return new_node;
 }
 
 gdata_t anode_data(anode_t *node) {
     if (!node) return NULL;
-    return node->data;
+    return (gdata_t)node->data_address;
 }
 
 int16_t anode_set_data(anode_t *node, gdata_t data) {
     if (!node) return EXIT_FAILURE;
-
-    node->data = data;
+    node->data_address = (size_t)data;
     return EXIT_SUCCESS;
 };
 
 void destroy_anode(anode_t **node) {
-    free((*node)->data);
+    free((gdata_t)(*node)->data_address);
     free(*node);
     *node = NULL;
 }

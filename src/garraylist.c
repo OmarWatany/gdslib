@@ -15,7 +15,7 @@ alist_t *create_alist(size_t item_size) {
     alist->capacity = 2;
     alist->size = 0;
     alist->buf = (anode_t **)malloc(alist->capacity * sizeof(anode_t *));
-
+    memset(alist->buf, 0, sizeof(anode_t *) * alist->capacity);
     alist->allocator_fun = NULL;
     return alist;
 }
@@ -29,13 +29,9 @@ int16_t alist_pop(alist_t *list) {
     if (!list) return EXIT_FAILURE;
     return alist_rm_at(list, alist_size(list) - 1);
 }
-
-int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
+int16_t alist_change_at(alist_t *alist, size_t pos, gdata_t data) {
     if (alist == NULL || alist->buf == NULL) return EXIT_FAILURE;
-    if (pos >= alist->capacity) expand(alist, pos - alist->capacity + 1);
-    if (alist->size == alist->capacity) expand(alist, 5);
-
-    alist->buf[alist->size] = create_anode();
+    alist->buf[pos] = create_anode();
     gdata_t temp = NULL;
     if (alist->allocator_fun) {
         // use custom allocator
@@ -44,16 +40,33 @@ int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
         // use default allocator
         temp = default_allocator(alist->item_size, data);
     }
-    anode_set_data(alist->buf[alist->size], temp);
+    anode_set_data(alist->buf[pos], temp);
+    return EXIT_SUCCESS;
+}
 
+int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
+    if (alist == NULL || alist->buf == NULL) return EXIT_FAILURE;
+    if (alist->size == alist->capacity) expand(alist, 5);
+    if (pos >= alist->capacity) expand(alist, pos - alist->capacity + 1);
+
+    if (alist->buf[pos] != NULL) {
+        destroy_anode(&alist->buf[pos]);
+        alist->size--;
+    }
+
+    if (alist_change_at(alist, pos, data) != 0) return EXIT_FAILURE;
     alist->size++;
     return EXIT_SUCCESS;
 }
 
 int16_t alist_rm_at(alist_t *alist, size_t pos) {
     if (alist == NULL || alist->buf == NULL || pos >= alist->size) return EXIT_FAILURE;
-    alist->size--;
     destroy_anode(&alist->buf[pos]);
+
+    for (size_t i = pos + 1; i < alist->size; i++)
+        alist->buf[i - 1] = alist->buf[i];
+
+    alist->size--;
     return EXIT_SUCCESS;
 }
 
@@ -63,10 +76,8 @@ gdata_t alist_at(alist_t *alist, size_t pos) {
 }
 
 void alist_reserve(alist_t *alist, size_t size) {
-    if (!alist->buf) {
-
-    } else if (alist->capacity < size)
-        expand(alist, size - alist->capacity);
+    if (!alist->buf) return;
+    if (alist->capacity < size) expand(alist, size - alist->capacity);
 }
 
 void alist_set_allocator(alist_t *alist, gdata_t (*allocator_fun)(gdata_t data)) {
@@ -91,6 +102,8 @@ void expand(alist_t *alist, size_t size) {
     alist->capacity += size;
     anode_t **neobuf = (anode_t **)realloc(alist->buf, sizeof(anode_t *) * alist->capacity);
     if (neobuf) alist->buf = neobuf;
+    for (size_t i = alist->size; i < alist->capacity; i++)
+        alist->buf[i] = NULL;
 }
 
 void destroy_alist(alist_t **alist) {
@@ -100,10 +113,7 @@ void destroy_alist(alist_t **alist) {
 
 void clear_alist(alist_t *alist) {
     if (alist == NULL) return;
-
-    for (size_t i = 0; i < alist->size; i++) {
+    for (size_t i = 0; i < alist->size; i++)
         destroy_anode(&alist->buf[i]);
-    }
-
     free(alist->buf);
 }

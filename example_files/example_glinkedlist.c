@@ -11,13 +11,11 @@ static inline void push_front_i(llist_t *x, int y) {
 }
 
 static inline void push_front_s(llist_t *x, const char *s) {
-    if (strlen(s) <= list_item_size(x))
-        push_front(x, (void *)s);
+    if (strlen(s) <= list_item_size(x)) push_front(x, (void *)s);
 }
 
 static inline void push_back_s(llist_t *x, const char *s) {
-    if (strlen(s) <= list_item_size(x))
-        push_back(x, (void *)s);
+    if (strlen(s) <= list_item_size(x)) push_back(x, (void *)s);
 }
 
 static inline void dump_str_list(llist_t *x) {
@@ -32,8 +30,12 @@ static inline void dump_int_list(llist_t *x) {
 
 int main() {
 
-    llist_t *strings  = create_list(30);
+    llist_t *strings = create_list(30);
     llist_t *integers = create_list(sizeof(int));
+    llist_t *dyn_strings = create_list(3);
+    llist_set_allocator(dyn_strings, str_allocator);
+
+    push_front(dyn_strings, "dyn strings");
 
     push_front_i(integers, 3);
     push_front_i(integers, 2);
@@ -46,8 +48,12 @@ int main() {
         push_front_s(strings, "print");
         push_back_s(strings, "!");
     }
+    char *s = strdup("strings");
+    push_front_s(strings, s);
 
+    push_back(dyn_strings, s);
     dump_str_list(strings);
+    dump_str_list(dyn_strings);
 
     list_iterator_t *fast_it = create_list_iterator(strings);
     list_iterator_t *slow_it = create_list_iterator(strings);
@@ -74,20 +80,20 @@ int main() {
     free(fast_it);
     free(slow_it);
 
+    free(s);
     destroy_list(&strings);
     destroy_list(&integers);
+    destroy_list(&dyn_strings);
 
     return 0;
 }
 
 void _print_str(void *data) {
-    if (data == NULL)
-        return;
+    if (data == NULL) return;
     printf("%s -> ", (char *)data);
 }
 
 void _print_int(void *data) {
-    if (data == NULL)
-        return;
+    if (data == NULL) return;
     printf("%d", *(int *)data);
 }
