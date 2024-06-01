@@ -42,11 +42,7 @@ int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
         temp = alist->allocator_fun(data);
     } else {
         // use default allocator
-        allocator_data_t t = {
-            data,
-            alist->item_size,
-        };
-        temp = default_allocator(&t);
+        temp = default_allocator(alist->item_size, data);
     }
     anode_set_data(alist->buf[alist->size], temp);
 

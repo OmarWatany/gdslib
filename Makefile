@@ -2,7 +2,8 @@ SRC_D  := ./src
 OBJ_D  := ./objects
 EXAMPLE_D := ./example_files
 INC    := ./include
-LIB := -L./lib -l:libgdslib.a
+# LIB := -L./lib -l:libgdslib.a
+LIB := -L./lib -lgdslib -Wl,-rpath=./lib
 
 CFLAGS=-Wall -Wextra -g -I$(INC)
 
@@ -18,12 +19,12 @@ GSTACK_CFILES := $(wildcard $(SRC_D)/*stack*.c)
 NODE_HFILES   := $(wildcard $(INC)/*node*.h)
 NODE_CFILES   := $(wildcard $(SRC_D)/*node*.c)
 
-NODE_HFILES   := $(wildcard $(INC)/*allocator*.h)
-NODE_CFILES   := $(wildcard $(SRC_D)/*allocator*.c)
+ALLOC_HFILES   := $(wildcard $(INC)/*allocator*.h)
+ALLOC_CFILES   := $(wildcard $(SRC_D)/*allocator*.c)
 
 
-C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(NODE_CFILES)
-H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(NODE_HFILES)
+C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(NODE_CFILES) $(ALLOC_CFILES)
+H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(NODE_HFILES) $(ALLOC_HFILES)
 
 EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)
 ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
@@ -52,7 +53,7 @@ gnode: lib
 
 lib: obj 
 	ar rcs ./lib/libgdslib.a $(wildcard ./objects/*.o)
-	# gcc -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
+	gcc -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
 
 obj: $(C_FILES) $(H_FILES)
 	$(CC) $(CFLAGS) -c $(C_FILES) 

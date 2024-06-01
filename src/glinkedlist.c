@@ -105,11 +105,7 @@ int16_t push_front(llist_t *list, gdata_t data) {
         temp = list->allocator_fun(data);
     } else {
         // use default allocator
-        allocator_data_t t = {
-            data,
-            list->item_size,
-        };
-        temp = default_allocator(&t);
+        temp = default_allocator(list->item_size, data);
     }
     node_set_data(new_node, temp);
 
@@ -134,11 +130,7 @@ int16_t push_back(llist_t *list, gdata_t data) {
         temp = list->allocator_fun(data);
     } else {
         // use default allocator
-        allocator_data_t t = {
-            data,
-            list->item_size,
-        };
-        temp = default_allocator(&t);
+        temp = default_allocator(list->item_size, data);
     }
     node_set_data(new_node, temp);
 
