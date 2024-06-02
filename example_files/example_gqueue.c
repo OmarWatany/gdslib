@@ -16,25 +16,25 @@ bool q_search_s(node_t *node, void *data) {
 }
 
 int main() {
-    queue_t *cards_deck      = create_queue(sizeof(int));
+    queue_t *cards_deck = create_queue(sizeof(int));
     queue_t *discarded_cards = create_queue(sizeof(int));
-    queue_t *names           = create_queue(sizeof(char *));
+
+    queue_t *names = create_queue(sizeof(char *));
     enqueue(names, "hello");
     enqueue(names, "world");
-    enqueue(names, "!");
-    if (in_queue(names, "!", q_search_s))
-        dump_queue(names, __print_s);
+    // enqueue(names, "!");
+    if (in_queue(names, "!", q_search_s)) dump_queue(names, __print_s);
     dequeue(names);
-    dump_queue(names, __print_s);
+    if (in_queue(names, "!", q_search_s)) dump_queue(names, __print_s);
 
-    int deck_size = 0;
-    printf("deck size : ");
-    scanf("%d", &deck_size);
+    int deck_size = 1000000;
+    printf("deck size : %d\n", deck_size);
+    // scanf("%d", &deck_size);
     for (int i = 1; i <= deck_size; i++)
         enqueue(cards_deck, &i);
 
-    printf("card deck: ");
-    dump_queue(cards_deck, __print_int);
+    // printf("card deck: ");
+    // dump_queue(cards_deck, __print_int);
 
     {
         int s = 8;
@@ -52,8 +52,8 @@ int main() {
         dequeue(cards_deck);
     }
 
-    printf("discarded cards : ");
-    dump_queue(discarded_cards, __print_int);
+    printf("discarded cards : %ld\n", queue_length(discarded_cards));
+    // dump_queue(discarded_cards, __print_int);
 
     printf("remaining card : ");
     dump_queue(cards_deck, __print_int);

@@ -17,20 +17,18 @@ struct list_iterator_t {
 
 llist_t *create_list(size_t item_size) {
     llist_t *new_list = (llist_t *)malloc(sizeof(llist_t));
-    new_list->head = NULL;
-    new_list->tail = NULL;
+    memset(new_list, 0, sizeof(llist_t));
     new_list->item_size = item_size;
-    new_list->allocator_fun = NULL;
     return new_list;
 }
 
 list_iterator_t *create_list_iterator(llist_t *list) {
     list_iterator_t *it = (list_iterator_t *)malloc(sizeof(list_iterator_t));
     if (list == NULL || it == NULL) return NULL;
+    memset(it, 0, sizeof(list_iterator_t));
     it->list = list;
     it->end = list->tail;
     it->from = it->begin = list->head;
-    it->next_node = it->prev_node = 0;
     return it;
 }
 

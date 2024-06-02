@@ -1,19 +1,10 @@
+#include "../include/anode.h"
 #include "../include/garraylist.h"
 #include <string.h>
 
-struct anode_t {
-    size_t data_address;
-};
-
-anode_t *create_anode() {
-    anode_t *new_node = (anode_t *)malloc(sizeof(anode_t));
-    new_node->data_address = 0;
-    return new_node;
-}
-
-gdata_t anode_data(anode_t *node) {
-    if (!node) return NULL;
-    return (gdata_t)node->data_address;
+int16_t init_node(anode_t *node) {
+    node->data_address = 0;
+    return EXIT_SUCCESS;
 }
 
 int16_t anode_set_data(anode_t *node, gdata_t data) {
@@ -22,8 +13,17 @@ int16_t anode_set_data(anode_t *node, gdata_t data) {
     return EXIT_SUCCESS;
 };
 
+gdata_t anode_data(anode_t *node) {
+    if (!node) return NULL;
+    return (gdata_t)node->data_address;
+}
+
+void free_anode(anode_t *node) {
+    free((gdata_t)node->data_address);
+}
+
 void destroy_anode(anode_t **node) {
-    free((gdata_t)(*node)->data_address);
+    free_anode(*node);
     free(*node);
     *node = NULL;
 }

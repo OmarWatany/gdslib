@@ -3,15 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct node_t {
-    size_t data_address;
-    size_t link;
-};
-
 node_t *create_node() {
     node_t *new_node = (node_t *)malloc(sizeof(node_t));
-    new_node->data_address = 0;
-    new_node->link = 0;
+    memset(new_node, 0, sizeof(node_t));
     return new_node;
 }
 
@@ -36,8 +30,14 @@ int16_t node_set_data(node_t *node, gdata_t data) {
     return EXIT_SUCCESS;
 };
 
+void free_node(node_t *node) {
+    if (!node) return;
+    free((gdata_t)node->data_address);
+}
+
 void destroy_node(node_t **node) {
-    free((gdata_t)(*node)->data_address);
+    if (!node || !*node) return;
+    free_node(*node);
     free(*node);
     *node = NULL;
 }

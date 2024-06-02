@@ -2,20 +2,23 @@
 #include <stdio.h>
 #include <string.h>
 
-void _print_str(void *data);
-void _print_int(void *data);
+void _print_str(gdata_t data);
+void _print_int(gdata_t data);
+
+void _print_int(gdata_t data) {
+    int i = *(int *)data;
+    // int i = 8;
+    printf("%d", i);
+}
 
 static inline void push_front_i(llist_t *x, int y) {
     int i = y;
     push_front(x, &i);
 }
 
-static inline void push_front_s(llist_t *x, const char *s) {
-    if (strlen(s) <= list_item_size(x)) push_front(x, (void *)s);
-}
-
-static inline void push_back_s(llist_t *x, const char *s) {
-    if (strlen(s) <= list_item_size(x)) push_back(x, (void *)s);
+static inline void push_back_i(llist_t *x, int y) {
+    int i = y;
+    push_back(x, &i);
 }
 
 static inline void dump_str_list(llist_t *x) {
@@ -30,7 +33,7 @@ static inline void dump_int_list(llist_t *x) {
 
 int main() {
 
-    llist_t *strings = create_list(30);
+    llist_t *fixed_strings = create_list(30);
     llist_t *integers = create_list(sizeof(int));
     llist_t *dyn_strings = create_list(3);
     llist_set_allocator(dyn_strings, str_allocator);
@@ -43,25 +46,29 @@ int main() {
     dump_int_list(integers);
 
     for (int i = 0; i < 7; i++) {
-        push_front_s(strings, "world");
-        push_front_s(strings, "hello");
-        push_front_s(strings, "print");
-        push_back_s(strings, "!");
+        push_front(fixed_strings, "world");
+        push_front(fixed_strings, "hello");
+        push_front(fixed_strings, "print");
+        push_back(fixed_strings, "!");
     }
     char *s = strdup("strings");
-    push_front_s(strings, s);
+    char *fs = "strings";
 
+    push_front(fixed_strings, fs);
+    // push_front(fixed_strings, s);
+    //
+    push_front(dyn_strings, s);
     push_back(dyn_strings, s);
-    dump_str_list(strings);
+
+    dump_str_list(fixed_strings);
     dump_str_list(dyn_strings);
 
-    list_iterator_t *fast_it = create_list_iterator(strings);
-    list_iterator_t *slow_it = create_list_iterator(strings);
-
-    node_t *fast = itr_begin(fast_it);
-    node_t *slow = itr_begin(slow_it);
-
     {
+        list_iterator_t *fast_it = create_list_iterator(fixed_strings);
+        list_iterator_t *slow_it = create_list_iterator(fixed_strings);
+        node_t          *fast = itr_begin(fast_it);
+        node_t          *slow = itr_begin(slow_it);
+
         int length = 1, h_index = 0;
         while (fast != itr_end(fast_it)) {
             for (int i = 0; i < 2 && fast != itr_end(fast_it); i++) {
@@ -75,25 +82,36 @@ int main() {
         printf("\n");
         printf("length = %d \n", length);
         printf("length / 2 = %d \n", h_index);
+
+        free(fast_it);
+        free(slow_it);
     }
 
-    free(fast_it);
-    free(slow_it);
+    {
+        list_iterator_t *fast_it = create_list_iterator(integers);
+        node_t          *fast = itr_begin(fast_it);
+
+        int length = 1, i = 0;
+        while (fast != itr_end(fast_it)) {
+            length++;
+            i = *(int *)node_data(fast);
+            printf("%d\n", i);
+            fast = next(fast_it);
+        }
+        i = *(int *)node_data(fast);
+        printf("%d\n", i);
+        printf("integers length = %d \n", length);
+        free(fast_it);
+    }
 
     free(s);
-    destroy_list(&strings);
+    destroy_list(&fixed_strings);
     destroy_list(&integers);
     destroy_list(&dyn_strings);
 
     return 0;
 }
 
-void _print_str(void *data) {
-    if (data == NULL) return;
+void _print_str(gdata_t data) {
     printf("%s -> ", (char *)data);
-}
-
-void _print_int(void *data) {
-    if (data == NULL) return;
-    printf("%d", *(int *)data);
 }

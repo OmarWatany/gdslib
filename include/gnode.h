@@ -10,7 +10,10 @@ extern "C" {
 
 typedef void *gdata_t;
 
-typedef struct node_t node_t;
+typedef struct {
+    size_t data_address;
+    size_t link;
+} node_t;
 
 node_t *create_node();
 
@@ -20,6 +23,7 @@ void   node_set_link(node_t *node, size_t new_link);
 gdata_t node_data(node_t *node);
 int16_t node_set_data(node_t *node, gdata_t data);
 
+void free_node(node_t *node);
 void destroy_node(node_t **node);
 
 #ifdef __cplusplus

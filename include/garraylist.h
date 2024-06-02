@@ -6,16 +6,18 @@ extern "C" {
 #endif // cpp
 
 #include "gallocator.h"
+
 #include <stdbool.h>
 #include <stdlib.h>
 
 typedef struct alist_t alist_t;
 typedef struct anode_t anode_t;
 
-anode_t *create_anode();
-gdata_t  anode_data(anode_t *node);
-int16_t  anode_set_data(anode_t *node, gdata_t data);
-void     destroy_anode(anode_t **node);
+struct alist_t {
+    anode_t *buf;
+    size_t   item_size, capacity, size;
+    gdata_t (*allocator_fun)(gdata_t data);
+};
 
 alist_t *create_alist(size_t item_size);
 int16_t  alist_push(alist_t *list, gdata_t data);
