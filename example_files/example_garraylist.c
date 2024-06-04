@@ -20,31 +20,29 @@ int16_t alist_push_i(alist_t *list, int i) {
     return alist_push(list, &i);
 }
 
-typedef struct {
-    point (*fun)(int, int);
-} funP_wrapper;
+#define fnw point (**)(int, int)
 
 void functoins_p_list() {
-    funP_wrapper fw = {0};
+    point (**a)(int, int) = malloc(sizeof(point(*)(int, int)));
+    *a = create_point;
 
-    alist_t *funws = create_alist(sizeof(fw));
+    alist_t *funws = create_alist(sizeof(fnw));
 
-    alist_push(funws, &fw);
-    alist_push(funws, &fw);
+    alist_push(funws, a);
+    alist_push(funws, a);
 
     printf("__ funcs list __\n");
-    printf("size: %ld - capacity: %ld \n", alist_size(funws), alist_capacity(funws));
-
-    for (size_t j = 0; j < alist_size(funws); j++)
-        (*(funP_wrapper *)alist_at(funws, j)).fun = create_point;
+    printf("size: %ld - capacity: %ld item_size: %ld \n", alist_size(funws), alist_capacity(funws),
+           funws->item_size);
 
     // convert to fpwrapper pointer then derefrence it then use it
-    point p = (*(funP_wrapper *)alist_at(funws, 0)).fun(3, 4);
+    point p = (*(fnw)alist_at(funws, 0))(3, 4);
     printf("%ld - %ld\n", p.x, p.y);
-    p = (*(funP_wrapper *)alist_at(funws, 1)).fun(5, 3);
+    p = (*(fnw)alist_at(funws, 1))(5, 3);
     printf("%ld - %ld\n", p.x, p.y);
 
     alist_destroy(funws);
+    free(a);
     free(funws);
 }
 
@@ -177,10 +175,10 @@ int main() {
 
     functoins_p_list();
 
-    // points_list();
-    // fixed_strings();
-    // dyn_strings();
-    // integers_list();
+    points_list();
+    fixed_strings();
+    dyn_strings();
+    integers_list();
 
     return 0;
 }
