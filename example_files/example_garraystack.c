@@ -18,7 +18,8 @@ int main() {
         astack_pop(stack);
     }
 
-    destroy_astack(&stack);
+    astack_destroy(stack);
+    free(stack);
     return 0;
 }
 

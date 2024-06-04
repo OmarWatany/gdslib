@@ -5,19 +5,9 @@
 extern "C" {
 #endif // cpp
 
-#include "gallocator.h"
-
+#include "gds_types.h"
 #include <stdbool.h>
 #include <stdlib.h>
-
-typedef struct alist_t alist_t;
-typedef struct anode_t anode_t;
-
-struct alist_t {
-    anode_t *buf;
-    size_t   item_size, capacity, size;
-    gdata_t (*allocator_fun)(gdata_t data);
-};
 
 alist_t *create_alist(size_t item_size);
 int16_t  alist_push(alist_t *list, gdata_t data);
@@ -30,9 +20,7 @@ size_t   alist_capacity(alist_t *list);
 void     alist_reserve(alist_t *list, size_t size);
 void     alist_set_allocator(alist_t *alist, gdata_t (*allocator_fun)(gdata_t data));
 bool     alist_empty(alist_t *list);
-
-void clear_alist(alist_t *list);
-void destroy_alist(alist_t **list);
+void     alist_destroy(alist_t *list);
 
 #ifdef __cplusplus
 }

@@ -13,7 +13,7 @@ int main() {
     stack_t *stack = create_stack(sizeof(int));
 
     push_int(stack, 23);
-    clear_stack(stack);
+    stack_destroy(stack);
 
     push_int(stack, 3);
     push_int(stack, 2);
@@ -23,7 +23,8 @@ int main() {
         stack_pop(stack);
     }
 
-    destroy_stack(&stack);
+    stack_destroy(stack);
+    free(stack);
     return 0;
 }
 

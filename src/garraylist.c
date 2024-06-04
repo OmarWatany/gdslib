@@ -1,5 +1,5 @@
 #include "../include/garraylist.h"
-#include "../include/anode.h"
+#include "../include/gnode.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -51,10 +51,10 @@ int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
     gdata_t allocated = alist_alloc(alist, data);
 
     if (!anode_data(&alist->buf[pos])) {
-        init_node(&alist->buf[pos]);
+        anode_init(&alist->buf[pos]);
         alist->size++;
     } else
-        free_anode(&alist->buf[pos]);
+        anode_destroy(&alist->buf[pos]);
 
     anode_set_data(&alist->buf[pos], allocated);
 
@@ -63,7 +63,7 @@ int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
 
 int16_t alist_rm_at(alist_t *alist, size_t pos) {
     if (alist == NULL || alist->buf == NULL || pos >= alist->size) return EXIT_FAILURE;
-    free_anode(&alist->buf[pos]);
+    anode_destroy(&alist->buf[pos]);
 
     for (size_t i = pos + 1; i < alist->size; i++)
         alist->buf[i - 1] = alist->buf[i];
@@ -105,18 +105,13 @@ void expand(alist_t *alist, size_t size) {
     anode_t *neobuf = (anode_t *)realloc(alist->buf, sizeof(anode_t) * alist->capacity);
     if (neobuf) alist->buf = neobuf;
     for (size_t i = alist->size; i < alist->capacity; i++) {
-        init_node(&alist->buf[i]);
+        anode_init(&alist->buf[i]);
     }
 }
 
-void destroy_alist(alist_t **alist) {
-    clear_alist(*alist);
-    free(*alist);
-}
-
-void clear_alist(alist_t *alist) {
+void alist_destroy(alist_t *alist) {
     if (alist == NULL) return;
     for (size_t i = 0; i < alist->size; i++)
-        free_anode(&alist->buf[i]);
+        anode_destroy(&alist->buf[i]);
     free(alist->buf);
 }

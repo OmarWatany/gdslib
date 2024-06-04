@@ -30,7 +30,8 @@ void integers_list() {
         printf("%d - ", *(int *)alist_at(integers, i));
     printf("\n");
 
-    destroy_alist(&integers);
+    alist_destroy(integers);
+    free(integers);
 }
 
 void points_list() {
@@ -67,8 +68,10 @@ void points_list() {
     // printf("%ld \n", (size_t)a);
     free(a);
 
-    destroy_alist(&points);
-    destroy_alist(&p_refs);
+    alist_destroy(points);
+    free(points);
+    alist_destroy(p_refs);
+    free(p_refs);
 }
 
 void dyn_strings() {
@@ -107,7 +110,8 @@ void dyn_strings() {
 
     printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes),
            alist_capacity(dyn_strings_sizes));
-    destroy_alist(&dyn_strings_sizes);
+    alist_destroy(dyn_strings_sizes);
+    free(dyn_strings_sizes);
     free(ds);
 }
 
@@ -136,27 +140,9 @@ void fixed_strings() {
     }
 
     printf("size %ld - capacity %ld \n", alist_size(strings), alist_capacity(strings));
-    destroy_alist(&strings);
+    alist_destroy(strings);
+    free(strings);
     free(ds);
-}
-
-void int_list() {
-    printf("__ int list __\n");
-    alist_t *intlist = create_alist(sizeof(int));
-    alist_reserve(intlist, 5);
-    {
-        int temp = 0;
-        alist_push(intlist, &temp);
-        temp = 2;
-        alist_push(intlist, &temp);
-        temp = 3;
-        alist_push(intlist, &temp);
-    }
-    for (size_t i = 0; i < alist_capacity(intlist); i++) {
-        gdata_t temp = alist_at(intlist, i);
-        if (temp) printf("%d\n", *(int *)temp);
-    }
-    destroy_alist(&intlist);
 }
 
 int main() {

@@ -66,8 +66,9 @@ int main() {
     {
         list_iterator_t *fast_it = create_list_iterator(fixed_strings);
         list_iterator_t *slow_it = create_list_iterator(fixed_strings);
-        node_t          *fast = itr_begin(fast_it);
-        node_t          *slow = itr_begin(slow_it);
+
+        lnode_t *fast = itr_begin(fast_it);
+        lnode_t *slow = itr_begin(slow_it);
 
         int length = 1, h_index = 0;
         while (fast != itr_end(fast_it)) {
@@ -77,7 +78,7 @@ int main() {
             }
             slow = next(slow_it);
             h_index++;
-            _print_str(node_data(slow));
+            _print_str(lnode_data(slow));
         }
         printf("\n");
         printf("length = %d \n", length);
@@ -89,25 +90,28 @@ int main() {
 
     {
         list_iterator_t *fast_it = create_list_iterator(integers);
-        node_t          *fast = itr_begin(fast_it);
+        lnode_t         *fast = itr_begin(fast_it);
 
         int length = 1, i = 0;
         while (fast != itr_end(fast_it)) {
             length++;
-            i = *(int *)node_data(fast);
+            i = *(int *)lnode_data(fast);
             printf("%d\n", i);
             fast = next(fast_it);
         }
-        i = *(int *)node_data(fast);
+        i = *(int *)lnode_data(fast);
         printf("%d\n", i);
         printf("integers length = %d \n", length);
         free(fast_it);
     }
 
     free(s);
-    destroy_list(&fixed_strings);
-    destroy_list(&integers);
-    destroy_list(&dyn_strings);
+    list_destroy(fixed_strings);
+    free(fixed_strings);
+    list_destroy(integers);
+    free(integers);
+    list_destroy(dyn_strings);
+    free(dyn_strings);
 
     return 0;
 }

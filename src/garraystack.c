@@ -3,11 +3,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-struct astack_t {
-    alist_t *buf;
-    size_t  *top;
-};
-
 astack_t *create_astack(size_t element_size) {
     astack_t *stack = (astack_t *)malloc(sizeof(astack_t));
     stack->buf = create_alist(element_size);
@@ -30,14 +25,7 @@ bool astack_is_empty(astack_t *astack) {
     return alist_empty(astack->buf);
 }
 
-void destroy_astack(astack_t **astack) {
-    alist_t *temp = (*astack)->buf;
-    destroy_alist(&temp);
-    free(*astack);
-    *astack = NULL;
-}
-
-void clear_astack(astack_t *astack) {
-    alist_t *temp = astack->buf;
-    clear_alist(temp);
+void astack_destroy(astack_t *astack) {
+    alist_destroy(astack->buf);
+    free(astack->buf);
 }
