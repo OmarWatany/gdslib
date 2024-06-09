@@ -5,23 +5,25 @@
 extern "C" {
 #endif // cpp
 
+#include <stdint.h>
 #include <stdlib.h>
 
 typedef void *gdata_t;
 
 typedef struct {
-    size_t data_address;
+    uintptr_t data_address;
 } anode_t;
 
 typedef struct {
-    size_t data_address;
-    size_t link;
+    uintptr_t data_address;
+    uintptr_t link;
 } lnode_t;
+typedef struct tnode_t tnode_t;
 
-typedef struct {
-    size_t  data_address;
-    size_t *links;
-} knode_t;
+struct tnode_t {
+    gdata_t   data;
+    tnode_t **links;
+};
 
 #ifdef __cplusplus
 }

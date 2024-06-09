@@ -1,4 +1,5 @@
 #include "../include/gnode.h"
+#include <math.h>
 #include <string.h>
 
 anode_t *anode_create() {
@@ -19,7 +20,7 @@ gdata_t anode_data(anode_t *node) {
 
 int16_t anode_set_data(anode_t *node, gdata_t data) {
     if (!node) return EXIT_FAILURE;
-    node->data_address = (size_t)data;
+    node->data_address = (uintptr_t)data;
     return EXIT_SUCCESS;
 };
 
@@ -45,7 +46,7 @@ gdata_t lnode_data(lnode_t *node) {
 
 int16_t lnode_set_data(lnode_t *node, gdata_t data) {
     if (!node) return EXIT_FAILURE;
-    node->data_address = (size_t)data;
+    node->data_address = (uintptr_t)data;
     return EXIT_SUCCESS;
 };
 
@@ -54,7 +55,7 @@ size_t lnode_link(lnode_t *node) {
     return node->link;
 }
 
-void lnode_set_link(lnode_t *node, size_t new_link) {
+void lnode_set_link(lnode_t *node, uintptr_t new_link) {
     if (node == NULL) return;
     node->link = new_link;
 }
@@ -64,43 +65,80 @@ void lnode_destroy(lnode_t *node) {
     free((gdata_t)node->data_address);
 }
 
-knode_t *knode_create(size_t links_count) {
-    knode_t *new_node = (knode_t *)malloc(sizeof(knode_t));
-    memset(new_node, 0, sizeof(knode_t));
-    new_node->links = malloc(links_count * sizeof(size_t));
-    memset(new_node->links, 0, links_count * sizeof(size_t));
+tnode_t *tnode_create(size_t links_count) {
+    tnode_t *new_node = (tnode_t *)malloc(sizeof(tnode_t));
+    memset(new_node, 0, sizeof(tnode_t));
+    new_node->links = malloc(links_count * sizeof(tnode_t *));
+    memset(new_node->links, 0, links_count * sizeof(tnode_t *));
     return new_node;
 }
 
-int16_t knode_init(knode_t *node, size_t links_count) {
-    node->data_address = 0;
-    node->links = malloc(links_count * sizeof(size_t));
+int16_t tnode_init(tnode_t *node, size_t links_count) {
+    node->data = NULL;
+    node->links = malloc(links_count * sizeof(tnode_t *));
     return EXIT_SUCCESS;
 }
 
-gdata_t knode_data(knode_t *node) {
+gdata_t tnode_data(tnode_t *node) {
     if (!node) return NULL;
-    return (gdata_t)node->data_address;
+    return node->data;
 }
 
-int16_t knode_set_data(knode_t *node, gdata_t data) {
+int16_t tnode_set_data(tnode_t *node, gdata_t data) {
     if (!node) return EXIT_FAILURE;
-    node->data_address = (size_t)data;
+    node->data = data;
     return EXIT_SUCCESS;
 };
 
-size_t knode_link(knode_t *node, size_t link_num) {
+tnode_t *tnode_child(tnode_t *node, size_t n) {
+    if (!node || !node->links) return NULL;
+    return node->links[n];
+}
+
+tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
+    int qc = pow(nk, lvl);
+    int qfront = 0, qback = 0;
+
+    tnode_t **childs = malloc(qc * sizeof(tnode_t *));
+    tnode_t **lvlq = malloc(qc * sizeof(tnode_t *));
+    memset(childs, 0, sizeof(tnode_t *) * qc);
+    memset(lvlq, 0, sizeof(tnode_t *) * qc);
+
+    tnode_t *temp = node;
+    if (temp) lvlq[qback] = temp;
+    qback = (qback + 1) % (qc);
+    for (size_t i = 1; i <= lvl; i++) {
+        for (size_t j = 0; j < pow(nk, i - 1); j++) {
+            temp = lvlq[qfront];
+            qfront = (qfront + 1) % (qc);
+            for (int k = 0; k < nk; k++) {
+                lvlq[qback] = tnode_child(temp, k);
+                qback = (qback + 1) % (qc);
+            }
+        }
+    }
+
+    for (int j = 0; j < qc; j++) {
+        childs[j] = lvlq[qfront];
+        qfront = (qfront + 1) % (qc);
+    }
+
+    free(lvlq);
+    return childs;
+}
+
+tnode_t *tnode_link(tnode_t *node, size_t link_num) {
     if (node == NULL) return 0;
     return node->links[link_num];
 }
 
-void knode_set_link(knode_t *node, size_t link_num, size_t new_link) {
+void tnode_set_link(tnode_t *node, size_t link_num, tnode_t *new_link) {
     if (node == NULL) return;
     node->links[link_num] = new_link;
 }
 
-void knode_destroy(knode_t *node) {
+void tnode_destroy(tnode_t *node) {
     if (!node) return;
     free(node->links);
-    free((gdata_t)node->data_address);
+    free(node->data);
 }

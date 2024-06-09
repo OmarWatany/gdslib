@@ -6,6 +6,7 @@ extern "C" {
 #endif // cpp
 
 #include "gnodes_types.h"
+#include <stdbool.h>
 
 anode_t *anode_create();
 int16_t  anode_init(anode_t *node);
@@ -18,16 +19,19 @@ int16_t  lnode_init(lnode_t *node);
 gdata_t  lnode_data(lnode_t *node);
 int16_t  lnode_set_data(lnode_t *node, gdata_t data);
 size_t   lnode_link(lnode_t *node);
-void     lnode_set_link(lnode_t *node, size_t new_link);
+void     lnode_set_link(lnode_t *node, uintptr_t new_link);
 void     lnode_destroy(lnode_t *node);
 
-knode_t *knode_create(size_t links_count);
-int16_t  knode_init(knode_t *node, size_t links_count);
-gdata_t  knode_data(knode_t *node);
-int16_t  knode_set_data(knode_t *node, gdata_t data);
-size_t   knode_link(knode_t *node, size_t link_num);
-void     knode_set_link(knode_t *node, size_t link_num, size_t new_link);
-void     knode_destroy(knode_t *node);
+tnode_t *tnode_create(size_t links_count);
+int16_t  tnode_init(tnode_t *node, size_t links_count);
+gdata_t  tnode_data(tnode_t *node);
+int16_t  tnode_set_data(tnode_t *node, gdata_t data);
+tnode_t *tnode_child(tnode_t *node, size_t n);
+tnode_t *tnode_link(tnode_t *node, size_t link_num);
+void     tnode_set_link(tnode_t *node, size_t link_num, tnode_t *new_link);
+void     tnode_destroy(tnode_t *node);
+
+tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl);
 
 #ifdef __cplusplus
 }

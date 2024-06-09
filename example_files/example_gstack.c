@@ -10,7 +10,7 @@ int stack_peak_i(stack_t *s) {
 }
 
 int main() {
-    stack_t *stack = create_stack(sizeof(int));
+    stack_t *stack = stack_create(sizeof(int));
 
     push_int(stack, 23);
     stack_destroy(stack);
@@ -18,7 +18,7 @@ int main() {
     push_int(stack, 3);
     push_int(stack, 2);
 
-    while (!stack_is_empty(stack)) {
+    while (!stack_empty(stack)) {
         printf("%d\n", stack_peak_i(stack));
         stack_pop(stack);
     }

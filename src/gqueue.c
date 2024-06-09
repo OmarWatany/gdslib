@@ -3,16 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-queue_t *create_queue(size_t item_size) {
+queue_t *queue_create(size_t item_size) {
     queue_t *queue = (queue_t *)malloc(sizeof(queue_t));
     if (queue == NULL) return NULL;
-    init_list(&queue->list, item_size);
+    list_init(&queue->list, item_size);
     queue->length = 0;
     return queue;
 }
 
-void init_queue(queue_t *queue, size_t item_size) {
-    init_list(&queue->list, item_size);
+void queue_init(queue_t *queue, size_t item_size) {
+    list_init(&queue->list, item_size);
     queue->length = 0;
 }
 
@@ -46,16 +46,16 @@ gdata_t queue_back(queue_t *queue) {
     return peak_front(&queue->list);
 }
 
-bool queue_is_empty(queue_t *queue) {
+bool queue_empty(queue_t *queue) {
     if (queue == NULL || queue->length == 0) return true;
     return false;
 }
 
-bool in_queue(queue_t *heystack, gdata_t needle, bool (*search_fun)(lnode_t *node, gdata_t data)) {
-    if (queue_is_empty(heystack)) return false;
+bool queue_find(queue_t *heystack, gdata_t needle, bool (*search_fun)(lnode_t *node, gdata_t data)) {
+    if (queue_empty(heystack)) return false;
 
-    list_iterator_t itr = {0};
-    init_list_iterator(&itr, &heystack->list);
+    list_itr_t itr = {0};
+    list_itr_init(&itr, &heystack->list);
     itr_set_begin(&itr, list_head(&heystack->list));
     lnode_t *temp = itr_begin(&itr);
 

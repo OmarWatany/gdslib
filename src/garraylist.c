@@ -5,7 +5,7 @@
 
 void expand(alist_t *alist, size_t size);
 
-alist_t *create_alist(size_t item_size) {
+alist_t *alist_create(size_t item_size) {
     alist_t *alist = (alist_t *)malloc(sizeof(alist_t));
     alist->item_size = item_size;
     alist->capacity = 2;
@@ -16,7 +16,7 @@ alist_t *create_alist(size_t item_size) {
     return alist;
 }
 
-int16_t init_alist(alist_t *alist, size_t item_size) {
+int16_t alist_init(alist_t *alist, size_t item_size) {
     alist->item_size = item_size;
     alist->capacity = 2;
     alist->size = 0;

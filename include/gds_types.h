@@ -33,7 +33,7 @@ typedef struct {
     llist_t *list;
     lnode_t *from, *begin, *end;
     size_t   prev_node, next_node;
-} list_iterator_t;
+} list_itr_t;
 
 typedef struct {
     llist_t list;

@@ -33,9 +33,9 @@ static inline void dump_int_list(llist_t *x) {
 
 int main() {
 
-    llist_t *fixed_strings = create_list(30);
-    llist_t *integers = create_list(sizeof(int));
-    llist_t *dyn_strings = create_list(3);
+    llist_t *fixed_strings = list_create(30);
+    llist_t *integers = list_create(sizeof(int));
+    llist_t *dyn_strings = list_create(3);
     llist_set_allocator(dyn_strings, str_allocator);
 
     push_front(dyn_strings, "dyn strings");
@@ -64,8 +64,8 @@ int main() {
     dump_str_list(dyn_strings);
 
     {
-        list_iterator_t *fast_it = create_list_iterator(fixed_strings);
-        list_iterator_t *slow_it = create_list_iterator(fixed_strings);
+        list_itr_t *fast_it = list_itr_create(fixed_strings);
+        list_itr_t *slow_it = list_itr_create(fixed_strings);
 
         lnode_t *fast = itr_begin(fast_it);
         lnode_t *slow = itr_begin(slow_it);
@@ -89,8 +89,8 @@ int main() {
     }
 
     {
-        list_iterator_t *fast_it = create_list_iterator(integers);
-        lnode_t         *fast = itr_begin(fast_it);
+        list_itr_t *fast_it = list_itr_create(integers);
+        lnode_t    *fast = itr_begin(fast_it);
 
         int length = 1, i = 0;
         while (fast != itr_end(fast_it)) {

@@ -6,14 +6,14 @@ void _allocate_s(void **, void *);
 
 int main() {
 
-    astack_t *stack = create_astack(sizeof(char *));
+    astack_t *stack = astack_create(sizeof(char *));
     astack_push(stack, "hello");
     astack_push(stack, "world");
     astack_push(stack, "hello");
     astack_push(stack, "world");
     astack_push(stack, "hello");
     astack_push(stack, "world");
-    while (!astack_is_empty(stack)) {
+    while (!astack_empty(stack)) {
         printf("%s\n", (char *)astack_peak(stack));
         astack_pop(stack);
     }

@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-astack_t *create_astack(size_t element_size) {
+astack_t *astack_create(size_t element_size) {
     astack_t *stack = (astack_t *)malloc(sizeof(astack_t));
-    stack->buf = create_alist(element_size);
+    stack->buf = alist_create(element_size);
     return stack;
 }
 
@@ -21,7 +21,7 @@ gdata_t astack_peak(astack_t *astack) {
     return alist_at(astack->buf, alist_size(astack->buf) - 1);
 }
 
-bool astack_is_empty(astack_t *astack) {
+bool astack_empty(astack_t *astack) {
     return alist_empty(astack->buf);
 }
 

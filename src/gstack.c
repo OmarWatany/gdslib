@@ -2,9 +2,9 @@
 #include "../include/glinkedlist.h"
 #include <stdlib.h>
 
-stack_t *create_stack(size_t item_size) {
+stack_t *stack_create(size_t item_size) {
     stack_t *stack = (stack_t *)malloc(sizeof(stack_t));
-    init_list(&stack->list, item_size);
+    list_init(&stack->list, item_size);
     return stack;
 }
 
@@ -20,7 +20,7 @@ gdata_t stack_peak(stack_t *stack) {
     return peak_front(&stack->list);
 }
 
-bool stack_is_empty(stack_t *stack) {
+bool stack_empty(stack_t *stack) {
     return list_head(&stack->list) == NULL ? true : false;
 }
 
@@ -29,7 +29,7 @@ void stack_destroy(stack_t *stack) {
 }
 
 void clear_stack(stack_t *stack) {
-    while (!stack_is_empty(stack)) {
+    while (!stack_empty(stack)) {
         stack_pop(stack);
     }
 }
