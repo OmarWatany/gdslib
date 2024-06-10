@@ -202,9 +202,6 @@ void bst_delete_node(tnode_t *parent, tnode_t *node, int dir) {
     tnode_set_link(parent, dir, 0);
 }
 
-void bst_delete_1_child_node(tnode_t *parent, tnode_t *node, int dir) {
-}
-
 void tnode_swap_data(tnode_t *from, tnode_t *to) {
     gdata_t temp = NULL;
     temp = to->data;
@@ -212,26 +209,13 @@ void tnode_swap_data(tnode_t *from, tnode_t *to) {
     from->data = temp;
 }
 
-void bst_delete_2_child_node(ktree_t *tree, tnode_t *node) {
-    tnode_t *replacement = bst_right_min(node);
-    tnode_t *rep_parent = bst_find_parent(tree, node, replacement->data);
-
-    int dir = replacement == tnode_child(rep_parent, 0) ? 0 : 1;
-    tnode_swap_data(node, replacement);
-    tnode_set_link(rep_parent, dir, 0);
-    tnode_destroy(replacement);
-    free(replacement);
-}
-
 void bst_delete_h(ktree_t *tree, tnode_t *node, gdata_t data) {
 
     tnode_t *parent = bst_find_parent(tree, node, data);
-    if (!parent) {
-        printf("no parent\n");
-        return;
-    }
+    if (!parent) return;
     tnode_t *child = bst_find_h(tree, parent, data);
-    int      top = 0, count = 0, dir = 0;
+
+    int top = 0, count = 0, dir = 0;
 
     for (int i = 0; i < 2; i++)
         if (tnode_child(child, i)) {
@@ -240,7 +224,11 @@ void bst_delete_h(ktree_t *tree, tnode_t *node, gdata_t data) {
 
     dir = child == tnode_child(parent, 0) ? 0 : 1;
     if (count > 1) {
-        bst_delete_2_child_node(tree, child);
+        tnode_t *replacement = bst_right_min(child);
+        tnode_t *rep_parent = bst_find_parent(tree, child, replacement->data);
+        tnode_swap_data(replacement, child);
+        dir = replacement == tnode_child(rep_parent, 0) ? 0 : 1;
+        bst_delete_h(tree, rep_parent, data);
     } else if (count == 1) {
         if (child->links[0])
             tnode_set_link(parent, dir, child->links[0]);
@@ -255,7 +243,6 @@ void bst_delete_h(ktree_t *tree, tnode_t *node, gdata_t data) {
 }
 
 void bst_delete(btree_t *tree, gdata_t data) {
-    printf("deleting: %d \n", *(int *)data);
     bst_delete_h(tree, tree->root, data);
 }
 

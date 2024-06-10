@@ -42,8 +42,8 @@ int main() {
 
     srand(time(0));
     int j = 0;
-    for (size_t i = 0; i < 200; i++) {
-        j = rand() % (400);
+    for (size_t i = 0; i < 2000; i++) {
+        j = rand() % (1500) + 200;
         bst_add(&tree, &j);
     }
 
@@ -54,10 +54,11 @@ int main() {
     bst_add(&tree, &d);
 
     kt_for_each(&tree, IN_ORDER, iprintTree);
-    // printf("__ BREADTH START __\n");
-    // kt_for_each(&tree, BREADTH_FIRST_ORDER, iprintLvl);
-    // printf("__ BREADTH END __\n");
+    printf("__ BREADTH START __\n");
+    kt_for_each(&tree, BREADTH_FIRST_ORDER, iprintLvl);
+    printf("__ BREADTH END __\n");
 
+    printf("tree size : %ld\n", tree.size);
     size_t lvl = 4, lvlc = pow(tree.k, lvl);
 
     tnode_t **childs = kt_grand_childrens(&tree, lvl);
@@ -77,8 +78,6 @@ int main() {
 
     kt_for_each(&tree, IN_ORDER, inc);
     kt_for_each(&tree, IN_ORDER, iprintLvl);
-
-    if (bst_find(&tree, &d)) printf("found %d\n", d);
 
     free(childs);
     bst_destroy(&tree);
