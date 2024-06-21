@@ -62,7 +62,7 @@ void integers_list() {
 
 void points_list() {
     NEW_LINE;
-    printf("__ pointers list list __\n");
+    printf("__ points list __\n");
 
     alist_t *points = alist_create(sizeof(point));
     alist_t *p_refs = alist_create(sizeof(point *));

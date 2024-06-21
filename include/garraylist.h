@@ -10,6 +10,7 @@ extern "C" {
 #include <stdlib.h>
 
 alist_t *alist_create(size_t item_size);
+int16_t  alist_init(alist_t *alist, size_t item_size);
 int16_t  alist_push(alist_t *list, gdata_t data);
 int16_t  alist_pop(alist_t *list);
 int16_t  alist_set_at(alist_t *list, size_t pos, gdata_t data);
