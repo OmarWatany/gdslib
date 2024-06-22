@@ -1,2 +1,4 @@
-### ERROR: pushing heap allocated string into fixed string arraylist gives error
-### ERROR: memccpy works fine solves the previous error but breaks advanced data types 
+# TODO
+
+[ ] make flag system and string flag
+[ ] safe function in arraylist only make use it in the other ds or implement flag system

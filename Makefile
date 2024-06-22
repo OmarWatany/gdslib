@@ -2,8 +2,8 @@ SRC_D  := ./src
 OBJ_D  := ./objects
 EXAMPLE_D := ./example_files
 INC    := ./include
-RAY_LIB := -L./lib -lgdslib
-# RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib 
+# RAY_LIB := -L./lib -lgdslib
+RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib 
 
 LIB := $(RAY_LIB) -lm 
 
@@ -62,7 +62,7 @@ gtree: lib
 
 lib: obj 
 	ar rcs ./lib/libgdslib.a $(wildcard ./objects/*.o)
-	# $(CC) -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
+	$(CC) -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
 
 obj: $(C_FILES) $(H_FILES)
 	$(CC) $(CFLAGS) -c $(C_FILES) 

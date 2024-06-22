@@ -150,10 +150,10 @@ void fixed_strings() {
     char *fs = "fixed string";
 
     alist_reserve(strings, 5);
-    alist_push(strings, "hello");
-    alist_push(strings, "world");
-    alist_push(strings, fs);
-    // alist_push(strings, ds);
+    alist_push_safe(strings, strlen("hello"), "hello");
+    alist_push_safe(strings, strlen("world"), "world");
+    alist_push_safe(strings, strlen(fs), fs);
+    alist_push_safe(strings, strlen(ds), ds);
 
     for (size_t i = 0; i < alist_size(strings); i++) {
         printf("%s\n", (char *)alist_at(strings, i));
