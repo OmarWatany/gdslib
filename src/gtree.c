@@ -1,4 +1,5 @@
 #include "../include/gtree.h"
+#include "../include/gqueue.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,24 +10,24 @@
 void bf_order(ktree_t *tree, for_each_fn for_each) {
     int qfront = 0, qback = 0;
 
-    tnode_t **lvlq = malloc(tree->size * sizeof(tnode_t *));
-    memset(lvlq, 0, sizeof(tnode_t *) * tree->size);
+    // tnode_t **lvlq = malloc(tree->size * sizeof(tnode_t *));
+    queue_t lvlq = {0};
+    queue_init(&lvlq, sizeof(tnode_t *));
 
-    tnode_t *temp = tree->root;
-    if (temp) lvlq[qback] = temp;
-    qback = (qback + 1) % (tree->size);
-    for (size_t j = 0; j < tree->size; j++) {
-        temp = lvlq[qfront];
-        qfront = (qfront + 1) % (tree->size);
+    tnode_t *front = tree->root;
+    if (front) enqueue(&lvlq, &front);
+    while (!queue_empty(&lvlq)) {
+        front = *(tnode_t **)queue_front(&lvlq);
         for (size_t k = 0; k < tree->k; k++) {
-            lvlq[qback] = tnode_child(temp, k);
-            if (lvlq[qback]) {
-                for_each(lvlq[qback], 0);
-                qback = (qback + 1) % (tree->size);
+            tnode_t *child = tnode_child(front, k);
+            if (child) {
+                for_each(child, 0);
+                enqueue(&lvlq, &child);
             }
         }
+        dequeue(&lvlq);
     }
-    free(lvlq);
+    queue_destroy(&lvlq);
 }
 
 void in_order(tnode_t *node, size_t lvl, for_each_fn for_each) {

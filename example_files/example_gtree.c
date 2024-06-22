@@ -53,10 +53,10 @@ int main() {
     int d = 10000;
     bst_add(&tree, &d);
 
-    kt_for_each(&tree, IN_ORDER, iprintTree);
-    printf("__ BREADTH START __\n");
-    kt_for_each(&tree, BREADTH_FIRST_ORDER, iprintLvl);
-    printf("__ BREADTH END __\n");
+    // kt_for_each(&tree, IN_ORDER, iprintTree);
+    // printf("__ BREADTH START __\n");
+    // kt_for_each(&tree, BREADTH_FIRST_ORDER, iprintLvl);
+    // printf("__ BREADTH END __\n");
 
     printf("tree size : %ld\n", tree.size);
     size_t lvl = 4, lvlc = pow(tree.k, lvl);
@@ -68,16 +68,19 @@ int main() {
     if (bst_find(&tree, &d)) {
         bst_delete(&tree, &d);
         kt_for_each(&tree, IN_ORDER, iprintTree);
-    } else {
-        for (size_t j = 0; j < lvlc && childs; j++) {
-            if (childs[j])
-                printf("child n : %ld lvl: %ld = %d\n", j, lvl, *(int *)tnode_data(childs[j]));
-        }
-        printf("size: %ld \n", tree.size);
     }
-
-    kt_for_each(&tree, IN_ORDER, inc);
-    kt_for_each(&tree, IN_ORDER, iprintLvl);
+    // } else {
+    //     for (size_t j = 0; j < lvlc && childs; j++) {
+    //         if (childs[j])
+    //             printf("child n : %ld lvl: %ld = %d\n", j, lvl, *(int *)tnode_data(childs[j]));
+    //     }
+    //     printf("size: %ld \n", tree.size);
+    // }
+    //
+    // kt_for_each(&tree, IN_ORDER, inc);
+    // kt_for_each(&tree, IN_ORDER, iprintLvl);
+    printf("BREADTH FIRST PRINT\n");
+    kt_for_each(&tree, BREADTH_FIRST_ORDER, iprintLvl);
 
     free(childs);
     bst_destroy(&tree);
