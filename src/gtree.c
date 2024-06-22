@@ -18,7 +18,7 @@ void bf_order(ktree_t *tree, for_each_fn for_each) {
     for (size_t j = 0; j < tree->size; j++) {
         temp = lvlq[qfront];
         qfront = (qfront + 1) % (tree->size);
-        for (int k = 0; k < tree->k; k++) {
+        for (size_t k = 0; k < tree->k; k++) {
             lvlq[qback] = tnode_child(temp, k);
             if (lvlq[qback]) {
                 for_each(lvlq[qback], 0);
@@ -216,6 +216,7 @@ void bst_delete_h(ktree_t *tree, tnode_t *node, gdata_t data) {
     tnode_t *child = bst_find_h(tree, parent, data);
 
     int top = 0, count = 0, dir = 0;
+    (void)top;
 
     for (int i = 0; i < 2; i++)
         if (tnode_child(child, i)) {

@@ -9,23 +9,23 @@ anode_t *anode_create() {
 }
 
 int16_t anode_init(anode_t *node) {
-    node->data_address = 0;
+    node->data = 0;
     return EXIT_SUCCESS;
 }
 
 gdata_t anode_data(anode_t *node) {
     if (!node) return NULL;
-    return (gdata_t)node->data_address;
+    return node->data;
 }
 
 int16_t anode_set_data(anode_t *node, gdata_t data) {
     if (!node) return EXIT_FAILURE;
-    node->data_address = (uintptr_t)data;
+    node->data = data;
     return EXIT_SUCCESS;
 };
 
 void anode_destroy(anode_t *node) {
-    free((gdata_t)node->data_address);
+    free(node->data);
 }
 
 lnode_t *lnode_create() {
@@ -35,18 +35,18 @@ lnode_t *lnode_create() {
 }
 
 int16_t lnode_init(lnode_t *node) {
-    node->data_address = 0;
+    node->data = 0;
     return EXIT_SUCCESS;
 }
 
 gdata_t lnode_data(lnode_t *node) {
     if (!node) return NULL;
-    return (gdata_t)node->data_address;
+    return node->data;
 }
 
 int16_t lnode_set_data(lnode_t *node, gdata_t data) {
     if (!node) return EXIT_FAILURE;
-    node->data_address = (uintptr_t)data;
+    node->data = data;
     return EXIT_SUCCESS;
 };
 
@@ -62,7 +62,7 @@ void lnode_set_link(lnode_t *node, uintptr_t new_link) {
 
 void lnode_destroy(lnode_t *node) {
     if (!node) return;
-    free((gdata_t)node->data_address);
+    free(node->data);
 }
 
 tnode_t *tnode_create(size_t links_count) {

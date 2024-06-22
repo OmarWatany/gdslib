@@ -2,13 +2,13 @@ SRC_D  := ./src
 OBJ_D  := ./objects
 EXAMPLE_D := ./example_files
 INC    := ./include
-# RAY_LIB := -L./lib -l:libgdslib
-RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib 
+RAY_LIB := -L./lib -lgdslib
+# RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib 
 
 LIB := $(RAY_LIB) -lm 
 
-# CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC 
-CFLAGS= -g -I$(INC) -fPIC 
+CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC 
+# CFLAGS= -g -I$(INC) -fPIC 
 
 GQUEUE_HFILES := $(wildcard $(INC)/*queue*.h)
 GQUEUE_CFILES := $(wildcard $(SRC_D)/*queue*.c)
@@ -35,7 +35,7 @@ H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(GTREE_HFILES) $(N
 EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)
 ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
 
-CC := gcc
+CC := clang
 
 all:  stack queue linkedlist alist astack gtree $(EXAMPLE_D)
 
@@ -62,7 +62,7 @@ gtree: lib
 
 lib: obj 
 	ar rcs ./lib/libgdslib.a $(wildcard ./objects/*.o)
-	$(CC) -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
+	# $(CC) -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
 
 obj: $(C_FILES) $(H_FILES)
 	$(CC) $(CFLAGS) -c $(C_FILES) 

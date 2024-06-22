@@ -69,10 +69,9 @@ void points_list() {
 
     point  p = create_point(8, 4);
     point *a = malloc(sizeof(point));
-    point *b = NULL;
-
     a->x = 9;
     a->y = 5;
+    point *b = NULL;
 
     // save point 'p'
     alist_push(points, &p);
@@ -154,7 +153,7 @@ void fixed_strings() {
     alist_push(strings, "hello");
     alist_push(strings, "world");
     alist_push(strings, fs);
-    alist_push(strings, ds);
+    // alist_push(strings, ds);
 
     for (size_t i = 0; i < alist_size(strings); i++) {
         printf("%s\n", (char *)alist_at(strings, i));
@@ -174,7 +173,6 @@ void fixed_strings() {
 int main() {
 
     functoins_p_list();
-
     points_list();
     fixed_strings();
     dyn_strings();

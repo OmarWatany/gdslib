@@ -3,7 +3,7 @@
 
 gdata_t default_allocator(size_t item_size, gdata_t data) {
     gdata_t temp = malloc(item_size);
-    memccpy(memset(temp, 0, item_size), data, 0, item_size);
+    memcpy(memset(temp, 0, item_size), data, item_size);
     return temp;
 }
 
