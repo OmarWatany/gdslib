@@ -25,6 +25,7 @@ bool stack_empty(stack_t *stack) {
 }
 
 void stack_destroy(stack_t *stack) {
+    list_item_size(&stack->list);
     list_destroy(&stack->list);
 }
 

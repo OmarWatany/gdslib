@@ -13,6 +13,7 @@ astack_t *astack_create(size_t element_size);
 
 int16_t astack_push(astack_t *stack, gdata_t data);
 int16_t astack_pop(astack_t *stack);
+size_t  astack_size(astack_t *stack);
 void   *astack_peak(astack_t *stack);
 bool    astack_empty(astack_t *stack);
 

@@ -12,21 +12,23 @@ extern "C" {
 
 typedef void *gdata_t;
 
+typedef struct Private Private;
+
 typedef struct {
-    anode_t *buf;
-    size_t   item_size, capacity, size;
-    gdata_t (*allocator_fun)(gdata_t data);
+    size_t   capacity, size;
+    Private *pv;
 } alist_t;
 
 typedef struct {
-    alist_t *buf;
-    size_t  *top;
+    Private *pv;
+} ringbuffer_t;
+
+typedef struct {
+    Private *pv;
 } astack_t;
 
 typedef struct {
-    lnode_t *head, *tail;
-    size_t   item_size;
-    gdata_t (*allocator_fun)(gdata_t data);
+    Private *pv;
 } llist_t;
 
 typedef struct {
@@ -39,6 +41,11 @@ typedef struct {
     llist_t list;
     size_t  length;
 } queue_t;
+
+typedef struct {
+    llist_t list;
+    size_t  length;
+} deque_t;
 
 typedef struct {
     llist_t list;

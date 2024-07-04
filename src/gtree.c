@@ -8,9 +8,6 @@
 #define right(node) tnode_child(node, 1)
 
 void bf_order(ktree_t *tree, for_each_fn for_each) {
-    int qfront = 0, qback = 0;
-
-    // tnode_t **lvlq = malloc(tree->size * sizeof(tnode_t *));
     queue_t lvlq = {0};
     queue_init(&lvlq, sizeof(tnode_t *));
 

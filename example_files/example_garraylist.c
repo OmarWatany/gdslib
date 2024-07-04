@@ -32,8 +32,7 @@ void functoins_p_list() {
     alist_push(funws, a);
 
     printf("__ funcs list __\n");
-    printf("size: %ld - capacity: %ld item_size: %ld \n", alist_size(funws), alist_capacity(funws),
-           funws->item_size);
+    printf("size: %ld - capacity: %ld \n", alist_size(funws), alist_capacity(funws));
 
     // convert to fpwrapper pointer then derefrence it then use it
     point p = (*(fnw)alist_at(funws, 0))(3, 4);

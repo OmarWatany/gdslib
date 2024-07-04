@@ -7,7 +7,7 @@ RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib
 
 LIB := $(RAY_LIB) -lm 
 
-CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC 
+CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC -Wno-unused-function
 # CFLAGS= -g -I$(INC) -fPIC 
 
 GQUEUE_HFILES := $(wildcard $(INC)/*queue*.h)
@@ -19,6 +19,9 @@ LLIST_CFILES  := $(wildcard $(SRC_D)/*list*.c)
 GSTACK_HFILES := $(wildcard $(INC)/*stack*.h)
 GSTACK_CFILES := $(wildcard $(SRC_D)/*stack*.c)
 
+RING_HFILES   := $(wildcard $(INC)/*ring*.h)
+RING_CFILES   := $(wildcard $(SRC_D)/*ring*.c)
+
 GTREE_HFILES := $(wildcard $(INC)/*gtree*.h)
 GTREE_CFILES := $(wildcard $(SRC_D)/*gtree*.c)
 
@@ -29,18 +32,21 @@ ALLOC_HFILES   := $(wildcard $(INC)/*allocator*.h)
 ALLOC_CFILES   := $(wildcard $(SRC_D)/*allocator*.c)
 
 
-C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(GTREE_CFILES) $(NODE_CFILES) $(ALLOC_CFILES)
-H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(GTREE_HFILES) $(NODE_HFILES) $(ALLOC_HFILES)
+C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(GTREE_CFILES) $(NODE_CFILES) $(ALLOC_CFILES) $(RING_CFILES)
+H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(GTREE_HFILES) $(NODE_HFILES) $(ALLOC_HFILES) $(RING_HFILES)
 
 EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)
 ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
 
 CC := clang
 
-all:  stack queue linkedlist alist astack gtree $(EXAMPLE_D)
+all:  stack ring queue linkedlist alist astack gtree $(EXAMPLE_D)
 
 stack: lib
 	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gstack.c $(LIB) -o ./bin/stack 
+
+ring : lib
+	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gringbuffer.c $(LIB) -o ./bin/ring 
 
 queue: lib
 	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gqueue.c $(LIB) -o ./bin/queue
@@ -67,6 +73,9 @@ lib: obj
 obj: $(C_FILES) $(H_FILES)
 	$(CC) $(CFLAGS) -c $(C_FILES) 
 	mv *.o ./objects/
+
+run : all
+	@valgrind ./bin/ring
 
 clean :
 	rm ./objects/*

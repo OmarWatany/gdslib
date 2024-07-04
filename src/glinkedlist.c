@@ -2,12 +2,26 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+struct Private {
+    lnode_t *head, *tail;
+    size_t   item_size;
+    gdata_t (*allocator_fun)(gdata_t data);
+};
 
 llist_t *list_create(size_t item_size) {
     llist_t *new_list = (llist_t *)malloc(sizeof(llist_t));
     memset(new_list, 0, sizeof(llist_t));
-    new_list->item_size = item_size;
+    new_list->pv = (Private *)malloc(sizeof(Private));
+    memset(new_list->pv, 0, sizeof(Private));
+    new_list->pv->item_size = item_size;
     return new_list;
+}
+
+void list_init(llist_t *list, size_t item_size) {
+    memset(list, 0, sizeof(llist_t));
+    list->pv = (Private *)malloc(sizeof(Private));
+    memset(list->pv, 0, sizeof(Private));
+    list->pv->item_size = item_size;
 }
 
 list_itr_t *list_itr_create(llist_t *list) {
@@ -15,48 +29,43 @@ list_itr_t *list_itr_create(llist_t *list) {
     if (list == NULL || it == NULL) return NULL;
     memset(it, 0, sizeof(list_itr_t));
     it->list = list;
-    it->end = list->tail;
-    it->from = it->begin = list->head;
+    it->end = list->pv->tail;
+    it->from = it->begin = list->pv->head;
     return it;
-}
-
-void list_init(llist_t *list, size_t item_size) {
-    memset(list, 0, sizeof(llist_t));
-    list->item_size = item_size;
 }
 
 void list_itr_init(list_itr_t *it, llist_t *list) {
     if (list == NULL || it == NULL) return;
     memset(it, 0, sizeof(list_itr_t));
     it->list = list;
-    it->end = list->tail;
-    it->from = it->begin = list->head;
+    it->end = list->pv->tail;
+    it->from = it->begin = list->pv->head;
 }
 
 size_t list_item_size(llist_t *list) {
-    return list->item_size;
+    return list->pv->item_size;
 }
 
 lnode_t *list_head(llist_t *list) {
-    return list->head;
+    return list->pv->head;
 }
 
 lnode_t *list_tail(llist_t *list) {
-    return list->tail;
+    return list->pv->tail;
 }
 
 lnode_t *next(list_itr_t *iterator) {
     lnode_t *from = iterator->from;
     if (from == NULL) {
-        if (iterator->list->head) {
-            from = iterator->list->head;
+        if (iterator->list->pv->head) {
+            from = iterator->list->pv->head;
         } else
             return NULL;
     }
     if (lnode_link(from) == 0) {
         return NULL;
-    } else if (from == iterator->list->head) {
-        iterator->next_node = lnode_link(iterator->list->head);
+    } else if (from == iterator->list->pv->head) {
+        iterator->next_node = lnode_link(iterator->list->pv->head);
     } else {
         iterator->next_node = iterator->prev_node ^ lnode_link(from);
     }
@@ -69,15 +78,15 @@ lnode_t *next(list_itr_t *iterator) {
 lnode_t *prev(list_itr_t *iterator) {
     lnode_t *from = iterator->from;
     if (from == NULL) {
-        if (iterator->list->tail) {
-            from = iterator->list->tail;
+        if (iterator->list->pv->tail) {
+            from = iterator->list->pv->tail;
         } else
             return NULL;
     }
     if (lnode_link(from) == 0) {
         return NULL;
-    } else if (from == iterator->list->tail) {
-        iterator->prev_node = lnode_link(iterator->list->tail);
+    } else if (from == iterator->list->pv->tail) {
+        iterator->prev_node = lnode_link(iterator->list->pv->tail);
     } else {
         iterator->prev_node = iterator->next_node ^ lnode_link(from);
     }
@@ -96,27 +105,26 @@ lnode_t *itr_end(list_itr_t *iterator) {
 
 int16_t push_front(llist_t *list, gdata_t data) {
     lnode_t *new_node = lnode_create();
-    // lnode_t *new_node = node_create();
     if (!new_node) return EXIT_FAILURE;
 
     gdata_t temp = NULL;
-    if (list->allocator_fun) {
+    if (list->pv->allocator_fun) {
         // use custom allocator
-        temp = list->allocator_fun(data);
+        temp = list->pv->allocator_fun(data);
     } else {
         // use default allocator
-        temp = default_allocator(list->item_size, data);
+        temp = default_allocator(list->pv->item_size, data);
     }
     lnode_set_data(new_node, temp);
 
-    if (list->head == NULL) {
+    if (list->pv->head == NULL) {
         lnode_set_link(new_node, 0);
-        list->tail = new_node;
+        list->pv->tail = new_node;
     } else {
-        lnode_set_link(new_node, (uintptr_t)list->head);
-        lnode_set_link(list->head, lnode_link(list->head) ^ (uintptr_t)new_node);
+        lnode_set_link(new_node, (uintptr_t)list->pv->head);
+        lnode_set_link(list->pv->head, lnode_link(list->pv->head) ^ (uintptr_t)new_node);
     }
-    list->head = new_node;
+    list->pv->head = new_node;
     return EXIT_SUCCESS;
 }
 
@@ -125,19 +133,19 @@ int16_t push_back(llist_t *list, gdata_t data) {
     if (!new_node) return EXIT_FAILURE;
 
     gdata_t temp = NULL;
-    if (list->allocator_fun) {
+    if (list->pv->allocator_fun) {
         // use custom allocator
-        temp = list->allocator_fun(data);
+        temp = list->pv->allocator_fun(data);
     } else {
         // use default allocator
-        temp = default_allocator(list->item_size, data);
+        temp = default_allocator(list->pv->item_size, data);
     }
     lnode_set_data(new_node, temp);
 
-    if (list->tail) {
-        lnode_set_link(new_node, (uintptr_t)list->tail);
-        lnode_set_link(list->tail, lnode_link(list->tail) ^ (uintptr_t)new_node);
-        list->tail = new_node;
+    if (list->pv->tail) {
+        lnode_set_link(new_node, (uintptr_t)list->pv->tail);
+        lnode_set_link(list->pv->tail, lnode_link(list->pv->tail) ^ (uintptr_t)new_node);
+        list->pv->tail = new_node;
     } else {
         push_front(list, data);
     }
@@ -145,25 +153,25 @@ int16_t push_back(llist_t *list, gdata_t data) {
 }
 
 gdata_t peak_front(llist_t *list) {
-    return lnode_data(list->head);
+    return lnode_data(list->pv->head);
 }
 
 gdata_t peak_back(llist_t *list) {
-    return lnode_data(list->tail);
+    return lnode_data(list->pv->tail);
 }
 
 int16_t pop_front(llist_t *list) {
-    if (list->head == NULL || list == NULL) return EXIT_SUCCESS;
+    if (list->pv->head == NULL || list == NULL) return EXIT_SUCCESS;
 
     list_itr_t it = {0};
     list_itr_init(&it, list);
 
-    lnode_t *old_head = list->head;
-    list->head = next(&it);
-    if (list->head == NULL) {
-        list->tail = NULL;
+    lnode_t *old_head = list->pv->head;
+    list->pv->head = next(&it);
+    if (list->pv->head == NULL) {
+        list->pv->tail = NULL;
     } else
-        lnode_set_link(list->head, lnode_link(list->head) ^ (uintptr_t)old_head);
+        lnode_set_link(list->pv->head, lnode_link(list->pv->head) ^ (uintptr_t)old_head);
     lnode_destroy(old_head);
     free(old_head);
     old_head = NULL;
@@ -171,18 +179,18 @@ int16_t pop_front(llist_t *list) {
 }
 
 int16_t pop_back(llist_t *list) {
-    if (list == NULL || list->head == NULL) return EXIT_SUCCESS;
-    if (list->tail == list->head) return pop_front(list);
+    if (list == NULL || list->pv->head == NULL) return EXIT_SUCCESS;
+    if (list->pv->tail == list->pv->head) return pop_front(list);
 
     list_itr_t it = {0};
     list_itr_init(&it, list);
 
-    itr_set_from(&it, list->tail);
+    itr_set_from(&it, list->pv->tail);
 
-    lnode_t *old_tail = list->tail;
-    list->tail = prev(&it);
-    if (list->tail != NULL)
-        lnode_set_link(list->tail, lnode_link(list->tail) ^ (uintptr_t)old_tail);
+    lnode_t *old_tail = list->pv->tail;
+    list->pv->tail = prev(&it);
+    if (list->pv->tail != NULL)
+        lnode_set_link(list->pv->tail, lnode_link(list->pv->tail) ^ (uintptr_t)old_tail);
 
     lnode_destroy(old_tail);
     free(old_tail);
@@ -191,13 +199,14 @@ int16_t pop_back(llist_t *list) {
 }
 
 void list_destroy(llist_t *list) {
-    while (list->head != NULL) {
+    while (list->pv->head != NULL) {
         pop_front(list);
     }
+    free(list->pv);
 }
 
 void llist_set_allocator(llist_t *list, gdata_t (*allocator_fun)(gdata_t data)) {
-    list->allocator_fun = allocator_fun;
+    list->pv->allocator_fun = allocator_fun;
 }
 
 llist_t *itr_list(list_itr_t *iterator) {
@@ -218,8 +227,8 @@ void itr_set_end(list_itr_t *iterator, lnode_t *end_node) {
 }
 
 int16_t dump_list(llist_t *list, void (*print_data)(gdata_t)) {
-    if (list == NULL || list->head == NULL) return EXIT_FAILURE;
-    lnode_t *temp = list->head;
+    if (list == NULL || list->pv->head == NULL) return EXIT_FAILURE;
+    lnode_t *temp = list->pv->head;
 
     list_itr_t it = {0};
     list_itr_init(&it, list);
@@ -233,7 +242,7 @@ int16_t dump_list(llist_t *list, void (*print_data)(gdata_t)) {
 
 int16_t reverse_dump_list(llist_t *list, void (*print_data)(gdata_t)) {
     if (list == NULL) return EXIT_FAILURE;
-    lnode_t *temp = list->tail;
+    lnode_t *temp = list->pv->tail;
 
     list_itr_t *it = list_itr_create(list);
     itr_set_from(it, temp);
