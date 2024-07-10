@@ -125,10 +125,12 @@ void heapify(heap_t *heap, tnode_t *root) {
         tnode_t *child = tnode_child(root, k);
         if (!child) return;
 
+        int root_res = heap->in.cmp_fun(tnode_data(child), tnode_data(heap->in.root));
+        if ((heap->type == MAX_HEAP && root_res > 0) || (heap->type == MIN_HEAP && root_res < 0))
+            tnode_swap_data(heap->in.root, child);
         int restult = heap->in.cmp_fun(tnode_data(child), tnode_data(root));
-        if ((heap->type == MAX_HEAP && restult > 0) || (heap->type == MIN_HEAP && restult < 0)) {
+        if ((heap->type == MAX_HEAP && restult > 0) || (heap->type == MIN_HEAP && restult < 0))
             tnode_swap_data(root, child);
-        }
         for (int i = 0; i < 2; i++)
             heapify(heap, child);
     }
@@ -227,8 +229,13 @@ void heap_pop(heap_t *heap) {
     tnode_t *last = NULL;
     size_t   dir = 0;
 
-    for (size_t k = 0; k < heap->in.k; k++)
-        if (tnode_child(heap->lastParent, k)) last = tnode_child(heap->lastParent, k);
+    for (size_t k = 0; k < heap->in.k; k++) {
+        if (tnode_child(heap->lastParent, k)) {
+            last = tnode_child(heap->lastParent, k);
+            dir = k;
+        }
+    }
+
     tnode_swap_data(heap->in.root, last);
 
     tnode_set_link(heap->lastParent, dir, 0);
@@ -242,10 +249,7 @@ void heap_destroy(heap_t *heap) {
 }
 
 void heap_for_each(heap_t *heap, TRAVERSE_ORDER order, for_each_fn function) {
-    if (order == BREADTH_FIRST_ORDER) {
-        bf_order(&heap->in, function);
-    } else
-        order_functions[order](heap->in.root, 0, function);
+    kt_for_each(&heap->in, order, function);
 }
 
 // Binary tree
