@@ -16,9 +16,7 @@ bool q_search_s(lnode_t *node, void *data) {
 }
 
 int main() {
-    queue_t cards_deck = {0};
-    queue_t discarded_cards = {0};
-    queue_t names = {0};
+    queue_t cards_deck = {0}, discarded_cards = {0}, names = {0};
     queue_init(&cards_deck, sizeof(int));
     queue_init(&discarded_cards, sizeof(int));
     queue_init(&names, 6);
@@ -26,9 +24,9 @@ int main() {
     enqueue(&names, "hello");
     enqueue(&names, "world");
     // enqueue(names, "!");
-    if (queue_find(&names, "!", q_search_s)) dump_queue(&names, __print_s);
+    if (queue_find(&names, "!", q_search_s)) queue_dump(&names, __print_s);
     dequeue(&names);
-    if (queue_find(&names, "!", q_search_s)) dump_queue(&names, __print_s);
+    if (queue_find(&names, "!", q_search_s)) queue_dump(&names, __print_s);
 
     int deck_size = 1000000;
     printf("deck size : %d\n", deck_size);

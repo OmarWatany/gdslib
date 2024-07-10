@@ -3,39 +3,41 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-struct Private {
-    alist_t *buf;
-};
-
 astack_t *astack_create(size_t element_size) {
     astack_t *stack = (astack_t *)malloc(sizeof(astack_t));
-    stack->pv = (Private *)malloc(sizeof(Private));
-    stack->pv->buf = alist_create(element_size);
+    astack_init(stack, element_size);
     return stack;
 }
 
+int16_t astack_init(astack_t *stack, size_t item_size) {
+    alist_init(&stack->buf, item_size);
+    return EXIT_SUCCESS;
+}
+
+int16_t astack_push_safe(astack_t *stack, size_t item_size, gdata_t data) {
+    return alist_push_safe(&stack->buf, item_size, data);
+}
+
 int16_t astack_push(astack_t *astack, gdata_t data) {
-    return alist_push(astack->pv->buf, data);
+    return astack_push_safe(astack, alist_item_size(&astack->buf), data);
 }
 
 int16_t astack_pop(astack_t *astack) {
-    return alist_pop(astack->pv->buf);
+    return alist_pop(&astack->buf);
 }
 
 size_t astack_size(astack_t *stack) {
-    return alist_size(stack->pv->buf);
+    return alist_size(&stack->buf);
 }
 
 gdata_t astack_peak(astack_t *astack) {
-    return alist_at(astack->pv->buf, alist_size(astack->pv->buf) - 1);
+    return alist_at(&astack->buf, alist_size(&astack->buf) - 1);
 }
 
 bool astack_empty(astack_t *astack) {
-    return alist_empty(astack->pv->buf);
+    return alist_empty(&astack->buf);
 }
 
 void astack_destroy(astack_t *astack) {
-    alist_destroy(astack->pv->buf);
-    free(astack->pv->buf);
-    free(astack->pv);
+    alist_destroy(&astack->buf);
 }

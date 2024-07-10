@@ -2,41 +2,40 @@
 #include <stdio.h>
 #include <string.h>
 
-void _print_str(gdata_t data);
-void _print_int(gdata_t data);
+static void _print_str(gdata_t data);
+static void _print_int(gdata_t data);
 
-void _print_int(gdata_t data) {
+static void _print_int(gdata_t data) {
     int i = *(int *)data;
-    // int i = 8;
     printf("%d", i);
 }
 
-static inline void push_front_i(llist_t *x, int y) {
+static inline void push_front_i(list_t *x, int y) {
     int i = y;
     push_front(x, &i);
 }
 
-static inline void push_back_i(llist_t *x, int y) {
+static inline void push_back_i(list_t *x, int y) {
     int i = y;
     push_back(x, &i);
 }
 
-static inline void dump_str_list(llist_t *x) {
+static inline void dump_str_list(list_t *x) {
     dump_list(x, _print_str);
     printf("\n");
 }
 
-static inline void dump_int_list(llist_t *x) {
+static inline void dump_int_list(list_t *x) {
     dump_list(x, _print_int);
     printf("\n");
 }
 
 int main() {
 
-    llist_t *fixed_strings = list_create(30);
-    llist_t *integers = list_create(sizeof(int));
-    llist_t *dyn_strings = list_create(3);
-    llist_set_allocator(dyn_strings, str_allocator);
+    list_t *fixed_strings = list_create(30);
+    list_t *integers = list_create(sizeof(int));
+    list_t *dyn_strings = list_create(3);
+    list_set_allocator(dyn_strings, str_allocator);
 
     push_front(dyn_strings, "dyn strings");
 

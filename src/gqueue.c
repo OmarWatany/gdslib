@@ -6,8 +6,7 @@
 queue_t *queue_create(size_t item_size) {
     queue_t *queue = (queue_t *)malloc(sizeof(queue_t));
     if (queue == NULL) return NULL;
-    list_init(&queue->list, item_size);
-    queue->length = 0;
+    queue_init(queue, item_size);
     return queue;
 }
 
@@ -16,11 +15,15 @@ void queue_init(queue_t *queue, size_t item_size) {
     queue->length = 0;
 }
 
-int16_t enqueue(queue_t *queue, gdata_t data) {
+int16_t enqueue_safe(queue_t *queue, size_t item_size, gdata_t data) {
     if (queue == NULL) return EXIT_FAILURE;
-    push_front(&queue->list, data);
+    push_front_safe(&queue->list, item_size, data);
     queue->length++;
     return EXIT_SUCCESS;
+}
+
+int16_t enqueue(queue_t *queue, gdata_t data) {
+    return enqueue_safe(queue, list_item_size(&queue->list), data);
 }
 
 int16_t dequeue(queue_t *queue) {
@@ -51,7 +54,8 @@ bool queue_empty(queue_t *queue) {
     return false;
 }
 
-bool queue_find(queue_t *heystack, gdata_t needle, bool (*search_fun)(lnode_t *node, gdata_t data)) {
+bool queue_find(queue_t *heystack, gdata_t needle,
+                bool (*search_fun)(lnode_t *node, gdata_t data)) {
     if (queue_empty(heystack)) return false;
 
     list_itr_t itr = {0};
@@ -67,7 +71,7 @@ bool queue_find(queue_t *heystack, gdata_t needle, bool (*search_fun)(lnode_t *n
     return r;
 }
 
-void dump_queue(queue_t *queue, void (*_print_data)(gdata_t data)) {
+void queue_dump(queue_t *queue, void (*_print_data)(gdata_t data)) {
     reverse_dump_list(&queue->list, _print_data);
     printf("\n");
 }

@@ -18,6 +18,7 @@ typedef struct {
     gdata_t   data;
     uintptr_t link;
 } lnode_t;
+
 typedef struct tnode_t tnode_t;
 
 struct tnode_t {

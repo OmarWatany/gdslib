@@ -4,7 +4,7 @@
 
 anode_t *anode_create() {
     anode_t *new_node = (anode_t *)malloc(sizeof(anode_t));
-    memset(new_node, 0, sizeof(anode_t));
+    anode_init(new_node);
     return new_node;
 }
 
@@ -30,7 +30,7 @@ void anode_destroy(anode_t *node) {
 
 lnode_t *lnode_create() {
     lnode_t *new_node = (lnode_t *)malloc(sizeof(lnode_t));
-    memset(new_node, 0, sizeof(lnode_t));
+    lnode_init(new_node);
     return new_node;
 }
 
@@ -67,15 +67,14 @@ void lnode_destroy(lnode_t *node) {
 
 tnode_t *tnode_create(size_t links_count) {
     tnode_t *new_node = (tnode_t *)malloc(sizeof(tnode_t));
-    memset(new_node, 0, sizeof(tnode_t));
-    new_node->links = malloc(links_count * sizeof(tnode_t *));
-    memset(new_node->links, 0, links_count * sizeof(tnode_t *));
+    tnode_init(new_node, links_count);
     return new_node;
 }
 
 int16_t tnode_init(tnode_t *node, size_t links_count) {
     node->data = NULL;
-    node->links = malloc(links_count * sizeof(tnode_t *));
+    node->links = malloc(links_count * sizeof(uintptr_t));
+    memset(node->links, 0, links_count * sizeof(tnode_t *));
     return EXIT_SUCCESS;
 }
 
@@ -92,7 +91,7 @@ int16_t tnode_set_data(tnode_t *node, gdata_t data) {
 
 tnode_t *tnode_child(tnode_t *node, size_t n) {
     if (!node || !node->links) return NULL;
-    return node->links[n];
+    return (tnode_t *)node->links[n];
 }
 
 tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {

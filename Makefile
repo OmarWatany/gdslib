@@ -7,7 +7,7 @@ RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib
 
 LIB := $(RAY_LIB) -lm 
 
-CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC -Wno-unused-function
+CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC -Wno-unused-function 
 # CFLAGS= -g -I$(INC) -fPIC 
 
 GQUEUE_HFILES := $(wildcard $(INC)/*queue*.h)
@@ -38,7 +38,7 @@ H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(GTREE_HFILES) $(N
 EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)
 ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
 
-CC := clang
+CC := gcc
 
 all:  stack ring queue linkedlist alist astack gtree $(EXAMPLE_D)
 

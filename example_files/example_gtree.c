@@ -25,10 +25,10 @@ static void iprintTree(tnode_t *node, size_t lvl) {
     printf("%d\n", *(int *)tnode_data(node));
 }
 
-int main() {
+void random_output() {
     btree_t tree = {0};
-    btr_init(&tree, sizeof(int), gcmp_int);
-
+    bt_init(&tree, sizeof(int), gcmp_int);
+    // test 345 in various conditions such as (parent to tree ,parent to one child,leaf)
     // int arr[] = {197, 198, 32,  65,  267, 105, 345, 319, 245, 45, 386,
     //              47,  43,  195, 209, 389, 384, 259, 89,  29,  9};
     // int arr[] = {197, 198, 32,  65,  267, 105, 319, 245, 45, 386, 47,
@@ -58,7 +58,6 @@ int main() {
     // kt_for_each(&tree, BREADTH_FIRST_ORDER, iprintLvl);
     // printf("__ BREADTH END __\n");
 
-    printf("tree size : %ld\n", tree.size);
     size_t lvl = 4, lvlc = pow(tree.k, lvl);
 
     tnode_t **childs = kt_grand_childrens(&tree, lvl);
@@ -69,7 +68,7 @@ int main() {
         bst_delete(&tree, &d);
         kt_for_each(&tree, IN_ORDER, iprintTree);
     }
-    // } else {
+    //  else {
     //     for (size_t j = 0; j < lvlc && childs; j++) {
     //         if (childs[j])
     //             printf("child n : %ld lvl: %ld = %d\n", j, lvl, *(int *)tnode_data(childs[j]));
@@ -84,6 +83,50 @@ int main() {
 
     free(childs);
     bst_destroy(&tree);
+}
+
+bool valid_heap(heap_t *heap, tnode_t *root) {
+    for (size_t k = 0; k < heap->in.k; k++) {
+        tnode_t *child = tnode_child(root, k);
+        if (!child) return true;
+
+        int restult = heap->in.cmp_fun(tnode_data(child), tnode_data(root));
+        if ((heap->type == MAX_HEAP && restult > 0) || (heap->type == MIN_HEAP && restult < 0)) {
+            return false;
+        }
+        return valid_heap(heap, child);
+    }
+    return true;
+}
+
+void test_heap() {
+    // int arr[] = {11, 2, 5, 3, 10, 15, 13};
+    const int arr[] = {23, 7, 92, 6, 12, 14, 40, 44, 20, 21};
+    // int arr[] = {92, 44, 40, 23, 21, 12, 14, 6, 20, 7};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+    // should print perfect tree and BREADTH print should print it
+    heap_t hp = {0};
+    // compare funciton isn't important here
+    heap_init(&hp, sizeof(int), 2, MAX_HEAP);
+    heap_set_cmp_fun(&hp, gcmp_int);
+
+    for (int i = 0; i < arr_size; i++) {
+        heap_add(&hp, &arr[i]);
+    }
+
+    if (valid_heap(&hp, hp.in.root)) printf("VALID HEAP\n");
+    heap_pop(&hp);
+    if (valid_heap(&hp, hp.in.root)) printf("VALID HEAP\n");
+
+    // printf("BREADTH FIRST PRINT height %zu \n", heap_height(&hp));
+    // heap_for_each(&hp, BREADTH_FIRST_ORDER, iprintLvl);
+
+    heap_destroy(&hp);
+}
+
+int main() {
+    // random_output();
+    test_heap();
 
     return 0;
 }

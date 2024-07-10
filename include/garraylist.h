@@ -19,6 +19,7 @@ int16_t  alist_set_at_safe(alist_t *list, size_t pos, size_t item_size, gdata_t 
 int16_t  alist_rm_at(alist_t *list, size_t pos);
 gdata_t  alist_at(alist_t *list, size_t pos);
 size_t   alist_size(alist_t *list);
+size_t   alist_item_size(alist_t *list);
 size_t   alist_capacity(alist_t *list);
 void     alist_reserve(alist_t *list, size_t size);
 void     alist_set_allocator(alist_t *alist, gdata_t (*allocator_fun)(gdata_t data));
