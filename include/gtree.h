@@ -5,49 +5,8 @@
 extern "C" {
 #endif // cpp
 
-#include "gallocator.h"
-#include "gnode.h"
-#include "gnodes_types.h"
+#include "gds_types.h"
 #include <stdbool.h>
-
-typedef void (*for_each_fn)(tnode_t *node, size_t level);
-typedef int (*cmp_fun)(gdata_t data1, gdata_t data2); // data1 > data2 = 1
-
-typedef enum {
-    PRE_ORDER,
-    IN_ORDER,
-    POST_ORDER,
-    BREADTH_FIRST_ORDER,
-} TRAVERSE_ORDER;
-
-typedef enum {
-    MIN_HEAP,
-    MAX_HEAP,
-} HEAP_TYPE;
-
-typedef struct {
-    tnode_t *root;
-    size_t   item_size, k;
-    int (*cmp_fun)(gdata_t data1, gdata_t data2); // data1 > data2 = 1
-    allocator_fun_t allocator_fun;
-} ktree_t;
-
-typedef struct {
-    ktree_t   in;
-    tnode_t  *lastParent;
-    HEAP_TYPE type;
-} heap_t;
-
-typedef struct {
-    ktree_t       *tree;
-    TRAVERSE_ORDER order;
-} ktree_itr_t;
-
-typedef ktree_t btree_t;
-
-ktree_t *kt_create(size_t item_size, size_t k);
-heap_t  *heap_create(size_t item_size, size_t k, HEAP_TYPE type);
-btree_t *bt_create(size_t item_size);
 
 void kt_init(ktree_t *tree, size_t item_size, size_t k);
 void kt_set_allocator(ktree_t *tree, allocator_fun_t allocator_fun);
@@ -79,6 +38,8 @@ gdata_t *bst_min(ktree_t *tree);
 gdata_t *bst_max(ktree_t *tree);
 
 void bst_destroy(btree_t *tree);
+
+void heap_add_tnode(heap_t *heap, tnode_t *node);
 
 #ifdef __cplusplus
 }

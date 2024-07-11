@@ -40,7 +40,7 @@ ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
 
 CC := gcc
 
-all:  stack ring queue linkedlist alist astack gtree $(EXAMPLE_D)
+all:  stack ring queue linkedlist alist astack gtree pqueue $(EXAMPLE_D)
 
 stack: lib
 	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gstack.c $(LIB) -o ./bin/stack 
@@ -50,6 +50,9 @@ ring : lib
 
 queue: lib
 	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gqueue.c $(LIB) -o ./bin/queue
+
+pqueue: lib
+	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gpqueue.c $(LIB) -o ./bin/pqueue
 
 linkedlist: lib
 	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_glinkedlist.c $(LIB) -o ./bin/list

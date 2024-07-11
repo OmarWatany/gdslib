@@ -98,45 +98,52 @@ bool valid_heap(heap_t *heap, tnode_t *root) {
     return final_res;
 }
 
-void test_heap() {
+void test_kheap(size_t k) {
+    printf("K ->  %zu\n", k);
     // int arr[] = {11, 2, 5, 3, 10, 15, 13};
-    // int arr[] = {23, 7, 92, 6, 12, 14, 40, 44, 20, 21};
+    int arr[] = {23, 7, 92, 6, 12, 14, 40, 44, 20, 21, 92};
     // int arr[] = {92, 44, 40, 23, 21, 12, 14, 6, 20, 7};
-    int arr[] = {3, 5, 20, 10, 15, 30, 50};
+    // int arr[] = {3, 5, 20, 10, 15, 30, 50};
     int arr_size = sizeof(arr) / sizeof(arr[0]);
     // should print perfect tree and BREADTH print should print it
     heap_t hp = {0};
-    heap_init(&hp, sizeof(int), 2, MAX_HEAP);
+    heap_init(&hp, sizeof(int), k, MAX_HEAP);
     heap_set_cmp_fun(&hp, gcmp_int);
 
     for (int i = 0; i < arr_size; i++) {
         heap_add(&hp, &arr[i]);
     }
 
-    printf("BREADTH FIRST PRINT height %zu \n", heap_height(&hp));
-    heap_for_each(&hp, BREADTH_FIRST_ORDER, iprintLvl);
-
     if (valid_heap(&hp, hp.in.root))
         printf("VALID HEAP\n");
     else
         printf("UNVALID HEAP\n");
+
+    printf("BREADTH FIRST PRINT height %zu \n", heap_height(&hp));
+    heap_for_each(&hp, BREADTH_FIRST_ORDER, iprintLvl);
+
+    printf("\n");
+    heap_for_each(&hp, IN_ORDER, iprintTree);
+    printf("\n");
 
     heap_pop(&hp);
-
-    printf("BREADTH FIRST PRINT height %zu \n", heap_height(&hp));
-    heap_for_each(&hp, BREADTH_FIRST_ORDER, iprintLvl);
-
     if (valid_heap(&hp, hp.in.root))
         printf("VALID HEAP\n");
     else
         printf("UNVALID HEAP\n");
+    // printf("BREADTH FIRST PRINT height %zu \n", heap_height(&hp));
+    heap_for_each(&hp, IN_ORDER, iprintTree);
+    // heap_for_each(&hp, BREADTH_FIRST_ORDER, iprintLvl);
 
     heap_destroy(&hp);
+    printf("---------------");
+    printf("\n");
 }
 
 int main() {
     // random_output();
-    test_heap();
+    test_kheap(2);
+    test_kheap(4);
 
     return 0;
 }

@@ -5,11 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define left(node) tnode_child(node, 0)
-#define right(node) tnode_child(node, 1)
-
-void heap_add_tnode(heap_t *heap, tnode_t *node);
-
 static void bf_order(ktree_t *tree, for_each_fn for_each) {
     queue_t lvlq = {0};
     queue_init(&lvlq, sizeof(tnode_t *));
@@ -28,28 +23,29 @@ static void bf_order(ktree_t *tree, for_each_fn for_each) {
     queue_destroy(&lvlq);
 }
 
-static void in_order(tnode_t *node, size_t lvl, for_each_fn for_each) {
+static void in_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each) {
     if (node == NULL) return;
-    in_order(left(node), lvl + 1, for_each);
-    for_each(node, lvl);
-    in_order(right(node), lvl + 1, for_each);
+    for (size_t j = 0; j < k; j++) {
+        in_order(tnode_child(node, j), k, lvl + 1, for_each);
+        if (j == (k - 1) / 2) for_each(node, lvl);
+    }
 }
 
-static void post_order(tnode_t *node, size_t lvl, for_each_fn for_each) {
+static void post_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each) {
     if (node == NULL) return;
-    post_order(left(node), lvl + 1, for_each);
-    post_order(right(node), lvl + 1, for_each);
+    for (size_t j = 0; j < k; j++)
+        post_order(tnode_child(node, j), k, lvl + 1, for_each);
     for_each(node, lvl);
 }
 
-static void pre_order(tnode_t *node, size_t lvl, for_each_fn for_each) {
+static void pre_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each) {
     if (node == NULL) return;
     for_each(node, lvl);
-    pre_order(left(node), lvl + 1, for_each);
-    pre_order(right(node), lvl + 1, for_each);
+    for (size_t j = 0; j < k; j++)
+        pre_order(tnode_child(node, j), k, lvl + 1, for_each);
 }
 
-static void (*order_functions[])(tnode_t *, size_t, for_each_fn) = {
+static void (*order_functions[])(tnode_t *, size_t k, size_t, for_each_fn) = {
     pre_order,
     in_order,
     post_order,
@@ -94,7 +90,7 @@ void kt_for_each(ktree_t *tree, TRAVERSE_ORDER order, for_each_fn function) {
     if (order == BREADTH_FIRST_ORDER) {
         bf_order(tree, function);
     } else
-        order_functions[order](tree->root, 0, function);
+        order_functions[order](tree->root, tree->k, 0, function);
 }
 
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl) {
@@ -139,6 +135,10 @@ void heapify(heap_t *heap, tnode_t *root) {
 size_t heap_tnode_height(tnode_t *root) {
     if (!root) return 0;
     return 1 + heap_tnode_height(tnode_child(root, 0));
+}
+
+gdata_t heap_peak(heap_t *heap) {
+    return tnode_data(heap->in.root);
 }
 
 size_t heap_height(heap_t *heap) {
@@ -198,7 +198,7 @@ void heap_set_cmp_fun(heap_t *heap, cmp_fun cmp) {
     heap->in.cmp_fun = cmp;
 }
 
-void heap_add_safe(heap_t *heap, size_t item_size, const gdata_t data) {
+void heap_add_safe(heap_t *heap, size_t item_size, gdata_t data) {
     if (!heap->in.cmp_fun) {
         // TODO: return error;
         fprintf(stderr, "Error No Compare Functoin\n");
