@@ -13,6 +13,8 @@ CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC -Wno-unused-function
 GQUEUE_HFILES := $(wildcard $(INC)/*queue*.h)
 GQUEUE_CFILES := $(wildcard $(SRC_D)/*queue*.c)
 
+GHEAP_CFILES := $(wildcard $(SRC_D)/*heap*.c)
+
 LLIST_HFILES  := $(wildcard $(INC)/*list*.h) 
 LLIST_CFILES  := $(wildcard $(SRC_D)/*list*.c)
 
@@ -32,7 +34,7 @@ ALLOC_HFILES   := $(wildcard $(INC)/*allocator*.h)
 ALLOC_CFILES   := $(wildcard $(SRC_D)/*allocator*.c)
 
 
-C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(GTREE_CFILES) $(NODE_CFILES) $(ALLOC_CFILES) $(RING_CFILES)
+C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(GTREE_CFILES) $(NODE_CFILES) $(ALLOC_CFILES) $(RING_CFILES) $(GHEAP_CFILES)
 H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(GTREE_HFILES) $(NODE_HFILES) $(ALLOC_HFILES) $(RING_HFILES)
 
 EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)

@@ -72,9 +72,10 @@ tnode_t *tnode_create(size_t links_count) {
 }
 
 int16_t tnode_init(tnode_t *node, size_t links_count) {
+    size_t size = links_count * sizeof(uintptr_t);
     node->data = NULL;
-    node->links = malloc(links_count * sizeof(uintptr_t));
-    memset(node->links, 0, links_count * sizeof(tnode_t *));
+    node->links = malloc(size);
+    memset(node->links, 0, size);
     return EXIT_SUCCESS;
 }
 
@@ -92,6 +93,10 @@ int16_t tnode_set_data(tnode_t *node, gdata_t data) {
 tnode_t *tnode_child(tnode_t *node, size_t n) {
     if (!node || !node->links) return NULL;
     return (tnode_t *)node->links[n];
+}
+
+void tnode_set_child(tnode_t *node, size_t n, tnode_t *child) {
+    tnode_set_link(node, n, (uintptr_t)child);
 }
 
 tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
@@ -126,14 +131,30 @@ tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
     return childs;
 }
 
-tnode_t *tnode_link(tnode_t *node, size_t link_num) {
+uintptr_t tnode_link(tnode_t *node, size_t link_num) {
     if (node == NULL) return 0;
     return node->links[link_num];
 }
 
-void tnode_set_link(tnode_t *node, size_t link_num, tnode_t *new_link) {
+void tnode_set_link(tnode_t *node, size_t link_num, uintptr_t new_link) {
     if (node == NULL) return;
     node->links[link_num] = new_link;
+}
+
+uintptr_t tnode_xlink(tnode_t *node, size_t n, uintptr_t with) {
+    return node->links[n] ^ with;
+}
+
+void tnode_xset_link(tnode_t *node, size_t n, uintptr_t new_link) {
+    node->links[n] ^= new_link;
+}
+
+tnode_t *tnode_xnode(tnode_t *node, size_t n, tnode_t *with) {
+    return (tnode_t *)tnode_xlink(node, n, (uintptr_t)with);
+}
+
+void tnode_xset_node(tnode_t *node, size_t n, tnode_t *with) {
+    tnode_xset_link(node, n, (uintptr_t)with);
 }
 
 void tnode_destroy(tnode_t *node) {

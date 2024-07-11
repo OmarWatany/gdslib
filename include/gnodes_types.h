@@ -22,8 +22,8 @@ typedef struct {
 typedef struct tnode_t tnode_t;
 
 struct tnode_t {
-    gdata_t   data;
-    tnode_t **links;
+    gdata_t    data;
+    uintptr_t *links;
 };
 
 #ifdef __cplusplus
