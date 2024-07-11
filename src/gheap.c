@@ -17,16 +17,6 @@ static gdata_t kt_alloc(ktree_t *tree, size_t item_size, gdata_t data) {
 }
 
 // heap
-bool heapify_safe(heap_t *heap, tnode_t *node, tnode_t *new_node) {
-    int restult = heap->in.cmp_fun(tnode_data(new_node), tnode_data(node));
-
-    if ((heap->type == MAX_HEAP && restult > 0) || (heap->type == MIN_HEAP && restult < 0)) {
-        tnode_swap_data(new_node, node);
-        heap_add_tnode(heap, new_node);
-        return true;
-    }
-    return false;
-}
 
 void heapify(heap_t *heap, tnode_t *root) {
     for (size_t k = 0; k < heap->in.k; k++) {
@@ -102,27 +92,6 @@ void get_level_nodes(tnode_t *parent, size_t k, size_t lvl, ringbuffer_t *ring) 
     get_level_nodes(tnode_child(parent, 0), k, lvl - 1, ring);
 }
 
-// void heap_add_tnode(heap_t *heap, tnode_t *node) {
-//
-//     if (!heap->in.root) {
-//         heap->in.root = node;
-//         return;
-//     }
-//
-//     size_t height = heap_height(heap);
-//     size_t lvlCount = 1 << height;
-//     size_t parentsCount = 1 << (height - 1);
-//
-//     ringbuffer_t Q = {0};
-//     ring_init(&Q, sizeof(tnode_t *), lvlCount + 2);
-//     // get parents
-//     get_level_nodes(heap->in.root, heap->in.k, height - 1, &Q);
-//
-// END_FUNC:
-//     heapify(heap, heap->in.root);
-//     ring_destroy(&Q);
-// }
-
 heap_t *heap_create(size_t item_size, size_t k, HEAP_TYPE type) {
     heap_t *heap = malloc(sizeof(heap_t));
     heap_init(heap, item_size, k, type);
@@ -182,8 +151,8 @@ void heap_pop(heap_t *heap) {
     }
 
     tnode_swap_data(heap->in.root, last);
-
-    tnode_set_link(heap->lastParent, dir, 0);
+    heap->lastParent->links[dir] = 0;
+    tnode_set_child(heap->lastParent, dir, 0);
     tnode_destroy(last);
     free(last);
     heapify(heap, heap->in.root);
@@ -195,16 +164,4 @@ void heap_destroy(heap_t *heap) {
 
 void heap_for_each(heap_t *heap, TRAVERSE_ORDER order, for_each_fn function) {
     kt_for_each(&heap->in, order, function);
-}
-
-// Binary tree
-
-btree_t *bt_create(size_t item_size) {
-    ktree_t *tree = kt_create(item_size, 2);
-    return tree;
-}
-
-void bt_init(ktree_t *tree, size_t item_size, int (*cmp_fun)(gdata_t data1, gdata_t data2)) {
-    kt_init(tree, item_size, 2);
-    tree->cmp_fun = cmp_fun;
 }

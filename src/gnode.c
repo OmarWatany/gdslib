@@ -67,12 +67,13 @@ void lnode_destroy(lnode_t *node) {
 
 tnode_t *tnode_create(size_t links_count) {
     tnode_t *new_node = (tnode_t *)malloc(sizeof(tnode_t));
+    memset(new_node, 0, sizeof(tnode_t));
     tnode_init(new_node, links_count);
     return new_node;
 }
 
 int16_t tnode_init(tnode_t *node, size_t links_count) {
-    size_t size = links_count * sizeof(uintptr_t);
+    size_t size = links_count * sizeof(tnode_t *);
     node->data = NULL;
     node->links = malloc(size);
     memset(node->links, 0, size);
@@ -92,11 +93,59 @@ int16_t tnode_set_data(tnode_t *node, gdata_t data) {
 
 tnode_t *tnode_child(tnode_t *node, size_t n) {
     if (!node || !node->links) return NULL;
-    return (tnode_t *)node->links[n];
+    return node->links[n];
 }
 
 void tnode_set_child(tnode_t *node, size_t n, tnode_t *child) {
-    tnode_set_link(node, n, (uintptr_t)child);
+    if (!node) return;
+    node->links[n] = child;
+}
+
+dtnode_t *dtnode_create(size_t links_count) {
+    dtnode_t *temp = malloc(sizeof(dtnode_t));
+    memset(temp, 0, sizeof(dtnode_t));
+    dtnode_init(temp, links_count);
+    return temp;
+}
+
+int16_t dtnode_init(dtnode_t *node, size_t links_count) {
+    size_t size = links_count * sizeof(dtnode_t *);
+    node->data = NULL;
+    node->from = 0;
+    node->to = malloc(size);
+    memset(node->to, 0, size);
+    return EXIT_SUCCESS;
+}
+
+gdata_t dtnode_data(dtnode_t *node) {
+    return node->data;
+}
+
+int16_t dtnode_set_data(dtnode_t *node, gdata_t data) {
+    if (!node) return EXIT_FAILURE;
+    node->data = data;
+    return EXIT_SUCCESS;
+}
+
+void dtnode_destroy(dtnode_t *node) {
+    if (!node) return;
+    free(node->to);
+    free(node->data);
+}
+
+dtnode_t *dtnode_parent(dtnode_t *node) {
+    if (!node) return NULL;
+    return node->from;
+}
+
+dtnode_t *dtnode_child(dtnode_t *node, size_t n) {
+    if (!node) return NULL;
+    return node->to[n];
+}
+
+void dtnode_set_child(dtnode_t *node, size_t n, dtnode_t *child) {
+    if (!child || !node) return;
+    node->to[n] = child;
 }
 
 tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
@@ -129,32 +178,6 @@ tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
 
     free(lvlq);
     return childs;
-}
-
-uintptr_t tnode_link(tnode_t *node, size_t link_num) {
-    if (node == NULL) return 0;
-    return node->links[link_num];
-}
-
-void tnode_set_link(tnode_t *node, size_t link_num, uintptr_t new_link) {
-    if (node == NULL) return;
-    node->links[link_num] = new_link;
-}
-
-uintptr_t tnode_xlink(tnode_t *node, size_t n, uintptr_t with) {
-    return node->links[n] ^ with;
-}
-
-void tnode_xset_link(tnode_t *node, size_t n, uintptr_t new_link) {
-    node->links[n] ^= new_link;
-}
-
-tnode_t *tnode_xnode(tnode_t *node, size_t n, tnode_t *with) {
-    return (tnode_t *)tnode_xlink(node, n, (uintptr_t)with);
-}
-
-void tnode_xset_node(tnode_t *node, size_t n, tnode_t *with) {
-    tnode_xset_link(node, n, (uintptr_t)with);
 }
 
 void tnode_destroy(tnode_t *node) {

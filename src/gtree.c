@@ -103,6 +103,18 @@ static void tnode_swap_data(tnode_t *from, tnode_t *to) {
     from->data = temp;
 }
 
+// Binary tree
+
+btree_t *bt_create(size_t item_size) {
+    ktree_t *tree = kt_create(item_size, 2);
+    return tree;
+}
+
+void bt_init(ktree_t *tree, size_t item_size, int (*cmp_fun)(gdata_t data1, gdata_t data2)) {
+    kt_init(tree, item_size, 2);
+    tree->cmp_fun = cmp_fun;
+}
+
 // BST
 
 static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
@@ -193,7 +205,7 @@ bool bst_find(btree_t *heystack, gdata_t needle) {
 static void bst_delete_node(tnode_t *parent, tnode_t *node, int dir) {
     tnode_destroy(node);
     free(node);
-    tnode_set_link(parent, dir, 0);
+    tnode_set_child(parent, dir, 0);
 }
 
 static void bst_delete_h(ktree_t *tree, tnode_t *node, gdata_t data) {

@@ -27,16 +27,17 @@ int16_t  tnode_init(tnode_t *node, size_t links_count);
 gdata_t  tnode_data(tnode_t *node);
 int16_t  tnode_set_data(tnode_t *node, gdata_t data);
 void     tnode_destroy(tnode_t *node);
+tnode_t *tnode_child(tnode_t *node, size_t n);
+void     tnode_set_child(tnode_t *node, size_t n, tnode_t *child);
 
-tnode_t  *tnode_child(tnode_t *node, size_t n);
-void      tnode_set_child(tnode_t *node, size_t n, tnode_t *child);
-uintptr_t tnode_link(tnode_t *node, size_t n);
-void      tnode_set_link(tnode_t *node, size_t n, uintptr_t new_link);
-
-uintptr_t tnode_xlink(tnode_t *node, size_t n, uintptr_t with);
-void      tnode_xset_link(tnode_t *node, size_t n, uintptr_t new_link);
-tnode_t  *tnode_xnode(tnode_t *node, size_t n, tnode_t *with);
-void      tnode_xset_node(tnode_t *node, size_t n, tnode_t *with);
+dtnode_t *dtnode_create(size_t links_count);
+int16_t   dtnode_init(dtnode_t *node, size_t links_count);
+gdata_t   dtnode_data(dtnode_t *node);
+int16_t   dtnode_set_data(dtnode_t *node, gdata_t data);
+void      dtnode_destroy(dtnode_t *node);
+dtnode_t *dtnode_parent(dtnode_t *node);
+dtnode_t *dtnode_child(dtnode_t *node, size_t n);
+void      dtnode_set_child(dtnode_t *node, size_t n, dtnode_t *child);
 
 tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl);
 
