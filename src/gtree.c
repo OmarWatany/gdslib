@@ -75,7 +75,7 @@ void kt_set_allocator(ktree_t *tree, allocator_fun_t allocator_fun) {
     tree->allocator_fun = allocator_fun;
 }
 
-static void kt_node_destroy(tnode_t *node, size_t lvl) {
+static void kt_node_destroy(gdata_t node, size_t lvl) {
     (void)lvl;
     tnode_destroy(node);
     free(node);

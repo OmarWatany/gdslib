@@ -21,12 +21,12 @@ void    heap_set_cmp_fun(heap_t *heap, cmp_fun cmp);
 void    heap_add_safe(heap_t *heap, size_t item_size, gdata_t data);
 void    heap_add(heap_t *heap, gdata_t data);
 void    heap_destroy(heap_t *heap);
-void    heap_for_each(heap_t *heap, TRAVERSE_ORDER order, for_each_fn function);
+void    heap_for_each(heap_t *heap, for_each_fn function);
 void    heap_pop(heap_t *heap);
 gdata_t heap_peak(heap_t *heap);
-size_t  heap_height(heap_t *heap);
+void    build_heap_h(heap_t *heap, size_t pos);
+bool    valid_heap(heap_t *heap, size_t pos);
 
-void      heapify(heap_t *heap, tnode_t *root);
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl);
 
 void bt_init(btree_t *tree, size_t item_size, cmp_fun cmp);
@@ -38,8 +38,6 @@ gdata_t *bst_min(ktree_t *tree);
 gdata_t *bst_max(ktree_t *tree);
 
 void bst_destroy(btree_t *tree);
-
-void heap_add_tnode(heap_t *heap, tnode_t *node);
 
 #ifdef __cplusplus
 }

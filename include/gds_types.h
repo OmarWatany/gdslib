@@ -11,7 +11,7 @@ extern "C" {
 #include <stdlib.h>
 
 typedef void *gdata_t;
-typedef void (*for_each_fn)(tnode_t *node, size_t level);
+typedef void (*for_each_fn)(gdata_t node, size_t level);
 typedef int (*cmp_fun)(gdata_t data1, gdata_t data2); // data1 > data2 = 1
 
 typedef enum {
@@ -34,17 +34,12 @@ typedef struct {
 } ktree_t;
 
 typedef struct {
-    ktree_t   in;
-    tnode_t  *lastParent;
-    HEAP_TYPE type;
-} heap_t;
-
-typedef struct {
     ktree_t       *tree;
     TRAVERSE_ORDER order;
 } ktree_itr_t;
 
-typedef ktree_t btree_t;
+typedef struct heap_t heap_t;
+typedef ktree_t       btree_t;
 
 ktree_t *kt_create(size_t item_size, size_t k);
 heap_t  *heap_create(size_t item_size, size_t k, HEAP_TYPE type);
@@ -83,8 +78,16 @@ typedef struct {
     size_t length;
 } queue_t;
 
+struct heap_t {
+    alist_t   buf;
+    size_t    k;
+    HEAP_TYPE type;
+    cmp_fun   cmp_fun;
+};
+
 typedef struct {
     heap_t h;
+    size_t item_size;
 } pqueue_t;
 
 typedef struct {

@@ -13,12 +13,18 @@ static void inc(tnode_t *node, size_t lvl) {
     *(int *)tnode_data(node) += lvl + 3;
 }
 
-static void iprintLvl(tnode_t *node, size_t lvl) {
+static void iprint(gdata_t node, size_t lvl) {
+    (void)lvl;
+    if (!node) return;
+    printf("%d - ", *(int *)tnode_data(node));
+}
+
+static void iprintLvl(gdata_t node, size_t lvl) {
     if (!node) return;
     printf("%d - lvl %ld\n", *(int *)tnode_data(node), lvl);
 }
 
-static void iprintTree(tnode_t *node, size_t lvl) {
+static void iprintTree(gdata_t node, size_t lvl) {
     printf(" ");
     for (size_t i = 0; i < lvl; i++)
         printf("    ");
@@ -85,19 +91,6 @@ void random_output() {
     bst_destroy(&tree);
 }
 
-bool valid_heap(heap_t *heap, tnode_t *root) {
-    bool final_res = false;
-    for (size_t k = 0; k < heap->in.k; k++) {
-        tnode_t *child = tnode_child(root, k);
-        if (!child) return true;
-
-        int result = heap->in.cmp_fun(tnode_data(child), tnode_data(root));
-        final_res = valid_heap(heap, child) && ((heap->type == MAX_HEAP && result < 0) ||
-                                                (heap->type == MIN_HEAP && result > 0));
-    }
-    return final_res;
-}
-
 void test_kheap(size_t k) {
     printf("K ->  %zu\n", k);
     // int arr[] = {11, 2, 5, 3, 10, 15, 13};
@@ -114,25 +107,24 @@ void test_kheap(size_t k) {
         heap_add(&hp, &arr[i]);
     }
 
-    if (valid_heap(&hp, hp.in.root))
+    if (valid_heap(&hp, 0))
         printf("VALID HEAP\n");
     else
         printf("UNVALID HEAP\n");
 
-    printf("BREADTH FIRST PRINT height %zu \n", heap_height(&hp));
-    heap_for_each(&hp, BREADTH_FIRST_ORDER, iprintLvl);
-
+    printf("BREADTH FIRST PRINT\n");
+    heap_for_each(&hp, iprint);
     printf("\n");
-    heap_for_each(&hp, IN_ORDER, iprintTree);
-    printf("\n");
+    // heap_for_each(&hp, iprint);
+    // printf("\n");
 
     heap_pop(&hp);
-    if (valid_heap(&hp, hp.in.root))
+    if (valid_heap(&hp, 0))
         printf("VALID HEAP\n");
     else
         printf("UNVALID HEAP\n");
-    // printf("BREADTH FIRST PRINT height %zu \n", heap_height(&hp));
-    heap_for_each(&hp, IN_ORDER, iprintTree);
+    heap_for_each(&hp, iprint);
+    printf("\n");
     // heap_for_each(&hp, BREADTH_FIRST_ORDER, iprintLvl);
 
     heap_destroy(&hp);
@@ -143,7 +135,7 @@ void test_kheap(size_t k) {
 int main() {
     // random_output();
     test_kheap(2);
-    test_kheap(4);
+    // test_kheap(4);
 
     return 0;
 }
