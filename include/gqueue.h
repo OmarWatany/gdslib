@@ -2,6 +2,7 @@
 #define QUEUE_H
 
 #include "gds_types.h"
+#include "gnode.h"
 
 #ifdef __cplusplus
 extern "C" {

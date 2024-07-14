@@ -8,6 +8,7 @@ extern "C" {
 #endif // cpp
 
 #include "gds_types.h"
+#include "gnode.h"
 
 typedef struct {
     long    priority;

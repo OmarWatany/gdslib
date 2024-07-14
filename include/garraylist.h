@@ -6,6 +6,7 @@ extern "C" {
 #endif // cpp
 
 #include "gds_types.h"
+#include "gnode.h"
 #include <stdbool.h>
 #include <stdlib.h>
 

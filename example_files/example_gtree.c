@@ -129,6 +129,13 @@ void test_kheap(size_t k) {
     // printf("\n");
 
     heap_pop(&hp);
+    heap_for_each(&hp, heap_iprint);
+    printf("\n");
+
+    int i = 0x45;
+    heap_add(&hp, &i);
+    heap_add(&hp, &i);
+
     if (valid_heap(&hp, 0))
         printf("VALID HEAP\n");
     else
@@ -144,7 +151,7 @@ void test_kheap(size_t k) {
 
 int main() {
     random_output();
-    // test_kheap(2);
+    test_kheap(2);
     // test_kheap(4);
 
     return 0;

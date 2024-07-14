@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
+void heapify_child(heap_t *heap, size_t child_pos);
+void heapify_parent(heap_t *heap, size_t parent_p);
+
 static int aint(anode_t *node) {
     return *(int *)anode_data(node);
 }
@@ -46,7 +49,7 @@ static bool check_heap_prop(heap_t *heap, anode_t *parent, anode_t *child) {
 }
 
 bool valid_heap(heap_t *heap, size_t pos) {
-    bool     fin = true;
+    bool     fres = true;
     anode_t *cur = node_at(heap, pos), *child = NULL;
     ssize_t  child_p = -1;
     if (!cur) return true;
@@ -54,9 +57,9 @@ bool valid_heap(heap_t *heap, size_t pos) {
         child_p = child_pos(heap, k, pos);
         child = node_at(heap, child_p);
         if (!child) return true;
-        fin = fin && check_heap_prop(heap, cur, child) && valid_heap(heap, child_p);
+        fres = fres && check_heap_prop(heap, cur, child) && valid_heap(heap, child_p);
     }
-    return fin;
+    return fres;
 }
 
 void heapify_child(heap_t *heap, size_t child_pos) {
@@ -74,7 +77,7 @@ void heapify_parent(heap_t *heap, size_t parent_p) {
     for (size_t k = 0; k < heap->k; k++) {
         size_t   child_p = child_pos(heap, k, parent_p);
         anode_t *child = node_at(heap, child_p);
-        if (!child || check_heap_prop(heap, parent, child)) return;
+        if (!child || check_heap_prop(heap, parent, child)) continue;
         anode_swap_data(child, parent);
         heapify_parent(heap, child_p);
     }
@@ -131,7 +134,9 @@ void heap_add_safe(heap_t *heap, size_t item_size, gdata_t data) {
         fprintf(stderr, "Error No Compare Functoin\n");
         return;
     }
+    size_t old_size = heap->buf.size;
     alist_push_safe(&heap->buf, item_size, data);
+    if (heap->buf.size == old_size) heap->buf.size++;
     heapify_child(heap, alist_size(&heap->buf) - 1);
 }
 
@@ -143,7 +148,7 @@ void heap_pop(heap_t *heap) {
     ssize_t  last_pos = alist_size(&heap->buf) - 1;
     anode_t *last = node_at(heap, last_pos);
     anode_swap_data(node_at(heap, 0), last);
-    alist_pop(&heap->buf);
+    heap->buf.size--;
     heapify_parent(heap, 0);
 }
 

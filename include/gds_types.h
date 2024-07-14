@@ -6,7 +6,7 @@ extern "C" {
 #endif // cpp
 
 #include "gallocator.h"
-#include "gnode.h"
+#include "gnodes_types.h"
 #include <stdbool.h>
 #include <stdlib.h>
 

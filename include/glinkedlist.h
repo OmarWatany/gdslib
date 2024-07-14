@@ -6,6 +6,7 @@ extern "C" {
 #endif // cpp
 
 #include "gds_types.h"
+#include "gnode.h"
 #include <stdlib.h>
 
 list_t     *list_create(size_t item_size);

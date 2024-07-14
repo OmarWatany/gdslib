@@ -47,7 +47,7 @@ void functoins_p_list() {
 
 void integers_list() {
     alist_t *integers = alist_create(sizeof(int));
-    alist_push_i(integers, 0x39939800);
+    alist_push_i(integers, 0x45);
     alist_push_i(integers, 4);
     alist_push_i(integers, 5);
 

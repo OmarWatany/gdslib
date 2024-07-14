@@ -9,10 +9,11 @@ extern "C" {
 #include <stdbool.h>
 
 anode_t *anode_create();
-int16_t  anode_init(anode_t *node);
+void     anode_init(anode_t *node);
 gdata_t  anode_data(anode_t *node);
-int16_t  anode_set_data(anode_t *node, gdata_t data);
+void     anode_set_data(anode_t *node, gdata_t data);
 void     anode_destroy(anode_t *node);
+void     anode_copy_data(anode_t *node, size_t allocation_size, size_t item_size, gdata_t from);
 
 lnode_t *lnode_create();
 int16_t  lnode_init(lnode_t *node);

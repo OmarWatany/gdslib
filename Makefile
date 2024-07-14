@@ -34,8 +34,8 @@ ALLOC_HFILES   := $(wildcard $(INC)/*allocator*.h)
 ALLOC_CFILES   := $(wildcard $(SRC_D)/*allocator*.c)
 
 
-C_FILES := $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(GTREE_CFILES) $(NODE_CFILES) $(ALLOC_CFILES) $(RING_CFILES) $(GHEAP_CFILES)
-H_FILES := $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(GTREE_HFILES) $(NODE_HFILES) $(ALLOC_HFILES) $(RING_HFILES)
+C_FILES := $(NODE_CFILES) $(ALLOC_CFILES) $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(GTREE_CFILES) $(RING_CFILES) $(GHEAP_CFILES)
+H_FILES := $(NODE_HFILES) $(ALLOC_HFILES) $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(GTREE_HFILES) $(RING_HFILES)
 
 EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)
 ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
@@ -77,7 +77,9 @@ lib: obj
 
 obj: $(C_FILES) $(H_FILES)
 	$(CC) $(CFLAGS) -c $(C_FILES) 
-	mv *.o ./objects/
+	@[[ -d ./objects ]] || mkdir objects 
+	@mv *.o ./objects/
+	@[[ -d ./bin ]] || mkdir bin 
 
 run : all
 	@valgrind ./bin/ring

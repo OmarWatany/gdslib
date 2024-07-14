@@ -1,33 +1,6 @@
 #include "../include/gnode.h"
 #include <math.h>
 #include <string.h>
-
-anode_t *anode_create() {
-    anode_t *new_node = (anode_t *)malloc(sizeof(anode_t));
-    anode_init(new_node);
-    return new_node;
-}
-
-int16_t anode_init(anode_t *node) {
-    node->data = 0;
-    return EXIT_SUCCESS;
-}
-
-gdata_t anode_data(anode_t *node) {
-    if (!node) return NULL;
-    return node->data;
-}
-
-int16_t anode_set_data(anode_t *node, gdata_t data) {
-    if (!node) return EXIT_FAILURE;
-    node->data = data;
-    return EXIT_SUCCESS;
-};
-
-void anode_destroy(anode_t *node) {
-    free(node->data);
-}
-
 lnode_t *lnode_create() {
     lnode_t *new_node = (lnode_t *)malloc(sizeof(lnode_t));
     lnode_init(new_node);
