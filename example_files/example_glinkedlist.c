@@ -33,6 +33,7 @@ static inline void dump_int_list(list_t *x) {
 int main() {
 
     list_t *fixed_strings = list_create(30);
+    list_set_allocator(fixed_strings, str_allocator);
     list_t *integers = list_create(sizeof(int));
     list_t *dyn_strings = list_create(3);
     list_set_allocator(dyn_strings, str_allocator);

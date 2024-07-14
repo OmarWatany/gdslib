@@ -18,6 +18,7 @@ int16_t astack_pop(astack_t *stack);
 size_t  astack_size(astack_t *stack);
 void   *astack_peak(astack_t *stack);
 bool    astack_empty(astack_t *stack);
+void    astack_set_allocator(astack_t *stack, allocator_fun_t allocator);
 
 void astack_destroy(astack_t *stack);
 

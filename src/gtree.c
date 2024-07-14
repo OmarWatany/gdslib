@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+void for_each_h(tnode_t *node, size_t lvl, for_each_fn for_each_f) {
+    for_each_f(&(tree_for_data){node, lvl});
+}
+
 static void bf_order(ktree_t *tree, for_each_fn for_each) {
     queue_t lvlq = {0};
     queue_init(&lvlq, sizeof(tnode_t *));
@@ -12,7 +16,7 @@ static void bf_order(ktree_t *tree, for_each_fn for_each) {
     if (front) enqueue(&lvlq, &front);
     while (!queue_empty(&lvlq)) {
         front = *(tnode_t **)queue_front(&lvlq);
-        for_each(front, 0);
+        for_each_h(front, 0, for_each);
         for (size_t k = 0; k < tree->k; k++) {
             tnode_t *child = tnode_child(front, k);
             if (child) enqueue(&lvlq, &child);
@@ -26,7 +30,7 @@ static void in_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each) 
     if (node == NULL) return;
     for (size_t j = 0; j < k; j++) {
         in_order(tnode_child(node, j), k, lvl + 1, for_each);
-        if (j == (k - 1) / 2) for_each(node, lvl);
+        if (j == (k - 1) / 2) for_each_h(node, lvl, for_each);
     }
 }
 
@@ -34,12 +38,12 @@ static void post_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each
     if (node == NULL) return;
     for (size_t j = 0; j < k; j++)
         post_order(tnode_child(node, j), k, lvl + 1, for_each);
-    for_each(node, lvl);
+    for_each_h(node, lvl, for_each);
 }
 
 static void pre_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each) {
     if (node == NULL) return;
-    for_each(node, lvl);
+    for_each_h(node, lvl, for_each);
     for (size_t j = 0; j < k; j++)
         pre_order(tnode_child(node, j), k, lvl + 1, for_each);
 }
@@ -75,10 +79,10 @@ void kt_set_allocator(ktree_t *tree, allocator_fun_t allocator_fun) {
     tree->allocator_fun = allocator_fun;
 }
 
-static void kt_node_destroy(gdata_t node, size_t lvl) {
-    (void)lvl;
-    tnode_destroy(node);
-    free(node);
+static void kt_node_destroy(gdata_t for_data) {
+    tree_for_data d = *(tree_for_data *)for_data;
+    tnode_destroy(d.node);
+    free(d.node);
 }
 
 void kt_destroy(ktree_t *tree) {

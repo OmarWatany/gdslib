@@ -11,7 +11,7 @@ extern "C" {
 #include <stdlib.h>
 
 typedef void *gdata_t;
-typedef void (*for_each_fn)(gdata_t node, size_t level);
+typedef void (*for_each_fn)(gdata_t node);
 typedef int (*cmp_fun)(gdata_t data1, gdata_t data2); // data1 > data2 = 1
 
 typedef enum {

@@ -65,21 +65,22 @@ void points_list() {
 
     alist_t *points = alist_create(sizeof(point));
     alist_t *p_refs = alist_create(sizeof(point *));
+    printf("sizeof Point %zu \n", sizeof(point));
 
-    point  p = create_point(8, 4);
     point *a = malloc(sizeof(point));
+    point *b = NULL;
     a->x = 9;
     a->y = 5;
-    point *b = NULL;
 
-    // save point 'p'
-    alist_push(points, &p);
-    // save the point refrenced by a
+    // copys points data
+    alist_push(points, &(point){8, 4});
+    // copys the point refrenced by a
     alist_push(points, a);
-    // save the 'a' pointer
+    // copys 'a' address
+    alist_push_safe(points, sizeof(point *), &a);
     alist_push(p_refs, &a);
 
-    p = *alist_pt_at(points, 0);
+    point p = *alist_pt_at(points, 0);
     printf("%ld - %ld\n", p.x, p.y);
 
     p = *alist_pt_at(points, 1);
@@ -149,8 +150,10 @@ void fixed_strings() {
     char *fs = "fixed string";
 
     alist_reserve(strings, 5);
-    alist_push_safe(strings, strlen("hello"), "hello");
-    alist_push_safe(strings, strlen("world"), "world");
+    // causes buffer overflow
+    // alist_push(strings, "buffer overflow");
+    alist_push_safe(strings, strlen("hello") + 1, "hello");
+    alist_push_safe(strings, strlen("world") + 1, "world");
     alist_push_safe(strings, strlen(fs), fs);
     alist_push_safe(strings, strlen(ds), ds);
 

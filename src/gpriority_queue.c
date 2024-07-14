@@ -41,21 +41,17 @@ static gdata_t pq_alloc(pqueue_t *q, size_t item_size, gdata_t data) {
                                   : default_safe_allocator(q->item_size, item_size, data);
 }
 
-static pq_node pq_node_create(long int priority, gdata_t data) {
-    pq_node temp = {0};
-    temp.priority = priority;
-    temp.data = data;
-    return temp;
-}
-
 // TODO: return error
 int16_t pq_enqueue_safe(pqueue_t *pqueue, size_t item_size, long int priority, gdata_t data) {
     if (!pqueue->h.cmp_fun) {
         fprintf(stderr, "ERROR : No Compare Function \n");
         return EXIT_FAILURE;
     }
-    pq_node new_pq_node = pq_node_create(priority, pq_alloc(pqueue, item_size, data));
-    heap_add_safe(&pqueue->h, sizeof(pq_node), &new_pq_node);
+    heap_add_safe(&pqueue->h, sizeof(pq_node),
+                  &(pq_node){
+                      priority,
+                      pq_alloc(pqueue, item_size, data),
+                  });
     return EXIT_SUCCESS;
 }
 
@@ -69,8 +65,7 @@ int16_t pq_dequeue(pqueue_t *pqueue) {
     return EXIT_SUCCESS;
 }
 
-static void heap_node_destroy(gdata_t node, size_t lvl) {
-    (void)lvl;
+static void heap_node_destroy(gdata_t node) {
     pq_node *temp = (pq_node *)anode_data((anode_t *)node);
     free(temp->data);
 }

@@ -38,6 +38,10 @@ bool astack_empty(astack_t *astack) {
     return alist_empty(&astack->buf);
 }
 
+void astack_set_allocator(astack_t *stack, allocator_fun_t allocator) {
+    alist_set_allocator(&stack->buf, allocator);
+}
+
 void astack_destroy(astack_t *astack) {
     alist_destroy(&astack->buf);
 }

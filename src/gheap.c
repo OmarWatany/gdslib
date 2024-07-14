@@ -153,5 +153,5 @@ void heap_destroy(heap_t *heap) {
 
 void heap_for_each(heap_t *heap, for_each_fn function) {
     for (size_t j = 0; j < alist_size(&heap->buf); j++)
-        function((anode_t *)&heap->buf.buf[j], 0);
+        function((anode_t *)&heap->buf.buf[j]);
 }

@@ -2,8 +2,7 @@
 #include <stdio.h>
 
 // TODO : pq_node for_each system
-static void iprint(gdata_t node, size_t lvl) {
-    (void)lvl;
+static void iprint(gdata_t node) {
     if (!node) return;
     int  value = *(int *)((pq_node *)tnode_data(node))->data;
     long priority = ((pq_node *)tnode_data(node))->priority;

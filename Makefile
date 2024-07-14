@@ -7,7 +7,7 @@ RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib
 
 LIB := $(RAY_LIB) -lm 
 
-CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC -Wno-unused-function 
+CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC -Wno-unused-function $(TEMP_CFLAGS)
 # CFLAGS= -g -I$(INC) -fPIC 
 
 GQUEUE_HFILES := $(wildcard $(INC)/*queue*.h)

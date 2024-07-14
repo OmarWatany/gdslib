@@ -8,6 +8,13 @@ extern "C" {
 #include "gds_types.h"
 #include <stdbool.h>
 
+typedef struct {
+    tnode_t *node;
+    size_t   lvl;
+} tree_for_data;
+
+void for_each_h(tnode_t *node, size_t lvl, for_each_fn for_each_f);
+
 void kt_init(ktree_t *tree, size_t item_size, size_t k);
 void kt_set_allocator(ktree_t *tree, allocator_fun_t allocator_fun);
 void kt_add_safe(ktree_t *tree, gdata_t data); // TODO: implement
