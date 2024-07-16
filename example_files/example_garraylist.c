@@ -26,10 +26,8 @@ void functoins_p_list() {
     point (**a)(int, int) = malloc(sizeof(point(*)(int, int)));
     *a = create_point;
 
-    alist_t *funws = alist_create(sizeof(fnw));
-
-    alist_push(funws, a);
-    alist_push(funws, a);
+    alist_t  funptrs = alist_build_addr(sizeof(fnw), 2, (gdata_t[]){a, a});
+    alist_t *funws = &funptrs;
 
     printf("__ funcs list __\n");
     printf("size: %ld - capacity: %ld \n", alist_size(funws), alist_capacity(funws));
@@ -42,21 +40,23 @@ void functoins_p_list() {
 
     alist_destroy(funws);
     free(a);
-    free(funws);
 }
 
 void integers_list() {
-    alist_t *integers = alist_create(sizeof(int));
-    alist_push_i(integers, 0x45);
-    alist_push_i(integers, 4);
-    alist_push_i(integers, 5);
+    printf("integers_list \n");
+    alist_t ntgrs = alist_build_num(sizeof(int), 3, (gnum_t[4]){2, 3, 4, 5});
+    // alist_init(&ntgrs, sizeof(int));
+
+    alist_t *integers = &ntgrs;
+    // alist_push_i(integers, 0x45);
+    // alist_push_i(integers, 4);
+    // alist_push_i(integers, 5);
 
     for (size_t i = 0; i < alist_size(integers); i++)
         printf("%d - ", *(int *)alist_at(integers, i));
     printf("\n");
 
     alist_destroy(integers);
-    free(integers);
 }
 
 void points_list() {
@@ -102,18 +102,20 @@ void points_list() {
 void dyn_strings() {
     NEW_LINE;
     printf("__ dynamic size strings list __\n");
-    alist_t *dyn_strings_sizes = alist_create(4);
-    alist_set_allocator(dyn_strings_sizes, str_allocator);
+
+    alist_t  dstrings = alist_build_str(4, (char *[]){
+                                              "hello",
+                                              "world",
+                                              "hello",
+                                              "world",
+                                          });
+    alist_t *dyn_strings_sizes = &dstrings;
 
     printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes),
            alist_capacity(dyn_strings_sizes));
-    alist_reserve(dyn_strings_sizes, 5);
+    alist_reserve(dyn_strings_sizes, 10);
     printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes),
            alist_capacity(dyn_strings_sizes));
-    alist_push(dyn_strings_sizes, "hello");
-    alist_push(dyn_strings_sizes, "world");
-    alist_push(dyn_strings_sizes, "hello");
-    alist_push(dyn_strings_sizes, "world");
 
     char *fs = "f string";
     char *ds = strdup("d string");
@@ -136,7 +138,6 @@ void dyn_strings() {
     printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes),
            alist_capacity(dyn_strings_sizes));
     alist_destroy(dyn_strings_sizes);
-    free(dyn_strings_sizes);
     free(ds);
 }
 
@@ -144,14 +145,17 @@ void fixed_strings() {
     NEW_LINE;
     printf("__ fixed size strings list __\n");
     // each list element has 30 bytes
-    alist_t *strings = alist_create(30);
+    alist_t strs = {0};
+    alist_init(&strs, 30);
+
+    alist_t *strings = &strs;
     printf("size %ld - capacity %ld \n", alist_size(strings), alist_capacity(strings));
     char *ds = strdup("dynamic string");
     char *fs = "fixed string";
-
     alist_reserve(strings, 5);
-    // causes buffer overflow
-    // alist_push(strings, "buffer overflow");
+
+    // alist_push(strings, "buffer overflow"); //-> causes buffer overflow (copys 30 bytes not
+    // string length).
     alist_push_safe(strings, strlen("hello") + 1, "hello");
     alist_push_safe(strings, strlen("world") + 1, "world");
     alist_push_safe(strings, strlen(fs), fs);
@@ -168,7 +172,6 @@ void fixed_strings() {
 
     printf("size %ld - capacity %ld \n", alist_size(strings), alist_capacity(strings));
     alist_destroy(strings);
-    free(strings);
     free(ds);
 }
 

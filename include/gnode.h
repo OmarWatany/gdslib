@@ -8,6 +8,8 @@ extern "C" {
 #include "gnodes_types.h"
 #include <stdbool.h>
 
+gdata_t gnode_data(gdata_t node);
+
 anode_t *anode_create();
 void     anode_init(anode_t *node);
 gdata_t  anode_data(anode_t *node);

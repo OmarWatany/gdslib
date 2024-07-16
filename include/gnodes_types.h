@@ -12,7 +12,9 @@ typedef void *gdata_t;
 
 typedef struct {
     gdata_t data;
-} anode_t;
+} gnode_t;
+
+typedef gnode_t anode_t;
 
 typedef struct {
     gdata_t   data;

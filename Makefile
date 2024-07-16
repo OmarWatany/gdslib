@@ -2,8 +2,8 @@ SRC_D  := ./src
 OBJ_D  := ./objects
 EXAMPLE_D := ./example_files
 INC    := ./include
-# RAY_LIB := -L./lib -lgdslib
-RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib 
+RAY_LIB := -L./lib -lgdslib
+# RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib 
 
 LIB := $(RAY_LIB) -lm 
 
@@ -42,7 +42,11 @@ ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
 
 CC := gcc
 
+
 all:  stack ring queue linkedlist alist astack gtree pqueue $(EXAMPLE_D)
+
+test: 
+	make TEMP_CFLAGS="-fsanitize=address -g3" 
 
 stack: lib
 	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gstack.c $(LIB) -o ./bin/stack 
@@ -73,7 +77,7 @@ gtree: lib
 
 lib: obj 
 	ar rcs ./lib/libgdslib.a $(wildcard ./objects/*.o)
-	$(CC) -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
+	# $(CC) -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
 
 obj: $(C_FILES) $(H_FILES)
 	$(CC) $(CFLAGS) -c $(C_FILES) 

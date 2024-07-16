@@ -1,6 +1,11 @@
 #include "../include/gnode.h"
 #include <math.h>
 #include <string.h>
+
+gdata_t gnode_data(gdata_t node) {
+    return ((gnode_t *)node)->data;
+}
+
 lnode_t *lnode_create() {
     lnode_t *new_node = (lnode_t *)malloc(sizeof(lnode_t));
     lnode_init(new_node);

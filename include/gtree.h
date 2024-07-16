@@ -1,6 +1,7 @@
 #ifndef GTREE_T
 #define GTREE_T
 
+#include "gnodes_types.h"
 #ifdef __cplusplus
 extern "C" {
 #endif // cpp
@@ -10,11 +11,9 @@ extern "C" {
 #include <stdbool.h>
 
 typedef struct {
-    tnode_t *node;
-    size_t   lvl;
+    gdata_t node;
+    size_t  lvl;
 } tree_for_data;
-
-void for_each_h(tnode_t *node, size_t lvl, for_each_fn for_each_f);
 
 void kt_init(ktree_t *tree, size_t item_size, size_t k);
 void kt_set_allocator(ktree_t *tree, allocator_fun_t allocator_fun);
@@ -29,10 +28,10 @@ void    heap_set_cmp_fun(heap_t *heap, cmp_fun cmp);
 void    heap_add_safe(heap_t *heap, size_t item_size, gdata_t data);
 void    heap_add(heap_t *heap, gdata_t data);
 void    heap_destroy(heap_t *heap);
+void    heap_for_each_order(heap_t *heap, TRAVERSE_ORDER order, for_each_fn function);
 void    heap_for_each(heap_t *heap, for_each_fn function);
 void    heap_pop(heap_t *heap);
 gdata_t heap_peak(heap_t *heap);
-void    build_heap_h(heap_t *heap, size_t pos);
 bool    valid_heap(heap_t *heap, size_t pos);
 
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl);

@@ -1,5 +1,6 @@
 #include "../include/garraylist.h"
 #include "../include/gtree.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -63,45 +64,65 @@ bool valid_heap(heap_t *heap, size_t pos) {
 }
 
 void heapify_child(heap_t *heap, size_t child_pos) {
-    size_t   p_pos = parent_pos(heap, child_pos);
-    anode_t *parent = node_at(heap, p_pos);
+    size_t   parent_p = parent_pos(heap, child_pos);
+    anode_t *parent = node_at(heap, parent_p);
     anode_t *child = node_at(heap, child_pos);
     if (!child || !parent || check_heap_prop(heap, parent, child)) return;
     anode_swap_data(child, parent);
-    heapify_child(heap, p_pos);
+    heapify_child(heap, parent_p);
 }
 
 void heapify_parent(heap_t *heap, size_t parent_p) {
     anode_t *parent = node_at(heap, parent_p);
     if (!parent) return;
-    for (size_t k = 0; k < heap->k; k++) {
-        size_t   child_p = child_pos(heap, k, parent_p);
+    size_t n = 0;
+    size_t largest_pos = parent_p;
+    size_t child_p = child_pos(heap, n, largest_pos);
+    if (!node_at(heap, child_p)) return;
+    for (size_t n = 1; n <= heap->k; n++) {
         anode_t *child = node_at(heap, child_p);
-        if (!child || check_heap_prop(heap, parent, child)) continue;
-        anode_swap_data(child, parent);
-        heapify_parent(heap, child_p);
+        if (!child) continue;
+        if (!check_heap_prop(heap, node_at(heap, largest_pos), child)) largest_pos = child_p;
+        child_p = child_pos(heap, n, largest_pos);
     }
+    if (largest_pos == parent_p) return;
+    anode_swap_data(node_at(heap, largest_pos), parent);
+    heapify_parent(heap, largest_pos);
 }
 
-void build_heap_h(heap_t *heap, size_t pos) {
-    anode_t *cur = node_at(heap, pos);
-    if (!cur) return;
+static void for_each_h(anode_t *node, size_t lvl, for_each_fn for_each_f) {
+    for_each_f(&(tree_for_data){node, lvl});
+}
 
+static void in_order(heap_t *heap, size_t pos, size_t lvl, for_each_fn for_each) {
+    if (!heap || pos >= heap->buf.size) return;
+    size_t child_p = 0;
     for (size_t n = 0; n < heap->k; n++) {
-        ssize_t  child_p = child_pos(heap, n, pos);
-        anode_t *child = node_at(heap, child_p);
-        if (!child) return;
-        if (!check_heap_prop(heap, cur, child)) {
-            heapify_child(heap, child_p);
-        }
-        build_heap_h(heap, child_p);
+        child_p = child_pos(heap, n, pos);
+        in_order(heap, child_p, lvl + 1, for_each);
+        if (n == (heap->k - 1) / 2) for_each_h(node_at(heap, pos), lvl, for_each);
     }
 }
 
-// TODO: takes array elements and return valid heap
-void build_heap(heap_t *heap) {
-    build_heap_h(heap, 0);
+static void post_order(heap_t *heap, size_t pos, size_t lvl, for_each_fn for_each) {
+    if (!heap) return;
+    for (size_t j = 0; j < heap->k; j++)
+        post_order(heap, child_pos(heap, j, pos), lvl + 1, for_each);
+    for_each_h(node_at(heap, pos), lvl, for_each);
 }
+
+static void pre_order(heap_t *heap, size_t pos, size_t lvl, for_each_fn for_each) {
+    if (!heap) return;
+    for_each_h(node_at(heap, pos), lvl, for_each);
+    for (size_t j = 0; j < heap->k; j++)
+        pre_order(heap, child_pos(heap, j, pos), lvl + 1, for_each);
+}
+
+static void (*order_functions[])(heap_t *heap, size_t k, size_t lvl, for_each_fn) = {
+    [PRE_ORDER] = pre_order,
+    [IN_ORDER] = in_order,
+    [POST_ORDER] = post_order,
+};
 
 gdata_t heap_peak(heap_t *heap) {
     return alist_at(&heap->buf, 0);
@@ -156,7 +177,17 @@ void heap_destroy(heap_t *heap) {
     alist_destroy(&heap->buf);
 }
 
+void heap_for_each_order(heap_t *heap, TRAVERSE_ORDER order, for_each_fn function) {
+    switch (order) {
+    case BREADTH_FIRST_ORDER:
+        for (size_t j = 0; j < alist_size(&heap->buf); j++)
+            for_each_h(&heap->buf.buf[j], 0, function);
+        break;
+    default:
+        order_functions[order](heap, 0, 0, function);
+    }
+}
+
 void heap_for_each(heap_t *heap, for_each_fn function) {
-    for (size_t j = 0; j < alist_size(&heap->buf); j++)
-        function((anode_t *)&heap->buf.buf[j]);
+    heap_for_each_order(heap, BREADTH_FIRST_ORDER, function);
 }

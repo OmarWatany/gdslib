@@ -20,6 +20,31 @@ int16_t alist_init(alist_t *alist, size_t item_size) {
     return EXIT_SUCCESS;
 }
 
+alist_t alist_build_addr(size_t item_size, size_t arr_size, gdata_t arr[arr_size]) {
+    alist_t alist = {0};
+    alist_init(&alist, item_size);
+    for (size_t j = 0; j < arr_size; j++)
+        alist_push(&alist, arr[j]);
+    return alist;
+}
+
+alist_t alist_build_num(size_t item_size, size_t arr_size, gnum_t arr[arr_size]) {
+    alist_t alist = {0};
+    alist_init(&alist, item_size);
+    for (size_t j = 0; j < arr_size; j++)
+        alist_push(&alist, &arr[j]);
+    return alist;
+}
+
+alist_t alist_build_str(size_t arr_size, char *arr[arr_size]) {
+    alist_t alist = {0};
+    alist_init(&alist, 0);
+    alist_set_allocator(&alist, str_allocator);
+    for (size_t j = 0; j < arr_size; j++)
+        alist_push(&alist, arr[j]);
+    return alist;
+}
+
 int16_t alist_push(alist_t *alist, gdata_t data) {
     if (!alist) return EXIT_FAILURE;
     return alist_set_at(alist, alist->size, data);

@@ -18,19 +18,18 @@ static void inc(gdata_t for_data) {
 static void iprint(gdata_t for_data) {
     if (!for_data) return;
     tree_for_data *d = (tree_for_data *)for_data;
-    printf("%d - ", *(int *)tnode_data(d->node));
+    printf("%d - ", *(int *)gnode_data(d->node));
 }
 
-static void heap_iprint(gdata_t anode) {
-    if (!anode) return;
-    printf("%d - ", *(int *)anode_data(anode));
+static void heap_iprint(gdata_t for_data) {
+    iprint(for_data);
 }
 
 static void iprintLvl(gdata_t for_data) {
     if (!for_data) return;
     tree_for_data d = *(tree_for_data *)for_data;
     if (!d.node) return;
-    printf("%d - lvl %ld\n", *(int *)tnode_data(d.node), d.lvl);
+    printf("%d - lvl %ld\n", *(int *)gnode_data(d.node), d.lvl);
 }
 
 static void iprintTree(gdata_t for_data) {
@@ -38,7 +37,7 @@ static void iprintTree(gdata_t for_data) {
     printf(" ");
     for (size_t i = 0; i < d.lvl; i++)
         printf("    ");
-    printf("%d\n", *(int *)tnode_data(d.node));
+    printf("%d\n", *(int *)gnode_data(d.node));
 }
 
 void random_output() {
@@ -127,10 +126,13 @@ void test_kheap(size_t k) {
     printf("\n");
     // heap_for_each(&hp, iprint);
     // printf("\n");
+    heap_for_each_order(&hp, IN_ORDER, iprintTree);
+    printf("---------------\n");
 
     heap_pop(&hp);
     heap_for_each(&hp, heap_iprint);
     printf("\n");
+    printf("---------------\n");
 
     int i = 0x45;
     heap_add(&hp, &i);
@@ -142,15 +144,17 @@ void test_kheap(size_t k) {
         printf("UNVALID HEAP\n");
     heap_for_each(&hp, heap_iprint);
     printf("\n");
-    // heap_for_each(&hp, BREADTH_FIRST_ORDER, iprintLvl);
+
+    heap_for_each_order(&hp, IN_ORDER, iprintTree);
+    printf("\n");
 
     heap_destroy(&hp);
-    printf("---------------");
+    printf("---------------\n");
     printf("\n");
 }
 
 int main() {
-    random_output();
+    // random_output();
     test_kheap(2);
     // test_kheap(4);
 

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void for_each_h(tnode_t *node, size_t lvl, for_each_fn for_each_f) {
+static void for_each_h(tnode_t *node, size_t lvl, for_each_fn for_each_f) {
     for_each_f(&(tree_for_data){node, lvl});
 }
 
@@ -28,30 +28,30 @@ static void bf_order(ktree_t *tree, for_each_fn for_each) {
 
 static void in_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each) {
     if (node == NULL) return;
-    for (size_t j = 0; j < k; j++) {
-        in_order(tnode_child(node, j), k, lvl + 1, for_each);
-        if (j == (k - 1) / 2) for_each_h(node, lvl, for_each);
+    for (size_t n = 0; n < k; n++) {
+        in_order(tnode_child(node, n), k, lvl + 1, for_each);
+        if (n == (k - 1) / 2) for_each_h(node, lvl, for_each);
     }
 }
 
 static void post_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each) {
     if (node == NULL) return;
-    for (size_t j = 0; j < k; j++)
-        post_order(tnode_child(node, j), k, lvl + 1, for_each);
+    for (size_t n = 0; n < k; n++)
+        post_order(tnode_child(node, n), k, lvl + 1, for_each);
     for_each_h(node, lvl, for_each);
 }
 
 static void pre_order(tnode_t *node, size_t k, size_t lvl, for_each_fn for_each) {
     if (node == NULL) return;
     for_each_h(node, lvl, for_each);
-    for (size_t j = 0; j < k; j++)
-        pre_order(tnode_child(node, j), k, lvl + 1, for_each);
+    for (size_t n = 0; n < k; n++)
+        pre_order(tnode_child(node, n), k, lvl + 1, for_each);
 }
 
-static void (*order_functions[])(tnode_t *, size_t k, size_t, for_each_fn) = {
-    pre_order,
-    in_order,
-    post_order,
+static void (*order_functions[])(tnode_t *, size_t k, size_t lvl, for_each_fn) = {
+    [PRE_ORDER] = pre_order,
+    [IN_ORDER] = in_order,
+    [POST_ORDER] = post_order,
 };
 
 static gdata_t kt_alloc(ktree_t *tree, size_t item_size, gdata_t data) {
