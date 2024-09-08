@@ -1,95 +1,54 @@
+# Directories
 SRC_D  := ./src
 OBJ_D  := ./objects
 EXAMPLE_D := ./example_files
 INC    := ./include
-RAY_LIB := -L./lib -lgdslib
-# RAY_LIB := -L./lib -lgdslib -Wl,-rpath=./lib 
+BIN_D  := ./bin
+LIB_D  := ./lib
 
-LIB := $(RAY_LIB) -lm 
-
-CFLAGS=-Wall -Wextra -g -I$(INC) -fPIC -Wno-unused-function $(TEMP_CFLAGS)
-# CFLAGS= -g -I$(INC) -fPIC 
-
-GQUEUE_HFILES := $(wildcard $(INC)/*queue*.h)
-GQUEUE_CFILES := $(wildcard $(SRC_D)/*queue*.c)
-
-GHEAP_CFILES := $(wildcard $(SRC_D)/*heap*.c)
-
-LLIST_HFILES  := $(wildcard $(INC)/*list*.h) 
-LLIST_CFILES  := $(wildcard $(SRC_D)/*list*.c)
-
-GSTACK_HFILES := $(wildcard $(INC)/*stack*.h)
-GSTACK_CFILES := $(wildcard $(SRC_D)/*stack*.c)
-
-RING_HFILES   := $(wildcard $(INC)/*ring*.h)
-RING_CFILES   := $(wildcard $(SRC_D)/*ring*.c)
-
-GTREE_HFILES := $(wildcard $(INC)/*gtree*.h)
-GTREE_CFILES := $(wildcard $(SRC_D)/*gtree*.c)
-
-NODE_HFILES   := $(wildcard $(INC)/*node*.h)
-NODE_CFILES   := $(wildcard $(SRC_D)/*node*.c)
-
-ALLOC_HFILES   := $(wildcard $(INC)/*allocator*.h)
-ALLOC_CFILES   := $(wildcard $(SRC_D)/*allocator*.c)
-
-
-C_FILES := $(NODE_CFILES) $(ALLOC_CFILES) $(GQUEUE_CFILES) $(GSTACK_CFILES) $(LLIST_CFILES) $(GTREE_CFILES) $(RING_CFILES) $(GHEAP_CFILES)
-H_FILES := $(NODE_HFILES) $(ALLOC_HFILES) $(GQUEUE_HFILES) $(GSTACK_HFILES) $(LLIST_HFILES) $(GTREE_HFILES) $(RING_HFILES)
-
-EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)
-ALL := $(H_FILES) $(C_FILES) $(EXAMPLE_FILES)
-
+# Compiler and flags
 CC := gcc
+CFLAGS := -Wall -Wextra -g -I$(INC) -fPIC -Wno-unused-function $(TEMP_CFLAGS)
+LIB := -L$(LIB_D) -lgdslib -lm
 
+# Files
+C_FILES := $(wildcard $(SRC_D)/*.c)
+H_FILES := $(wildcard $(INC)/*.h)
+EXAMPLE_FILES := $(wildcard $(EXAMPLE_D)/*.c)
 
-all:  stack ring queue linkedlist alist astack gtree pqueue $(EXAMPLE_D)
+# Binaries for examples
+BINARIES := $(BIN_D)/stack $(BIN_D)/ringbuffer $(BIN_D)/queue $(BIN_D)/pqueue $(BIN_D)/linkedlist $(BIN_D)/arraylist $(BIN_D)/arraystack $(BIN_D)/tree
 
-test: 
-	make TEMP_CFLAGS="-fsanitize=address -g3" 
+# Phony targets
+.PHONY: all clean test run
 
-stack: lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gstack.c $(LIB) -o ./bin/stack 
+# Default target
+all: lib $(BINARIES)
 
-ring : lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gringbuffer.c $(LIB) -o ./bin/ring 
+# Build example binaries using pattern rules
+$(BIN_D)/%: $(EXAMPLE_D)/example_g%.c lib
+	$(CC) $(CFLAGS) $< $(LIB) -o $@
 
-queue: lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gqueue.c $(LIB) -o ./bin/queue
+# Test with sanitizers enabled
+test:
+	$(MAKE) TEMP_CFLAGS="-fsanitize=address -g3" all
 
-pqueue: lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gpqueue.c $(LIB) -o ./bin/pqueue
+# Compile and archive the static library
+lib: obj
+	ar rcs $(LIB_D)/libgdslib.a $(wildcard $(OBJ_D)/*.o)
 
-linkedlist: lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_glinkedlist.c $(LIB) -o ./bin/list
-
-alist: lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_garraylist.c $(LIB) -o ./bin/alist
-
-astack: lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_garraystack.c $(LIB) -o ./bin/astack
-
-gnode: lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gnode.c $(LIB) -o ./bin/node
-
-gtree: lib
-	$(CC) $(CFLAGS) $(EXAMPLE_D)/example_gtree.c $(LIB) -o ./bin/tree
-
-lib: obj 
-	ar rcs ./lib/libgdslib.a $(wildcard ./objects/*.o)
-	# $(CC) -shared $(OBJ_D)/*.o -o ./lib/libgdslib.so
-
+# Compile object files
 obj: $(C_FILES) $(H_FILES)
-	$(CC) $(CFLAGS) -c $(C_FILES) 
-	@[[ -d ./objects ]] || mkdir objects 
-	@mv *.o ./objects/
-	@[[ -d ./bin ]] || mkdir bin 
+	$(CC) $(CFLAGS) -c $(C_FILES)
+	@echo "\n"
+	@mkdir -p $(OBJ_D) $(BIN_D) $(LIB_D)
+	@mv *.o $(OBJ_D)/
 
-run : all
+# Clean the build
+clean:
+	rm -rf $(OBJ_D)/* $(LIB_D)/* $(BIN_D)/*
+
+# Run a specific example with Valgrind
+run: all
 	@valgrind ./bin/ring
-
-clean :
-	rm ./objects/*
-	rm ./lib/*
-	rm ./bin/*
 
