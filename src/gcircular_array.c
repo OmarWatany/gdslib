@@ -1,4 +1,4 @@
-#include "../include/gcircular_array.h"
+#include "gcircular_array.h"
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>

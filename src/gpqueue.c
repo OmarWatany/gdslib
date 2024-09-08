@@ -1,5 +1,5 @@
-#include "../include/gpriority_queue.h"
-#include "../include/gtree.h"
+#include "gpriority_queue.h"
+#include "gtree.h"
 #include <stdio.h>
 #include <string.h>
 

@@ -1,4 +1,4 @@
-#include "../include/gringbuffer.h"
+#include "gringbuffer.h"
 
 #define ringbuffer_commit_write(B, S) ((B)->write_idx = ((B)->write_idx + (S)) % (B)->size)
 #define ringbuffer_commit_read(B, S)  ((B)->read_idx = ((B)->read_idx + (S)) % (B)->size)

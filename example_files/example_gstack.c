@@ -1,4 +1,4 @@
-#include "../include/gstack.h"
+#include "gstack.h"
 #include <stdio.h>
 
 int16_t stack_push_i(stack_t *stack, int value);

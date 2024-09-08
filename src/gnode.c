@@ -1,4 +1,4 @@
-#include "../include/gnode.h"
+#include "gnode.h"
 #include <math.h>
 #include <string.h>
 

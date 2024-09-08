@@ -1,5 +1,5 @@
-#include "../include/gstack.h"
-#include "../include/glinkedlist.h"
+#include "gstack.h"
+#include "glinkedlist.h"
 #include "string.h"
 #include <stdlib.h>
 

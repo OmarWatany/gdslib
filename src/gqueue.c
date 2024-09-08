@@ -1,5 +1,5 @@
-#include "../include/gqueue.h"
-#include "../include/glinkedlist.h"
+#include "gqueue.h"
+#include "glinkedlist.h"
 #include <stdio.h>
 #include <stdlib.h>
 

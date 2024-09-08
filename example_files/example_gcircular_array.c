@@ -1,4 +1,4 @@
-#include "../include/gcircular_array.h"
+#include "gcircular_array.h"
 #include <stdio.h>
 
 static int16_t irng_write(circular_array_t *carray, int i) {

@@ -1,4 +1,4 @@
-#include "../include/garraylist.h"
+#include "garraylist.h"
 #include <stdio.h>
 #include <string.h>
 #define NEW_LINE printf("\n");

@@ -1,4 +1,4 @@
-#include "../include/gds_types.h"
+#include "gds_types.h"
 #include <string.h>
 
 void itr_init(gitr_t *it, gdata_t ds) {

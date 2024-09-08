@@ -1,5 +1,5 @@
-#include "../include/garraylist.h"
-#include "../include/gtree.h"
+#include "garraylist.h"
+#include "gtree.h"
 
 #include <stdio.h>
 #include <string.h>

@@ -1,4 +1,4 @@
-#include "../include/gqueue.h"
+#include "gqueue.h"
 #include <stdio.h>
 #include <string.h>
 

@@ -1,4 +1,4 @@
-#include "../include/glinkedlist.h"
+#include "glinkedlist.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>

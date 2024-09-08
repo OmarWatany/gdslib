@@ -1,5 +1,5 @@
-#include "../include/garraystack.h"
-#include "../include/garraylist.h"
+#include "garraystack.h"
+#include "garraylist.h"
 #include <stdint.h>
 #include <stdlib.h>
 

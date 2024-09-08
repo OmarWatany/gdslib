@@ -1,4 +1,4 @@
-#include "../include/garraystack.h"
+#include "garraystack.h"
 #include <stdio.h>
 
 int main() {

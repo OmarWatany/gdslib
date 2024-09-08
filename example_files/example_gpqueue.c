@@ -1,4 +1,4 @@
-#include "../include/gpriority_queue.h"
+#include "gpriority_queue.h"
 #include <stdio.h>
 
 // TODO : pq_node for_each system

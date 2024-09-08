@@ -1,4 +1,4 @@
-#include "../include/gallocator.h"
+#include "gallocator.h"
 #include <string.h>
 
 gdata_t default_allocator(size_t item_size, gdata_t data) {

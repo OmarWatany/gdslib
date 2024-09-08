@@ -1,6 +1,8 @@
 # Minimum CMake version required
 cmake_minimum_required(VERSION 3.10)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Project name and version
 project(GDSLib VERSION 1.0)
 

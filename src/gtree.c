@@ -1,5 +1,5 @@
-#include "../include/gtree.h"
-#include "../include/gqueue.h"
+#include "gtree.h"
+#include "gqueue.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

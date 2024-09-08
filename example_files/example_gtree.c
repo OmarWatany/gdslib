@@ -1,4 +1,4 @@
-#include "../include/gtree.h"
+#include "gtree.h"
 #include <math.h>
 #include <stdio.h>
 #include <time.h>

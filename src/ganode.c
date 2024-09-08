@@ -1,4 +1,4 @@
-#include "../include/gnode.h"
+#include "gnode.h"
 #include <string.h>
 
 anode_t *anode_create() {
