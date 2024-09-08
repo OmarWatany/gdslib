@@ -126,10 +126,10 @@ void dyn_strings() {
         char *s = alist_at(dyn_strings_sizes, i);
         if (s) printf("%ld - %s\n", i, s);
     }
-    alist_rm_at(dyn_strings_sizes, 1);
+    alist_rm_str_at(dyn_strings_sizes, 1);
 
     printf("__ after remove __\n");
-    alist_set_at(dyn_strings_sizes, 1, "new hello");
+    /* alist_set_at(dyn_strings_sizes, 1, "new hello"); */
     for (size_t i = 0; i < alist_size(dyn_strings_sizes); i++) {
         char *s = alist_at(dyn_strings_sizes, i);
         if (s) printf("%ld - %s\n", i, s);
@@ -165,7 +165,7 @@ void fixed_strings() {
         printf("%s\n", (char *)alist_at(strings, i));
     }
 
-    alist_rm_at(strings, 1);
+    alist_rm_str_at(strings, 1);
     for (size_t i = 0; i < alist_size(strings); i++) {
         printf("%s\n", (char *)alist_at(strings, i));
     }

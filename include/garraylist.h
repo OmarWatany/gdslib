@@ -23,6 +23,7 @@ int16_t  alist_pop(alist_t *list);
 int16_t  alist_set_at(alist_t *list, size_t pos, gdata_t data);
 int16_t  alist_set_at_safe(alist_t *list, size_t pos, size_t item_size, gdata_t data);
 int16_t  alist_rm_at(alist_t *list, size_t pos);
+int16_t  alist_rm_str_at(alist_t *alist, size_t pos);
 gdata_t  alist_at(alist_t *list, size_t pos);
 size_t   alist_size(alist_t *list);
 size_t   alist_item_size(alist_t *list);

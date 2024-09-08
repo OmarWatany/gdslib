@@ -11,12 +11,10 @@ alist_t *alist_create(size_t item_size) {
 }
 
 int16_t alist_init(alist_t *alist, size_t item_size) {
+    *alist = (alist_t){0};
     alist->capacity = 2;
-    alist->size = 0;
     alist->item_size = item_size;
-    alist->allocator_fun = NULL;
-    alist->buf = (anode_t *)malloc(alist->capacity * sizeof(anode_t));
-    memset(alist->buf, 0, sizeof(size_t *) * alist->capacity);
+    alist->buf = (anode_t *)calloc(alist->capacity, sizeof(anode_t));
     return EXIT_SUCCESS;
 }
 
@@ -87,9 +85,26 @@ int16_t alist_set_at_safe(alist_t *alist, size_t pos, size_t item_size, gdata_t 
     return EXIT_SUCCESS;
 }
 
+int16_t alist_rm_str_at(alist_t *alist, size_t pos) {
+    if (alist == NULL || alist->buf == NULL || pos >= alist->size) return EXIT_FAILURE;
+
+    anode_t *node = &alist->buf[pos];
+    anode_destroy(node);
+    for (size_t i = pos + 1; i < alist->size; i++)
+        alist->buf[i - 1] = alist->buf[i];
+    anode_init(&alist->buf[alist->size - 1]);
+    alist->size--;
+    return EXIT_SUCCESS;
+}
+
 int16_t alist_rm_at(alist_t *alist, size_t pos) {
     if (alist == NULL || alist->buf == NULL || pos >= alist->size) return EXIT_FAILURE;
-    anode_destroy(&alist->buf[pos]);
+
+    anode_t *node = &alist->buf[pos];
+    if (node->data) {
+        /* alist->deallocator_fun(node->data); */
+        memset(node->data, 0, alist->item_size);
+    }
     for (size_t i = pos + 1; i < alist->size; i++)
         alist->buf[i - 1] = alist->buf[i];
     anode_init(&alist->buf[alist->size - 1]);
@@ -138,13 +153,16 @@ void expand(alist_t *alist, size_t by) {
     }
 }
 
-void alist_destroy(alist_t *alist) {
+void alist_purge(alist_t *alist) {
     if (alist == NULL) return;
     anode_t *temp = NULL;
     for (size_t i = 0; i < alist->capacity; i++) {
-        temp = &alist->buf[i];
-        if (!anode_data(temp)) continue;
+        if (!anode_data((temp = &alist->buf[i]))) continue;
         anode_destroy(temp);
     }
+}
+
+void alist_destroy(alist_t *alist) {
+    alist_purge(alist);
     free(alist->buf);
 }
