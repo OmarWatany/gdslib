@@ -30,6 +30,7 @@ size_t   alist_capacity(alist_t *list);
 void     alist_reserve(alist_t *list, size_t size);
 void     alist_set_allocator(alist_t *alist, gdata_t (*allocator_fun)(gdata_t data));
 bool     alist_empty(alist_t *list);
+void     alist_purge(alist_t *list);
 void     alist_destroy(alist_t *list);
 
 #ifdef __cplusplus

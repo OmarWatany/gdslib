@@ -4,8 +4,7 @@
 #include <string.h>
 
 list_t *list_create(size_t item_size) {
-    list_t *list = (list_t *)malloc(sizeof(list_t));
-    memset(list, 0, sizeof(list_t));
+    list_t *list = (list_t *)calloc(1, sizeof(list_t));
     list_init(list, item_size);
     return list;
 }
@@ -15,9 +14,8 @@ void list_init(list_t *list, size_t item_size) {
 }
 
 list_itr_t *list_itr_create(list_t *list) {
-    list_itr_t *it = (list_itr_t *)malloc(sizeof(list_itr_t));
+    list_itr_t *it = (list_itr_t *)calloc(1, sizeof(list_itr_t));
     if (list == NULL || it == NULL) return NULL;
-    memset(it, 0, sizeof(list_itr_t));
     list_itr_init(it, list);
     return it;
 }
@@ -183,14 +181,14 @@ int16_t pop_back(list_t *list) {
     return EXIT_SUCCESS;
 }
 
-void list_clear(list_t *list) {
+void list_purge(list_t *list) {
     while (list->head != NULL) {
         pop_front(list);
     }
 }
 
 void list_destroy(list_t *list) {
-    list_clear(list);
+    list_purge(list);
 }
 
 void list_set_allocator(list_t *list, gdata_t (*allocator_fun)(gdata_t data)) {

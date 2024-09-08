@@ -16,7 +16,7 @@ void    stack_pop(stack_t *stack);
 void   *stack_peak(stack_t *stack);
 bool    stack_empty(stack_t *stack);
 
-void stack_clear(stack_t *stack);
+void stack_purge(stack_t *stack);
 void stack_destroy(stack_t *stack);
 
 #ifdef __cplusplus

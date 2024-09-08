@@ -32,7 +32,7 @@ int16_t pop_back(list_t *list);
 gdata_t peak_front(list_t *list);
 gdata_t peak_back(list_t *list);
 
-void list_clear(list_t *list);
+void list_purge(list_t *list);
 void list_destroy(list_t *list);
 void list_set_allocator(list_t *list, gdata_t (*allocator_fun)(gdata_t data));
 void itr_set_from(list_itr_t *iterator, lnode_t *from);

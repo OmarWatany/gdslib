@@ -35,8 +35,8 @@ bool stack_empty(stack_t *stack) {
     return list_head(&stack->list) == NULL ? true : false;
 }
 
-void stack_clear(stack_t *stack) {
-    list_clear(&stack->list);
+void stack_purge(stack_t *stack) {
+    list_purge(&stack->list);
 }
 
 void stack_destroy(stack_t *stack) {

@@ -31,8 +31,7 @@ struct tnode_t {
 
 struct dtnode_t {
     gdata_t    data;
-    dtnode_t **to;
-    dtnode_t  *from;
+    dtnode_t **to, *from;
 };
 
 #ifdef __cplusplus
