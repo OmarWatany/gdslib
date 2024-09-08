@@ -55,7 +55,12 @@ typedef struct {
     anode_t        *buf;
     size_t          read_pointer, write_pointer, capacity, size, item_size;
     allocator_fun_t allocator_fun;
-} ringbuffer_t;
+} circular_array_t;
+
+typedef struct {
+    uint8_t *buffer;
+    size_t   size, write_idx, read_idx;
+} ringbuffer;
 
 typedef struct {
     alist_t buf;

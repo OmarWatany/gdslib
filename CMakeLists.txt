@@ -17,16 +17,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -g -fPIC -Wno-unused-function"
 include_directories(${INC_D})
 
 # Source files
-file(GLOB NODE_CFILES "${SRC_D}/*node*.c")
-file(GLOB ALLOC_CFILES "${SRC_D}/*allocator*.c")
-file(GLOB GQUEUE_CFILES "${SRC_D}/*queue*.c")
-file(GLOB GSTACK_CFILES "${SRC_D}/*stack*.c")
-file(GLOB LLIST_CFILES "${SRC_D}/*list*.c")
-file(GLOB GTREE_CFILES "${SRC_D}/*gtree*.c")
-file(GLOB RING_CFILES "${SRC_D}/*ring*.c")
-file(GLOB GHEAP_CFILES "${SRC_D}/*heap*.c")
-
-set(C_FILES ${NODE_CFILES} ${ALLOC_CFILES} ${GQUEUE_CFILES} ${GSTACK_CFILES} ${LLIST_CFILES} ${GTREE_CFILES} ${RING_CFILES} ${GHEAP_CFILES})
+file(GLOB C_FILES "${SRC_D}/*.c")
 
 # Example source files
 file(GLOB EXAMPLE_FILES "${EXAMPLE_D}/*.c")
@@ -39,7 +30,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_D})
 add_library(gdslib STATIC ${C_FILES})
 
 # List of example programs
-set(EXAMPLES stack ringbuffer queue pqueue linkedlist arraylist arraystack tree)
+set(EXAMPLES stack queue pqueue linkedlist arraylist arraystack circular_array ringbuffer tree)
 
 # Macro to simplify adding executables and linking them to the library
 foreach(example IN LISTS EXAMPLES)

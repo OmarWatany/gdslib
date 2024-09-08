@@ -1,31 +1,38 @@
-#ifndef ringbfr_H
-#define ringbfr_H
+#ifndef _GRINGBUFFER_H_
+#define _GRINGBUFFER_H_
 
-#include "gallocator.h"
-#ifdef __cplusplus
-extern "C" {
-#endif // cpp
+#define BUFFER_BACKEND_LIBC_MALLOC        0
+#define BUFFER_BACKEND_LINUX_MMAP         1
+#define BUFFER_BACKEND_WIN32_VIRTUALALLOC 2
+
+#define BUFFER_BACKEND BUFFER_BACKEND_LIBC_MALLOC
+
+#ifndef BUFFER_BACKEND
+#if defined(_WIN32)
+#define BUFFER_BACKEND BUFFER_BACKEND_WIN32_VIRTUALALLOC
+#else
+#define BUFFER_BACKEND BUFFER_BACKEND_LINUX_MMAP
+#endif
+#endif // BUFFER_BACKEND
 
 #include "gds_types.h"
-#include "gnode.h"
-#include <stdbool.h>
-#include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
-ringbuffer_t *ring_create(size_t item_size, size_t capacity);
+void *ringbuffer_alloc(size_t *);
 
-int16_t ring_init(ringbuffer_t *ringbfr, size_t item_size, size_t capacity);
-int16_t ring_write_safe(ringbuffer_t *list, size_t item_size, gdata_t data);
-int16_t ring_write(ringbuffer_t *list, gdata_t data);
-int16_t ring_overwrite_safe(ringbuffer_t *list, size_t item_size, gdata_t data);
-int16_t ring_overwrite(ringbuffer_t *list, gdata_t data);
-gdata_t ring_read(ringbuffer_t *list);
-size_t  ring_size(ringbuffer_t *list);
-size_t  ring_capacity(ringbuffer_t *list);
-void    ring_set_allocator(ringbuffer_t *ringbfr, gdata_t (*allocator_fun)(gdata_t data));
-bool    ring_empty(ringbuffer_t *list);
-void    ring_destroy(ringbuffer_t *list);
+void ring_init(ringbuffer *buffer, size_t size);
 
-#ifdef __cplusplus
-}
-#endif // cpp
-#endif // !ringbfr_H
+int ring_write(ringbuffer *buffer, gdata_t data, size_t size);
+
+int ring_read(ringbuffer *buffer, void *target, size_t size);
+
+gdata_t ring_read_return(ringbuffer *buffer, size_t size);
+
+void ring_reset(ringbuffer *buffer);
+
+void ring_destroy(ringbuffer *buffer);
+
+#endif // _GRINGBUFFER_H_
