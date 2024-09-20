@@ -1,4 +1,5 @@
 #include "gringbuffer.h"
+#include <stdio.h>
 
 static void logBuffer(ringbuffer *buffer) {
     printf("----------\n");

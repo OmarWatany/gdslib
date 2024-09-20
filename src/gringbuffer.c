@@ -1,14 +1,7 @@
 #include "gringbuffer.h"
-
-#define ringbuffer_commit_write(B, S) ((B)->write_idx = ((B)->write_idx + (S)) % (B)->size)
-#define ringbuffer_commit_read(B, S)  ((B)->read_idx = ((B)->read_idx + (S)) % (B)->size)
-#define ringbuffer_write_idx(B)       ((B)->buffer + (B)->write_idx)
-#define ringbuffer_read_idx(B)        ((B)->buffer + (B)->read_idx)
-#define ringbuffer_space_until_end(B) ((B)->size - (B)->write_idx)
-
-#define ringbuffer_remaining_sapce(B)                                                              \
-    (((B)->write_idx >= (B)->read_idx) ? ((B)->size - ((B)->write_idx - (B)->read_idx))            \
-                                       : ((B)->read_idx - (B)->write_idx))
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
 
 #define ringbuffer_check_remaining_space(B, S)                                                     \
     do {                                                                                           \
@@ -17,10 +10,6 @@
             return EXIT_FAILURE;                                                                   \
         }                                                                                          \
     } while (0);
-
-#define ringbuffer_available_data(B)                                                               \
-    (((B)->write_idx > (B)->read_idx) ? (((B)->write_idx - (B)->read_idx))                         \
-                                      : ((B)->size - (B)->read_idx - (B)->write_idx))
 
 #define ringbuffer_check_available_data(B, S)                                                      \
     do {                                                                                           \
