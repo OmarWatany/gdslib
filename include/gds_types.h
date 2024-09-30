@@ -10,7 +10,6 @@ extern "C" {
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef void *gdata_t;
 typedef void (*for_each_fn)(gdata_t node);
 typedef int (*cmp_fun)(gdata_t data1, gdata_t data2); // data1 > data2 = 1
 
@@ -27,8 +26,24 @@ typedef enum {
 } HEAP_TYPE;
 
 typedef struct {
-    tnode_t        *root;
-    size_t          item_size, k;
+    gdata_t begin, from, end;
+} itr_context_t;
+
+typedef struct gitr_t gitr_t;
+typedef struct {
+    gdata_t (*next)(gitr_t *);
+    gdata_t (*prev)(gitr_t *);
+} gitr_vtable;
+
+struct gitr_t {
+    itr_context_t *context;
+    gitr_vtable   *vtable;
+};
+
+typedef struct {
+    tnode_t *root;
+    size_t   item_size, k;
+    // function pointers
     cmp_fun         cmp_fun;
     allocator_fun_t allocator_fun;
 } ktree_t;
@@ -38,22 +53,17 @@ typedef struct {
     TRAVERSE_ORDER order;
 } ktree_itr_t;
 
-typedef struct heap_t heap_t;
-typedef ktree_t       btree_t;
-
-ktree_t *kt_create(size_t item_size, size_t k);
-heap_t  *heap_create(size_t item_size, size_t k, HEAP_TYPE type);
-btree_t *bt_create(size_t item_size);
-
 typedef struct {
-    anode_t        *buf;
-    size_t          item_size, capacity, size;
+    anode_t *buf;
+    size_t   item_size, capacity, size;
+    // function pointers
     allocator_fun_t allocator_fun;
 } alist_t;
 
 typedef struct {
-    anode_t        *buf;
-    size_t          read_pointer, write_pointer, capacity, size, item_size;
+    anode_t *buf;
+    size_t   read_pointer, write_pointer, capacity, size, item_size;
+    // function pointers
     allocator_fun_t allocator_fun;
 } circular_array_t;
 
@@ -67,18 +77,17 @@ typedef struct {
 } astack_t;
 
 typedef struct {
-    lnode_t        *head, *tail;
-    size_t          item_size;
+    lnode_t *head, *tail;
+    size_t   item_size;
+    // function pointers
     allocator_fun_t allocator_fun;
 } list_t;
 
-typedef struct gitr_t gitr_t;
-struct gitr_t {
-    gdata_t   ds, other;
-    uintptr_t begin, end, next_node, prev_node;
-    gnode_t *(*next)(gitr_t *iterator);
-    gnode_t *(*prev)(gitr_t *iterator);
-};
+typedef struct {
+    itr_context_t context;
+    list_t       *list;
+    uintptr_t     prev_node, next_node;
+} list_itr_context_t;
 
 typedef struct {
     list_t   *list;
@@ -91,12 +100,15 @@ typedef struct {
     size_t length;
 } queue_t;
 
-struct heap_t {
+typedef struct {
     alist_t   buf;
     size_t    k;
     HEAP_TYPE type;
-    cmp_fun   cmp_fun;
-};
+    // function pointers
+    cmp_fun cmp_fun;
+} heap_t;
+
+typedef ktree_t btree_t;
 
 typedef struct {
     heap_t h;

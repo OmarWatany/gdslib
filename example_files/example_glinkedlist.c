@@ -1,13 +1,16 @@
+#include "gds_types.h"
+#include "gitr.h"
 #include "glinkedlist.h"
 #include <stdio.h>
 #include <string.h>
 
-static void _print_str(gdata_t data);
-static void _print_int(gdata_t data);
-
 static void _print_int(gdata_t data) {
     int i = *(int *)data;
     printf("%d", i);
+}
+
+static void _print_str(gdata_t data) {
+    printf("%s -> ", (char *)data);
 }
 
 static inline void push_front_i(list_t *x, int y) {
@@ -31,10 +34,9 @@ static inline void dump_int_list(list_t *x) {
 }
 
 int main() {
-
+    list_t *integers = list_create(sizeof(int));
     list_t *fixed_strings = list_create(30);
     list_set_allocator(fixed_strings, str_allocator);
-    list_t *integers = list_create(sizeof(int));
     list_t *dyn_strings = list_create(3);
     list_set_allocator(dyn_strings, str_allocator);
 
@@ -89,6 +91,34 @@ int main() {
     }
 
     {
+        printf("-------------------\n");
+        printf("Integers itrator\n");
+        gitr_t *fast_it = list_gitr_create(integers);
+        gitr_t *slow_it = list_gitr_create(integers);
+
+        lnode_t *fast = gitr_begin(fast_it);
+        lnode_t *slow = gitr_begin(slow_it);
+
+        int length = 1, h_index = 0;
+        while (fast != gitr_end(fast_it)) {
+            for (int i = 0; i < 2 && fast != gitr_end(fast_it); i++) {
+                length++;
+                fast = gitr_next(fast_it);
+            }
+            slow = gitr_next(slow_it);
+            h_index++;
+            _print_int(lnode_data(slow));
+        }
+        printf("\n");
+        printf("length = %d \n", length);
+        printf("length / 2 = %d \n", h_index);
+
+        gitr_destroy(fast_it);
+        gitr_destroy(slow_it);
+        printf("-------------------\n");
+    }
+
+    {
         list_itr_t *fast_it = list_itr_create(integers);
         lnode_t    *fast = itr_begin(fast_it);
 
@@ -114,8 +144,4 @@ int main() {
     free(dyn_strings);
 
     return 0;
-}
-
-void _print_str(gdata_t data) {
-    printf("%s -> ", (char *)data);
 }
