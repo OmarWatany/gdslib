@@ -7,15 +7,15 @@
 
 // list
 typedef struct {
-    itr_context_t context;
-    list_t       *list;
-    uintptr_t     prev_node, next_node;
-} list_itr_context_t;
+    itr_ctx_t context;
+    list_t   *list;
+    uintptr_t prev_node, next_node;
+} list_itr_ctx_t;
 
 gdata_t list_gitr_next(gitr_t *itr) {
     if (NULL == itr) return NULL;
-    itr_context_t      *context = itr->context;
-    list_itr_context_t *lcontext = (list_itr_context_t *)context;
+    itr_ctx_t      *context = itr->context;
+    list_itr_ctx_t *lcontext = (list_itr_ctx_t *)context;
 
     lnode_t *from = (lnode_t *)context->from;
     if (from == NULL) {
@@ -39,9 +39,9 @@ gdata_t list_gitr_next(gitr_t *itr) {
 
 gdata_t list_gitr_prev(gitr_t *itr) {
     if (NULL == itr) return NULL;
-    itr_context_t      *context = itr->context;
-    list_itr_context_t *lcontext = (list_itr_context_t *)context;
-    lnode_t            *from = (lnode_t *)context->from;
+    itr_ctx_t      *context = itr->context;
+    list_itr_ctx_t *lcontext = (list_itr_ctx_t *)context;
+    lnode_t        *from = (lnode_t *)context->from;
     if (from == NULL) {
         if (lcontext->list->tail) {
             from = lcontext->list->tail;
@@ -67,27 +67,81 @@ gitr_vtable list_itr_vtable = {
 };
 
 gitr_t list_gitr(list_t *list) {
-    list_itr_context_t *ctx = calloc(1, sizeof(*ctx));
-    *ctx = (list_itr_context_t){
+    if (!list) return (gitr_t){0};
+    list_itr_ctx_t *ctx = calloc(1, sizeof(*ctx));
+    *ctx = (list_itr_ctx_t){
         .list = list,
         .context.from = (gnode_t *)list->head,
         .context.begin = (gnode_t *)list->head,
         .context.end = (gnode_t *)list->tail,
     };
-    return (gitr_t){.context = (itr_context_t *)ctx, .vtable = &list_itr_vtable};
+    return (gitr_t){.context = (itr_ctx_t *)ctx, .vtable = &list_itr_vtable};
+}
+
+// arraylist
+gdata_t alist_gitr_next(gitr_t *itr) {
+    if (NULL == itr) return NULL;
+    itr_ctx_t *ctx = itr->context;
+    if (ctx->from == ctx->end) return NULL;
+    return (ctx->from += sizeof(anode_t));
+}
+
+gdata_t alist_gitr_prev(gitr_t *itr) {
+    if (NULL == itr) return NULL;
+    itr_ctx_t *ctx = itr->context;
+    if (ctx->from == ctx->begin) return NULL;
+    return (ctx->from -= sizeof(anode_t));
+}
+
+gitr_vtable alist_itr_vtable = {
+    .next = alist_gitr_next,
+    .prev = alist_gitr_prev,
+};
+
+gitr_t alist_gitr(alist_t *lst) {
+    if (!lst) return (gitr_t){0};
+    itr_ctx_t *ctx = calloc(1, sizeof(*ctx));
+    *ctx = (itr_ctx_t){
+        .from = &lst->buf[0],
+        .begin = &lst->buf[0],
+        .end = &lst->buf[lst->size - 1],
+    };
+    return (gitr_t){.context = (itr_ctx_t *)ctx, .vtable = &alist_itr_vtable};
+}
+
+// stack
+gitr_t stack_gitr(stack_t *stack) {
+    return list_gitr(&stack->list);
+}
+
+// queue
+gitr_t queue_gitr(queue_t *queue) {
+    return list_gitr(&queue->list);
+}
+
+// astack
+gitr_t astack_gitr(astack_t *stack) {
+    return alist_gitr(&stack->buf);
+}
+//
+gitr_t carray_gitr(circular_array_t *carr) {
+    if (!carr) return (gitr_t){0};
+    itr_ctx_t *ctx = calloc(1, sizeof(*ctx));
+    *ctx = (itr_ctx_t){
+        .from = &carr->buf[0],
+        .begin = &carr->buf[0],
+        .end = &carr->buf[carr->size - 1],
+    };
+    return (gitr_t){.context = (itr_ctx_t *)ctx, .vtable = &alist_itr_vtable};
 }
 
 // tree
-// queue
-// arraylist
 // heap
-// stack
-// astack
 // pqueue
 // circular_buffer
 
 // general
 void gitr_destroy(gitr_t *itr) {
     if (NULL == itr) return;
-    free(itr->context);
+    if (itr->context) free(itr->context);
 }

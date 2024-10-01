@@ -11,6 +11,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdlib.h>
 
+// TODO : check for errors
 circular_array_t *carray_create(size_t item_size, size_t capacity);
 
 int16_t carray_init(circular_array_t *ringbfr, size_t item_size, size_t capacity);

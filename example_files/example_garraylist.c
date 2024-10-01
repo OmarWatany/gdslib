@@ -1,4 +1,6 @@
 #include "garraylist.h"
+#include "gds_types.h"
+#include "gitr.h"
 #include <stdio.h>
 #include <string.h>
 #define NEW_LINE printf("\n");
@@ -43,8 +45,8 @@ void functoins_p_list() {
 }
 
 void integers_list() {
-    printf("integers_list \n");
-    alist_t ntgrs = alist_build_num(sizeof(int), 3, (gnum_t[4]){2, 3, 4, 5});
+    printf("----integers_list ----\n");
+    alist_t ntgrs = alist_build_num(sizeof(int), 4, (gnum_t[4]){2, 3, 4, 5});
     // alist_init(&ntgrs, sizeof(int));
 
     alist_t *integers = &ntgrs;
@@ -56,6 +58,25 @@ void integers_list() {
         printf("%d - ", *(int *)alist_at(integers, i));
     printf("\n");
 
+    {
+        printf("------------------- ");
+        printf("Integers giterator\n");
+        gitr_t itr = alist_gitr(integers);
+
+        anode_t *temp = gitr_begin(&itr);
+        do {
+            printf("%d - ", *(int *)temp->data);
+        } while ((temp = gitr_next(&itr)));
+        printf("\n");
+
+        temp = gitr_end(&itr);
+        do {
+            printf("%d - ", *(int *)temp->data);
+        } while ((temp = gitr_prev(&itr)));
+        printf("\n");
+
+        gitr_destroy(&itr);
+    }
     alist_destroy(integers);
 }
 

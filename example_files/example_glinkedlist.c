@@ -132,13 +132,11 @@ void integer_list() {
 
     {
         printf("------------------- ");
-        printf("Integers gitrator\n");
+        printf("Integers giterator\n");
         gitr_t  fast_itr = list_gitr(integers);
         gitr_t  slow_itr = list_gitr(integers);
         gitr_t *fast_it = &fast_itr;
         gitr_t *slow_it = &slow_itr;
-        /* gitr_t *fast_it = list_gitr_create(integers); */
-        /* gitr_t *slow_it = list_gitr_create(integers); */
 
         lnode_t *fast = gitr_begin(fast_it);
         lnode_t *slow = gitr_begin(slow_it);

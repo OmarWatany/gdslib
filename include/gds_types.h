@@ -27,7 +27,7 @@ typedef enum {
 
 typedef struct {
     gdata_t begin, from, end;
-} itr_context_t;
+} itr_ctx_t;
 
 typedef struct gitr_t gitr_t;
 typedef struct {
@@ -36,8 +36,8 @@ typedef struct {
 } gitr_vtable;
 
 struct gitr_t {
-    itr_context_t *context;
-    gitr_vtable   *vtable;
+    itr_ctx_t   *context;
+    gitr_vtable *vtable;
 };
 
 typedef struct {
