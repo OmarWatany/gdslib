@@ -7,13 +7,12 @@
 #define gitr_prev(itr)  ((itr)->vtable->prev((itr)))
 #define gitr_begin(itr) ((itr)->context->begin)
 #define gitr_end(itr)   ((itr)->context->end)
+#define gitr_set_from(itr, F)                                                                      \
+    do {                                                                                           \
+        (itr)->context->from = (F);                                                                \
+    } while (0)
 
-/*
-gnode_t *gitr_next(gitr_t *itr, itr_context_t *context);
-gnode_t *gitr_prev(gitr_t *itr, itr_context_t *context);
-*/
-
-gitr_t *list_gitr_create(list_t *list);
-void    gitr_destroy(gitr_t *itr);
+gitr_t list_gitr(list_t *list);
+void   gitr_destroy(gitr_t *itr);
 
 #endif // !ITRERATOR_H_

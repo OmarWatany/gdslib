@@ -7,7 +7,7 @@ gdata_t gnode_data(gdata_t node) {
 }
 
 lnode_t *lnode_create() {
-    lnode_t *new_node = (lnode_t *)malloc(sizeof(lnode_t));
+    lnode_t *new_node = (lnode_t *)malloc(sizeof(*new_node));
     lnode_init(new_node);
     return new_node;
 }
@@ -77,53 +77,6 @@ tnode_t *tnode_child(tnode_t *node, size_t n) {
 void tnode_set_child(tnode_t *node, size_t n, tnode_t *child) {
     if (!node) return;
     node->links[n] = child;
-}
-
-dtnode_t *dtnode_create(size_t links_count) {
-    dtnode_t *temp = malloc(sizeof(dtnode_t));
-    memset(temp, 0, sizeof(dtnode_t));
-    dtnode_init(temp, links_count);
-    return temp;
-}
-
-int16_t dtnode_init(dtnode_t *node, size_t links_count) {
-    size_t size = links_count * sizeof(dtnode_t *);
-    node->data = NULL;
-    node->from = 0;
-    node->to = malloc(size);
-    memset(node->to, 0, size);
-    return EXIT_SUCCESS;
-}
-
-gdata_t dtnode_data(dtnode_t *node) {
-    return node->data;
-}
-
-int16_t dtnode_set_data(dtnode_t *node, gdata_t data) {
-    if (!node) return EXIT_FAILURE;
-    node->data = data;
-    return EXIT_SUCCESS;
-}
-
-void dtnode_destroy(dtnode_t *node) {
-    if (!node) return;
-    free(node->to);
-    free(node->data);
-}
-
-dtnode_t *dtnode_parent(dtnode_t *node) {
-    if (!node) return NULL;
-    return node->from;
-}
-
-dtnode_t *dtnode_child(dtnode_t *node, size_t n) {
-    if (!node) return NULL;
-    return node->to[n];
-}
-
-void dtnode_set_child(dtnode_t *node, size_t n, dtnode_t *child) {
-    if (!child || !node) return;
-    node->to[n] = child;
 }
 
 tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {

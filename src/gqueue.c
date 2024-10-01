@@ -1,4 +1,5 @@
 #include "gqueue.h"
+#include "gitr.h"
 #include "glinkedlist.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,16 +59,15 @@ bool queue_find(queue_t *heystack, gdata_t needle,
                 bool (*search_fun)(lnode_t *node, gdata_t data)) {
     if (queue_empty(heystack)) return false;
 
-    list_itr_t itr = {0};
-    list_itr_init(&itr, &heystack->list);
-    itr_set_begin(&itr, list_head(&heystack->list));
-    lnode_t *temp = itr_begin(&itr);
+    gitr_t   itr = list_gitr(&heystack->list);
+    lnode_t *temp = gitr_begin(&itr);
 
     bool r = false;
     while (temp != NULL && !r) {
         if (search_fun(temp, needle)) r = true;
-        temp = next(&itr);
+        temp = gitr_next(&itr);
     }
+    gitr_destroy(&itr);
     return r;
 }
 

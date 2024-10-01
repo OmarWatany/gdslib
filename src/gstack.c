@@ -32,7 +32,7 @@ gdata_t stack_peak(stack_t *stack) {
 }
 
 bool stack_empty(stack_t *stack) {
-    return list_head(&stack->list) == NULL ? true : false;
+    return stack->list.head == NULL ? true : false;
 }
 
 void stack_purge(stack_t *stack) {

@@ -8,11 +8,11 @@ void __allocate_s(lnode_t *node, void *data);
 void __print_s(void *data);
 
 bool queue_search_int(lnode_t *node, void *data) {
-    return *(int *)lnode_data(node) == *(int *)data;
+    return *(int *)node->data == *(int *)data;
 }
 
 bool q_search_s(lnode_t *node, void *data) {
-    return strcmp(data, lnode_data(node));
+    return strcmp(data, (char *)node->data);
 }
 
 int main() {

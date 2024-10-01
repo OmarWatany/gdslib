@@ -6,6 +6,12 @@
 #include <string.h>
 
 // list
+typedef struct {
+    itr_context_t context;
+    list_t       *list;
+    uintptr_t     prev_node, next_node;
+} list_itr_context_t;
+
 gdata_t list_gitr_next(gitr_t *itr) {
     if (NULL == itr) return NULL;
     itr_context_t      *context = itr->context;
@@ -60,17 +66,15 @@ gitr_vtable list_itr_vtable = {
     .prev = list_gitr_prev,
 };
 
-gitr_t *list_gitr_create(list_t *list) {
-    if (NULL == list) return NULL;
-    list_itr_context_t *context = calloc(1, sizeof *context);
-    gitr_t             *itr = calloc(1, sizeof(*itr));
-    itr->vtable = &list_itr_vtable;
-    itr->context = (itr_context_t *)context;
-    // TODO: REFACTOR
-    context->list = list;
-    context->context.end = (gnode_t *)list->tail;
-    context->context.from = context->context.begin = (gnode_t *)list->head;
-    return itr;
+gitr_t list_gitr(list_t *list) {
+    list_itr_context_t *ctx = calloc(1, sizeof(*ctx));
+    *ctx = (list_itr_context_t){
+        .list = list,
+        .context.from = (gnode_t *)list->head,
+        .context.begin = (gnode_t *)list->head,
+        .context.end = (gnode_t *)list->tail,
+    };
+    return (gitr_t){.context = (itr_context_t *)ctx, .vtable = &list_itr_vtable};
 }
 
 // tree
@@ -86,5 +90,4 @@ gitr_t *list_gitr_create(list_t *list) {
 void gitr_destroy(gitr_t *itr) {
     if (NULL == itr) return;
     free(itr->context);
-    free(itr);
 }

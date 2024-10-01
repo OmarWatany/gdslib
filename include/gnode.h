@@ -7,6 +7,7 @@ extern "C" {
 
 #include "gnodes_types.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 gdata_t gnode_data(gdata_t node);
 
@@ -32,15 +33,6 @@ int16_t  tnode_set_data(tnode_t *node, gdata_t data);
 void     tnode_destroy(tnode_t *node);
 tnode_t *tnode_child(tnode_t *node, size_t n);
 void     tnode_set_child(tnode_t *node, size_t n, tnode_t *child);
-
-dtnode_t *dtnode_create(size_t links_count);
-int16_t   dtnode_init(dtnode_t *node, size_t links_count);
-gdata_t   dtnode_data(dtnode_t *node);
-int16_t   dtnode_set_data(dtnode_t *node, gdata_t data);
-void      dtnode_destroy(dtnode_t *node);
-dtnode_t *dtnode_parent(dtnode_t *node);
-dtnode_t *dtnode_child(dtnode_t *node, size_t n);
-void      dtnode_set_child(dtnode_t *node, size_t n, dtnode_t *child);
 
 tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl);
 

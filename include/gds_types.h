@@ -10,7 +10,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef void (*for_each_fn)(gdata_t node);
+typedef void (*for_each_fn)(gdata_t);
 typedef int (*cmp_fun)(gdata_t data1, gdata_t data2); // data1 > data2 = 1
 
 typedef enum {
@@ -82,18 +82,6 @@ typedef struct {
     // function pointers
     allocator_fun_t allocator_fun;
 } list_t;
-
-typedef struct {
-    itr_context_t context;
-    list_t       *list;
-    uintptr_t     prev_node, next_node;
-} list_itr_context_t;
-
-typedef struct {
-    list_t   *list;
-    lnode_t  *from, *begin, *end;
-    uintptr_t prev_node, next_node;
-} list_itr_t;
 
 typedef struct {
     list_t list;

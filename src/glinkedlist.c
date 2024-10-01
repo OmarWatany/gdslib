@@ -1,4 +1,7 @@
 #include "glinkedlist.h"
+#include "gds_types.h"
+#include "gitr.h"
+#include <alloca.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,19 +16,6 @@ void list_init(list_t *list, size_t item_size) {
     list->item_size = item_size;
 }
 
-list_itr_t *list_itr_create(list_t *list) {
-    list_itr_t *it = (list_itr_t *)calloc(1, sizeof(list_itr_t));
-    if (list == NULL || it == NULL) return NULL;
-    list_itr_init(it, list);
-    return it;
-}
-
-void list_itr_init(list_itr_t *it, list_t *list) {
-    it->list = list;
-    it->end = list->tail;
-    it->from = it->begin = list->head;
-}
-
 size_t list_item_size(list_t *list) {
     return list->item_size;
 }
@@ -36,55 +26,6 @@ lnode_t *list_head(list_t *list) {
 
 lnode_t *list_tail(list_t *list) {
     return list->tail;
-}
-
-lnode_t *next(list_itr_t *iterator) {
-    lnode_t *from = iterator->from;
-    if (from == NULL) {
-        if (iterator->list->head) {
-            from = iterator->list->head;
-        } else
-            return NULL;
-    }
-    if (lnode_link(from) == 0) {
-        return NULL;
-    } else if (from == iterator->list->head) {
-        iterator->next_node = lnode_link(iterator->list->head);
-    } else {
-        iterator->next_node = iterator->prev_node ^ lnode_link(from);
-    }
-    iterator->prev_node = (uintptr_t)from;
-    iterator->from = (lnode_t *)iterator->next_node;
-    iterator->next_node = iterator->prev_node ^ lnode_link(from);
-    return iterator->from;
-}
-
-lnode_t *prev(list_itr_t *iterator) {
-    lnode_t *from = iterator->from;
-    if (from == NULL) {
-        if (iterator->list->tail) {
-            from = iterator->list->tail;
-        } else
-            return NULL;
-    }
-    if (lnode_link(from) == 0) {
-        return NULL;
-    } else if (from == iterator->list->tail) {
-        iterator->prev_node = lnode_link(iterator->list->tail);
-    } else {
-        iterator->prev_node = iterator->next_node ^ lnode_link(from);
-    }
-    iterator->next_node = (uintptr_t)from;
-    iterator->from = (lnode_t *)iterator->prev_node;
-    iterator->prev_node = iterator->next_node ^ lnode_link(from);
-    return iterator->from;
-}
-
-lnode_t *itr_begin(list_itr_t *iterator) {
-    return iterator->begin;
-}
-lnode_t *itr_end(list_itr_t *iterator) {
-    return iterator->end;
 }
 
 int16_t push_front_safe(list_t *list, size_t item_size, gdata_t data) {
@@ -152,39 +93,66 @@ gdata_t peak_back(list_t *list) {
     return lnode_data(list->tail);
 }
 
-int16_t pop_front(list_t *list) {
-    if (list->head == NULL || list == NULL) return EXIT_SUCCESS;
+gdata_t pop_front_s(list_t *list, size_t size, bool return_value, bool str) {
     lnode_t *old_head = list->head;
+    gdata_t  r = return_value ? (str ? old_head->data
+                                     : memcpy(memset(alloca(size), 0, size), old_head->data, size))
+                              : NULL;
+
     list->head = (lnode_t *)old_head->link;
     if (list->head == NULL) {
         list->tail = NULL;
     } else
         lnode_set_link(list->head, lnode_link(list->head) ^ (uintptr_t)old_head);
-    lnode_destroy(old_head);
+
+    if (!str) lnode_destroy(old_head);
     free(old_head);
     old_head = NULL;
-    return EXIT_SUCCESS;
+    return r;
 }
 
-int16_t pop_back(list_t *list) {
-    if (list == NULL || list->head == NULL) return EXIT_SUCCESS;
-    if (list->tail == list->head) return pop_front(list);
+gdata_t pop_front(list_t *list) {
+    if (list->head == NULL || list == NULL) return NULL;
+    return pop_front_s(list, list->item_size, true, false);
+}
 
+char *spop_front(list_t *list, size_t *size) {
+    if (list == NULL || list->head == NULL) return NULL;
+    size_t tsize = strlen((char *)list->head->data) + 1;
+    if (size) *size = tsize;
+    return pop_front_s(list, tsize, true, true);
+}
+
+gdata_t pop_back_s(list_t *list, size_t size, bool return_value, bool str) {
+    if (list->tail == list->head) return pop_front_s(list, size, true, false);
     lnode_t *old_tail = list->tail;
+    gdata_t  r = return_value ? (str ? old_tail->data
+                                     : memcpy(memset(alloca(size), 0, size), old_tail->data, size))
+                              : NULL;
     list->tail = (lnode_t *)old_tail->link;
     if (list->tail != NULL)
         lnode_set_link(list->tail, lnode_link(list->tail) ^ (uintptr_t)old_tail);
 
-    lnode_destroy(old_tail);
+    if (!str) lnode_destroy(old_tail);
     free(old_tail);
     old_tail = NULL;
-    return EXIT_SUCCESS;
+    return r;
+}
+
+gdata_t pop_back(list_t *list) {
+    if (list == NULL || list->head == NULL) return NULL;
+    return pop_back_s(list, list->item_size, true, false);
+}
+char *spop_back(list_t *list, size_t *size) {
+    if (list == NULL || list->head == NULL) return NULL;
+    size_t tsize = strlen((char *)list->tail->data);
+    if (size) *size = tsize;
+    return pop_back_s(list, tsize, true, true);
 }
 
 void list_purge(list_t *list) {
-    while (list->head != NULL) {
-        pop_front(list);
-    }
+    while (list->head != NULL)
+        pop_front_s(list, list->item_size, false, false);
 }
 
 void list_destroy(list_t *list) {
@@ -195,48 +163,28 @@ void list_set_allocator(list_t *list, gdata_t (*allocator_fun)(gdata_t data)) {
     list->allocator_fun = allocator_fun;
 }
 
-list_t *itr_list(list_itr_t *iterator) {
-    return iterator->list;
-}
-
-void itr_set_from(list_itr_t *iterator, lnode_t *from) {
-    if (iterator == NULL || itr_list(iterator) == NULL) return;
-    iterator->from = from;
-}
-
-void itr_set_begin(list_itr_t *iterator, lnode_t *begin_node) {
-    iterator->begin = begin_node;
-}
-
-void itr_set_end(list_itr_t *iterator, lnode_t *end_node) {
-    iterator->end = end_node;
-}
-
 int16_t dump_list(list_t *list, void (*print_data)(gdata_t)) {
     if (list == NULL || list->head == NULL) return EXIT_FAILURE;
     lnode_t *temp = list->head;
-
-    list_itr_t it = {0};
-    list_itr_init(&it, list);
+    gitr_t   itr = list_gitr(list);
 
     while (temp != NULL) {
         print_data(lnode_data(temp));
-        temp = next(&it);
+        temp = gitr_next(&itr);
     }
+    gitr_destroy(&itr);
     return EXIT_SUCCESS;
 }
 
 int16_t reverse_dump_list(list_t *list, void (*print_data)(gdata_t)) {
     if (list == NULL) return EXIT_FAILURE;
     lnode_t *temp = list->tail;
-
-    list_itr_t *it = list_itr_create(list);
-    itr_set_from(it, temp);
-    if (it == NULL) return EXIT_FAILURE;
+    gitr_t   itr = list_gitr(list);
+    gitr_set_from(&itr, temp);
     while (temp != NULL) {
         print_data(lnode_data(temp));
-        temp = prev(it);
+        temp = gitr_prev(&itr);
     }
-    free(it);
+    gitr_destroy(&itr);
     return EXIT_SUCCESS;
 }
