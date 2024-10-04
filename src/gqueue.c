@@ -63,7 +63,7 @@ bool queue_find(queue_t *heystack, gdata_t needle,
 
     bool r = false;
     while (temp != NULL && !r) {
-        if (search_fun(temp, needle)) r = true;
+        if (!search_fun(temp, needle)) r = true;
         temp = itr_next(&itr);
     }
     gitr_destroy(&itr);

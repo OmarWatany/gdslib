@@ -23,7 +23,8 @@ int main() {
 
     enqueue(&names, "hello");
     enqueue(&names, "world");
-    // enqueue(names, "!");
+    enqueue(&names, "!");
+
     if (queue_find(&names, "!", q_search_s)) queue_dump(&names, __print_s);
     dequeue(&names);
     if (queue_find(&names, "!", q_search_s)) queue_dump(&names, __print_s);

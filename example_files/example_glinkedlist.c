@@ -106,6 +106,8 @@ void dyn_strings() {
     printf("------------------- ");
     printf("Dynamic Strings\n");
     dump_str_list(dyn_strings);
+    reverse_dump_list(dyn_strings, _print_str);
+    printf("\n");
 
 #if 0
     printf("Destroying Dynamic Strings\n");

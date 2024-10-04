@@ -54,7 +54,7 @@ gdata_t list_prev(gitr_t *itr) {
     }
 
     if (lnode_link(from) == 0) {
-        return NULL;
+        return from;
     } else if (from == lctx->list->tail) {
         lctx->prev_node = lnode_link(lctx->list->tail);
     } else {

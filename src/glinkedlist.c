@@ -176,13 +176,13 @@ int16_t dump_list(list_t *list, void (*print_data)(gdata_t)) {
 
 int16_t reverse_dump_list(list_t *list, void (*print_data)(gdata_t)) {
     if (list == NULL) return EXIT_FAILURE;
-    lnode_t *temp = list->tail;
     gitr_t   itr = list_gitr(list);
+    lnode_t *temp = itr_end(&itr);
     gitr_set_from(&itr, temp);
-    while (temp != NULL) {
-        print_data(lnode_data(temp));
+    do {
         temp = itr_prev(&itr);
-    }
+        print_data(lnode_data(temp));
+    } while (temp != itr_begin(&itr));
     gitr_destroy(&itr);
     return EXIT_SUCCESS;
 }
