@@ -107,15 +107,15 @@ void random_output() {
     printf("Tree iterator\n");
     printf("SIZE : %ld \n", tree.size);
     gitr_t   itr = tr_gitr_o(&tree, POST_ORDER);
-    gnode_t *temp = gitr_begin(&itr);
+    gnode_t *temp = itr_begin(&itr);
 
     size_t idx = 0;
     do {
         printf("%3ld %5d - \n", ++idx, *(int *)gnode_data(temp));
-    } while ((temp = gitr_next(&itr)));
+    } while ((temp = itr_next(&itr)));
 
-    while (temp != gitr_begin(&itr)) {
-        temp = gitr_prev(&itr);
+    while (temp != itr_begin(&itr)) {
+        temp = itr_prev(&itr);
         printf("%3ld %5d - \n", --idx, *(int *)gnode_data(temp));
     }
 

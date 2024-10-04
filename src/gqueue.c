@@ -59,12 +59,12 @@ bool queue_find(queue_t *heystack, gdata_t needle,
     if (queue_empty(heystack)) return false;
 
     gitr_t   itr = list_gitr(&heystack->list);
-    lnode_t *temp = gitr_begin(&itr);
+    lnode_t *temp = itr_begin(&itr);
 
     bool r = false;
     while (temp != NULL && !r) {
         if (search_fun(temp, needle)) r = true;
-        temp = gitr_next(&itr);
+        temp = itr_next(&itr);
     }
     gitr_destroy(&itr);
     return r;

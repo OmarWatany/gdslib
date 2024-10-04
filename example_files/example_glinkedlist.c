@@ -56,18 +56,19 @@ void fixed_strings() {
 
         gitr_t   fast_it = list_gitr(fixed_strings);
         gitr_t   slow_it = list_gitr(fixed_strings);
-        lnode_t *fast = gitr_begin(&fast_it);
-        lnode_t *slow = gitr_begin(&slow_it);
+        lnode_t *fast = itr_begin(&fast_it);
+        lnode_t *slow = itr_begin(&slow_it);
 
-        int length = 1, h_index = 0;
-        while (fast != gitr_end(&fast_it)) {
-            for (int i = 0; i < 2 && fast != gitr_end(&fast_it); i++) {
-                length++;
-                fast = gitr_next(&fast_it);
+        int length = 0, h_index = 0;
+        while (fast != itr_end(&fast_it)) {
+            for (int i = 0; i < 2 && fast != itr_end(&fast_it); i++) {
+                if (fast) length++;
+                fast = itr_next(&fast_it);
             }
-            if (fast != gitr_end(&fast_it)) h_index++;
+            if (!fast) break;
+            h_index++;
             _print_str(lnode_data(slow));
-            slow = gitr_next(&slow_it);
+            slow = itr_next(&slow_it);
         }
         printf("\n");
         printf("length = %d \n", length);
@@ -131,32 +132,40 @@ void integer_list() {
 
     {
         printf("------------------- ");
-        printf("Integers giterator\n");
-        gitr_t  fast_itr = list_gitr(integers);
-        gitr_t  slow_itr = list_gitr(integers);
-        gitr_t *fast_it = &fast_itr;
-        gitr_t *slow_it = &slow_itr;
+        printf("Integers iterator\n");
+        gitr_t fast_itr = list_gitr(integers);
+        gitr_t slow_itr = list_gitr(integers);
 
-        lnode_t *fast = gitr_begin(fast_it);
-        lnode_t *slow = gitr_begin(slow_it);
+        lnode_t *fast = itr_begin(&fast_itr);
+        lnode_t *slow = itr_begin(&slow_itr);
 
-        int length = 1, h_index = 0;
-        while (fast != gitr_end(fast_it)) {
-            for (int i = 0; i < 2 && fast != gitr_end(fast_it); i++) {
-                length++;
-                fast = gitr_next(fast_it);
+        int length = 0, h_index = 0;
+        while (fast != itr_end(&fast_itr)) {
+            for (int i = 0; i < 2; i++) {
+                if (fast) {
+                    length++;
+                    _print_int(lnode_data(fast));
+                }
+                fast = itr_next(&fast_itr);
             }
-            slow = gitr_next(slow_it);
+            if (!fast) break;
+            slow = itr_next(&slow_itr);
             h_index++;
-            printf("Center value: ");
-            _print_int(lnode_data(slow));
         }
+        printf("\nCenter value: ");
+        _print_int(lnode_data(slow));
         printf("\n");
         printf("length = %d \n", length);
         printf("length / 2 = %d \n", h_index);
 
-        gitr_destroy(fast_it);
-        gitr_destroy(slow_it);
+        do {
+            fast = itr_prev(&fast_itr);
+            _print_int(lnode_data(fast));
+        } while (fast != itr_begin(&fast_itr));
+        printf("\n");
+
+        gitr_destroy(&fast_itr);
+        gitr_destroy(&slow_itr);
     }
 
     {
@@ -164,18 +173,16 @@ void integer_list() {
         printf("Integers itrator\n");
 
         gitr_t   fast_it = list_gitr(integers);
-        lnode_t *fast = gitr_begin(&fast_it);
+        lnode_t *fast = itr_begin(&fast_it);
 
-        int length = 1, i = 0;
-        while (fast != gitr_end(&fast_it)) {
+        int length = 0, i = 0;
+        while (fast != itr_end(&fast_it)) {
             length++;
             i = *(int *)lnode_data(fast);
             printf("%d ", i);
-            fast = gitr_next(&fast_it);
+            fast = itr_next(&fast_it);
         }
-        i = *(int *)lnode_data(fast);
-        printf("%d\n", i);
-        printf("length = %d \n", length);
+        printf("\nlength = %d \n", length);
         gitr_destroy(&fast_it);
     }
 
@@ -184,8 +191,8 @@ void integer_list() {
 }
 
 int main() {
-    dyn_strings();
     fixed_strings();
     integer_list();
+    dyn_strings();
     return 0;
 }

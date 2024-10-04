@@ -63,16 +63,16 @@ void integers_list() {
         printf("Integers giterator\n");
         gitr_t itr = alist_gitr(integers);
 
-        anode_t *temp = gitr_begin(&itr);
+        anode_t *temp = itr_begin(&itr);
         do {
             printf("%d - ", *(int *)temp->data);
-        } while ((temp = gitr_next(&itr)));
+        } while ((temp = itr_next(&itr)));
         printf("\n");
 
-        temp = gitr_end(&itr);
+        temp = itr_end(&itr);
         do {
             printf("%d - ", *(int *)temp->data);
-        } while ((temp = gitr_prev(&itr)));
+        } while ((temp = itr_prev(&itr)));
         printf("\n");
 
         gitr_destroy(&itr);

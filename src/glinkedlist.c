@@ -168,7 +168,7 @@ int16_t dump_list(list_t *list, void (*print_data)(gdata_t)) {
 
     while (temp != NULL) {
         print_data(lnode_data(temp));
-        temp = gitr_next(&itr);
+        temp = itr_next(&itr);
     }
     gitr_destroy(&itr);
     return EXIT_SUCCESS;
@@ -181,7 +181,7 @@ int16_t reverse_dump_list(list_t *list, void (*print_data)(gdata_t)) {
     gitr_set_from(&itr, temp);
     while (temp != NULL) {
         print_data(lnode_data(temp));
-        temp = gitr_prev(&itr);
+        temp = itr_prev(&itr);
     }
     gitr_destroy(&itr);
     return EXIT_SUCCESS;

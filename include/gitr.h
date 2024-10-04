@@ -3,10 +3,11 @@
 
 #include "gds_types.h"
 
-#define gitr_next(itr)  ((!(itr)->vtable) ? NULL : (itr)->vtable->next((itr)))
-#define gitr_prev(itr)  ((!(itr)->vtable) ? NULL : (itr)->vtable->prev((itr)))
-#define gitr_begin(itr) ((!(itr)->context) ? NULL : (itr)->context->begin)
-#define gitr_end(itr)   ((!(itr)->context) ? NULL : (itr)->context->end)
+// return NODE
+#define itr_next(itr)  ((!(itr)->vtable) ? NULL : (itr)->vtable->next((itr)))
+#define itr_prev(itr)  ((!(itr)->vtable) ? NULL : (itr)->vtable->prev((itr)))
+#define itr_begin(itr) ((!(itr)->context) ? NULL : (itr)->context->begin)
+#define itr_end(itr)   ((!(itr)->context) ? NULL : (itr)->context->end)
 
 #define gitr_set_from(itr, F)                                                                      \
     do {                                                                                           \
