@@ -201,14 +201,14 @@ static gdata_t tr_next(gitr_t *itr) {
     itr_ctx_t    *ctx = itr->context;
     tr_itr_ctx_t *tctx = (tr_itr_ctx_t *)itr->context;
     if (tctx->idx == tctx->tr->size - 1) return NULL;
-    return (ctx->from = tctx->buffer[++tctx->idx]);
+    return IDATA(ctx->from = tctx->buffer[++tctx->idx]);
 }
 
 static gdata_t tr_prev(gitr_t *itr) {
     itr_ctx_t    *ctx = itr->context;
     tr_itr_ctx_t *tctx = (tr_itr_ctx_t *)itr->context;
     if (tctx->idx == 0) return tctx->buffer[0];
-    return (ctx->from = tctx->buffer[--tctx->idx]);
+    return IDATA(ctx->from = tctx->buffer[--tctx->idx]);
 }
 
 static gitr_vtable tr_itr_vtable = {

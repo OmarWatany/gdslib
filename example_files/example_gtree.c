@@ -111,12 +111,12 @@ void random_output() {
 
     size_t idx = 0;
     do {
-        printf("%3ld %5d - \n", ++idx, *(int *)gnode_data(temp));
+        printf("%3ld %5d - \n", ++idx, *(int *)temp);
     } while ((temp = itr_next(&itr)));
 
     while (temp != itr_begin(&itr)) {
         temp = itr_prev(&itr);
-        printf("%3ld %5d - \n", --idx, *(int *)gnode_data(temp));
+        printf("%3ld %5d - \n", --idx, *(int *)temp);
     }
 
     gitr_destroy(&itr);
