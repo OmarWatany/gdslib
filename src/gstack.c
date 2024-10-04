@@ -23,8 +23,9 @@ int16_t stack_push(stack_t *stack, gdata_t data) {
     return push_front(&stack->list, data);
 }
 
+// TODO: return data
 void stack_pop(stack_t *stack) {
-    pop_front(&stack->list);
+    pop_front(&stack->list, NULL);
 }
 
 gdata_t stack_peak(stack_t *stack) {

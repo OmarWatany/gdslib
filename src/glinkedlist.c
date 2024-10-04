@@ -12,20 +12,8 @@ list_t *list_create(size_t item_size) {
     return list;
 }
 
-void list_init(list_t *list, size_t item_size) {
+inline void list_init(list_t *list, size_t item_size) {
     list->item_size = item_size;
-}
-
-size_t list_item_size(list_t *list) {
-    return list->item_size;
-}
-
-lnode_t *list_head(list_t *list) {
-    return list->head;
-}
-
-lnode_t *list_tail(list_t *list) {
-    return list->tail;
 }
 
 int16_t push_front_safe(list_t *list, size_t item_size, gdata_t data) {
@@ -77,89 +65,99 @@ int16_t push_back_safe(list_t *list, size_t item_size, gdata_t data) {
     return EXIT_SUCCESS;
 }
 
-int16_t push_front(list_t *list, gdata_t data) {
+inline int16_t push_front(list_t *list, gdata_t data) {
     return push_front_safe(list, list->item_size, data);
 }
 
-int16_t push_back(list_t *list, gdata_t data) {
+inline int16_t push_back(list_t *list, gdata_t data) {
     return push_back_safe(list, list->item_size, data);
 }
 
-gdata_t peak_front(list_t *list) {
+inline gdata_t peak_front(list_t *list) {
     return lnode_data(list->head);
 }
 
-gdata_t peak_back(list_t *list) {
+inline gdata_t peak_back(list_t *list) {
     return lnode_data(list->tail);
 }
 
-gdata_t pop_front_s(list_t *list, size_t size, bool return_value, bool str) {
+int16_t pop_front_s(list_t *list, size_t size, void **buffer, bool str) {
+    if (list == NULL || list->head == NULL) return EXIT_FAILURE;
     lnode_t *old_head = list->head;
-    gdata_t  r = return_value ? (str ? old_head->data
-                                     : memcpy(memset(alloca(size), 0, size), old_head->data, size))
-                              : NULL;
-
+    if (buffer) {
+        if (str) {
+            *buffer = old_head->data;
+        } else {
+            if (*buffer) memcpy(*buffer, old_head->data, size);
+        }
+    }
     list->head = (lnode_t *)old_head->link;
     if (list->head == NULL) {
         list->tail = NULL;
     } else
         lnode_set_link(list->head, lnode_link(list->head) ^ (uintptr_t)old_head);
 
-    if (!str) lnode_destroy(old_head);
+    if (!(buffer && str)) lnode_destroy(old_head);
     free(old_head);
-    old_head = NULL;
-    return r;
+    return EXIT_SUCCESS;
 }
 
-gdata_t pop_front(list_t *list) {
-    if (list->head == NULL || list == NULL) return NULL;
-    return pop_front_s(list, list->item_size, true, false);
-}
-
-char *spop_front(list_t *list, size_t *size) {
-    if (list == NULL || list->head == NULL) return NULL;
-    size_t tsize = strlen((char *)list->head->data) + 1;
-    if (size) *size = tsize;
-    return pop_front_s(list, tsize, true, true);
-}
-
-gdata_t pop_back_s(list_t *list, size_t size, bool return_value, bool str) {
-    if (list->tail == list->head) return pop_front_s(list, size, true, false);
+int16_t pop_back_s(list_t *list, size_t size, void **buffer, bool str) {
+    if (list == NULL || list->head == NULL) return EXIT_FAILURE;
     lnode_t *old_tail = list->tail;
-    gdata_t  r = return_value ? (str ? old_tail->data
-                                     : memcpy(memset(alloca(size), 0, size), old_tail->data, size))
-                              : NULL;
+    if (buffer) {
+        if (str)
+            // pop front str
+            *buffer = old_tail->data;
+        else {
+            // pop front
+            if (*buffer) memcpy(*buffer, old_tail->data, size);
+        }
+    }
+    // both
     list->tail = (lnode_t *)old_tail->link;
-    if (list->tail != NULL)
+    if (list->tail == NULL) {
+        list->tail = NULL;
+    } else
         lnode_set_link(list->tail, lnode_link(list->tail) ^ (uintptr_t)old_tail);
 
-    if (!str) lnode_destroy(old_tail);
+    if (!(buffer && str)) lnode_destroy(old_tail);
+
+    // both
     free(old_tail);
-    old_tail = NULL;
-    return r;
+    return EXIT_SUCCESS;
 }
 
-gdata_t pop_back(list_t *list) {
-    if (list == NULL || list->head == NULL) return NULL;
-    return pop_back_s(list, list->item_size, true, false);
-}
-char *spop_back(list_t *list, size_t *size) {
-    if (list == NULL || list->head == NULL) return NULL;
-    size_t tsize = strlen((char *)list->tail->data);
-    if (size) *size = tsize;
-    return pop_back_s(list, tsize, true, true);
+inline int16_t pop_front(list_t *list, void *buffer) {
+    return pop_front_s(list, list->item_size, &buffer, false);
 }
 
-void list_purge(list_t *list) {
+inline int16_t pop_back(list_t *list, void *buffer) {
+    return pop_back_s(list, list->item_size, buffer, false);
+}
+
+char *strpop_front(list_t *list) {
+    if (list == NULL || list->head == NULL) return NULL;
+    void *temp = NULL;
+    return !pop_front_s(list, 0, &temp, true) ? (char *)temp : NULL;
+}
+
+char *strpop_back(list_t *list) {
+    if (list == NULL || list->head == NULL) return NULL;
+    void *temp = NULL;
+    return !pop_back_s(list, 0, &temp, true) ? temp : NULL;
+}
+
+inline void list_purge(list_t *list) {
     while (list->head != NULL)
-        pop_front_s(list, list->item_size, false, false);
+        pop_front_s(list, list->item_size, NULL, false);
 }
 
 void list_destroy(list_t *list) {
     list_purge(list);
 }
 
-void list_set_allocator(list_t *list, gdata_t (*allocator_fun)(gdata_t data)) {
+inline void list_set_allocator(list_t *list, gdata_t (*allocator_fun)(gdata_t data)) {
     list->allocator_fun = allocator_fun;
 }
 

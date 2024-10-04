@@ -79,11 +79,10 @@ void fixed_strings() {
 
 #if 1
     printf("------------------- ");
-    printf("Destroing fixed_strings\n");
-    char  *temp = NULL;
-    size_t sz = 0;
-    while ((temp = spop_front(fixed_strings, &sz))) {
-        printf("%s %ld -> ", temp, sz);
+    printf("Destroying fixed_strings\n");
+    char *temp = NULL;
+    while ((temp = strpop_front(fixed_strings))) {
+        printf("%s -> ", temp);
         free(temp);
     }
     printf("\n");

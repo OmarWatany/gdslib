@@ -24,15 +24,14 @@ int16_t enqueue_safe(queue_t *queue, size_t item_size, gdata_t data) {
 }
 
 int16_t enqueue(queue_t *queue, gdata_t data) {
-    return enqueue_safe(queue, list_item_size(&queue->list), data);
+    return enqueue_safe(queue, queue->list.item_size, data);
 }
 
 int16_t dequeue(queue_t *queue) {
     if (queue == NULL) return EXIT_FAILURE;
-    gdata_t temp = peak_back(&queue->list);
-    if (temp != NULL) pop_back(&queue->list);
-    queue->length--;
-    return EXIT_SUCCESS;
+    int16_t rc = pop_back(&queue->list, NULL);
+    if (!rc) queue->length--;
+    return rc;
 }
 
 size_t queue_length(queue_t *queue) {

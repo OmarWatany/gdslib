@@ -176,12 +176,9 @@ int ring_read(ringbuffer *buffer, void *target, size_t size) {
 
 void *ring_read_return(ringbuffer *buffer, size_t size) {
     if (!buffer) return NULL;
-
-    void *temp = NULL;
-    if (!(temp = malloc(size))) return NULL;
-
-    if (ring_read(buffer, temp, size) == EXIT_SUCCESS) return temp;
-    free(temp);
+    void *temp = malloc(size);
+    if (!ring_read(buffer, temp, size)) return temp;
+    if (temp) free(temp);
     return NULL;
 }
 
