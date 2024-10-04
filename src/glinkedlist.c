@@ -116,13 +116,11 @@ int16_t pop_back_s(list_t *list, size_t size, void **buffer, bool str) {
     // both
     list->tail = (lnode_t *)old_tail->link;
     if (list->tail == NULL) {
-        list->tail = NULL;
+        list->head = NULL;
     } else
         lnode_set_link(list->tail, lnode_link(list->tail) ^ (uintptr_t)old_tail);
 
     if (!(buffer && str)) lnode_destroy(old_tail);
-
-    // both
     free(old_tail);
     return EXIT_SUCCESS;
 }
