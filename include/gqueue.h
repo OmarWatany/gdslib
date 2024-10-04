@@ -2,7 +2,6 @@
 #define QUEUE_H
 
 #include "gds_types.h"
-#include "gnode.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +19,7 @@ gdata_t queue_front(queue_t *queue);
 gdata_t queue_back(queue_t *queue);
 
 bool queue_empty(queue_t *queue);
-bool queue_find(queue_t *heystack, gdata_t needle, bool (*search_fun)(lnode_t *node, gdata_t data));
+bool queue_find(queue_t *heystack, gdata_t needle, bool (*search_fun)(gdata_t d1, gdata_t needle));
 
 void queue_dump(queue_t *queue, void (*_print_data)(gdata_t data));
 void queue_destroy(queue_t *queue);

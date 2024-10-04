@@ -7,12 +7,12 @@ void __print_int(void *data);
 void __allocate_s(lnode_t *node, void *data);
 void __print_s(void *data);
 
-bool queue_search_int(lnode_t *node, void *data) {
-    return *(int *)node->data == *(int *)data;
+bool queue_search_int(gdata_t d1, void *d2) {
+    return *(int *)d1 == *(int *)d2;
 }
 
-bool q_search_s(lnode_t *node, void *data) {
-    return strcmp(data, (char *)node->data);
+bool q_search_s(gdata_t str1, gdata_t str2) {
+    return strcmp(str1, (char *)str2);
 }
 
 int main() {

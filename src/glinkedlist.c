@@ -1,7 +1,6 @@
 #include "glinkedlist.h"
-#include "gds_types.h"
 #include "gitr.h"
-#include <alloca.h>
+#include "gnode.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -163,11 +162,11 @@ inline void list_set_allocator(list_t *list, gdata_t (*allocator_fun)(gdata_t da
 
 int16_t dump_list(list_t *list, void (*print_data)(gdata_t)) {
     if (list == NULL || list->head == NULL) return EXIT_FAILURE;
-    lnode_t *temp = list->head;
-    gitr_t   itr = list_gitr(list);
+    gdata_t temp = list->head->data;
+    gitr_t  itr = list_gitr(list);
 
     while (temp != NULL) {
-        print_data(lnode_data(temp));
+        print_data(temp);
         temp = itr_next(&itr);
     }
     gitr_destroy(&itr);
@@ -181,7 +180,7 @@ int16_t reverse_dump_list(list_t *list, void (*print_data)(gdata_t)) {
     gitr_set_from(&itr, temp);
     do {
         temp = itr_prev(&itr);
-        print_data(lnode_data(temp));
+        print_data(temp);
     } while (temp != itr_begin(&itr));
     gitr_destroy(&itr);
     return EXIT_SUCCESS;

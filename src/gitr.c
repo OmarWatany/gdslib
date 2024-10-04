@@ -36,7 +36,7 @@ gdata_t list_next(gitr_t *itr) {
     lctx->prev_node = (uintptr_t)from;
     ctx->from = (gnode_t *)lctx->next_node;
     lctx->next_node = lctx->prev_node ^ lnode_link(from);
-    return ((gnode_t *)ctx->from);
+    return ctx->from ? ((lnode_t *)ctx->from)->data : NULL;
 }
 
 gdata_t list_prev(gitr_t *itr) {
@@ -54,7 +54,7 @@ gdata_t list_prev(gitr_t *itr) {
     }
 
     if (lnode_link(from) == 0) {
-        return from;
+        return from->data;
     } else if (from == lctx->list->tail) {
         lctx->prev_node = lnode_link(lctx->list->tail);
     } else {
@@ -64,7 +64,7 @@ gdata_t list_prev(gitr_t *itr) {
     lctx->next_node = (uintptr_t)from;
     ctx->from = (gnode_t *)lctx->prev_node;
     lctx->prev_node = lctx->next_node ^ lnode_link(from);
-    return ((gnode_t *)lctx->next_node);
+    return lctx->next_node != (uintptr_t)NULL ? ((lnode_t *)lctx->next_node)->data : NULL;
 }
 
 gitr_vtable list_itr_vtable = {
@@ -78,7 +78,7 @@ gitr_t list_gitr(list_t *list) {
     *ctx = (list_itr_ctx_t){
         .list = list,
         .context.from = (gnode_t *)list->head,
-        .context.begin = (gnode_t *)list->head,
+        .context.begin = (gnode_t *)list->head->data,
     };
     return (gitr_t){.context = (itr_ctx_t *)ctx, .vtable = &list_itr_vtable};
 }

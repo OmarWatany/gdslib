@@ -6,7 +6,6 @@ extern "C" {
 #endif // cpp
 
 #include "gds_types.h"
-#include "gnode.h"
 #include <stdlib.h>
 
 // it's recommended to set item_size to 0 if you are going to save strings

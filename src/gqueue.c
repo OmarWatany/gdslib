@@ -54,8 +54,7 @@ bool queue_empty(queue_t *queue) {
     return false;
 }
 
-bool queue_find(queue_t *heystack, gdata_t needle,
-                bool (*search_fun)(lnode_t *node, gdata_t data)) {
+bool queue_find(queue_t *heystack, gdata_t needle, bool (*search_fun)(gdata_t d1, gdata_t d2)) {
     if (queue_empty(heystack)) return false;
 
     gitr_t   itr = list_gitr(&heystack->list);
