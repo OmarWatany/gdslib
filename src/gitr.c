@@ -12,53 +12,60 @@ typedef struct {
     uintptr_t prev_node, next_node;
 } list_itr_ctx_t;
 
+typedef struct {
+    itr_ctx_t context;
+    size_t    idx;
+    ktree_t  *tr;
+    tnode_t  *buffer[];
+} tr_itr_ctx_t;
+
 gdata_t list_gitr_next(gitr_t *itr) {
     if (NULL == itr) return NULL;
-    itr_ctx_t      *context = itr->context;
-    list_itr_ctx_t *lcontext = (list_itr_ctx_t *)context;
+    itr_ctx_t      *ctx = itr->context;
+    list_itr_ctx_t *lctx = (list_itr_ctx_t *)ctx;
 
-    lnode_t *from = (lnode_t *)context->from;
+    lnode_t *from = (lnode_t *)ctx->from;
     if (from == NULL) {
-        if (lcontext->list->head) {
-            from = lcontext->list->head;
+        if (lctx->list->head) {
+            from = lctx->list->head;
         } else
             return NULL;
     }
     if (lnode_link(from) == 0) {
         return NULL;
-    } else if (from == lcontext->list->head) {
-        lcontext->next_node = lnode_link(lcontext->list->head);
+    } else if (from == lctx->list->head) {
+        lctx->next_node = lnode_link(lctx->list->head);
     } else {
-        lcontext->next_node = lcontext->prev_node ^ lnode_link(from);
+        lctx->next_node = lctx->prev_node ^ lnode_link(from);
     }
-    lcontext->prev_node = (uintptr_t)from;
-    context->from = (gnode_t *)lcontext->next_node;
-    lcontext->next_node = lcontext->prev_node ^ lnode_link(from);
-    return (gnode_t *)context->from;
+    lctx->prev_node = (uintptr_t)from;
+    ctx->from = (gnode_t *)lctx->next_node;
+    lctx->next_node = lctx->prev_node ^ lnode_link(from);
+    return (gnode_t *)ctx->from;
 }
 
 gdata_t list_gitr_prev(gitr_t *itr) {
     if (NULL == itr) return NULL;
-    itr_ctx_t      *context = itr->context;
-    list_itr_ctx_t *lcontext = (list_itr_ctx_t *)context;
-    lnode_t        *from = (lnode_t *)context->from;
+    itr_ctx_t      *ctx = itr->context;
+    list_itr_ctx_t *lctx = (list_itr_ctx_t *)ctx;
+    lnode_t        *from = (lnode_t *)ctx->from;
     if (from == NULL) {
-        if (lcontext->list->tail) {
-            from = lcontext->list->tail;
+        if (lctx->list->tail) {
+            from = lctx->list->tail;
         } else
             return NULL;
     }
     if (lnode_link(from) == 0) {
         return NULL;
-    } else if (from == lcontext->list->tail) {
-        lcontext->prev_node = lnode_link(lcontext->list->tail);
+    } else if (from == lctx->list->tail) {
+        lctx->prev_node = lnode_link(lctx->list->tail);
     } else {
-        lcontext->prev_node = lcontext->next_node ^ lnode_link(from);
+        lctx->prev_node = lctx->next_node ^ lnode_link(from);
     }
-    lcontext->next_node = (uintptr_t)from;
-    context->from = (gnode_t *)lcontext->prev_node;
-    lcontext->prev_node = lcontext->next_node ^ lnode_link(from);
-    return (gnode_t *)context->from;
+    lctx->next_node = (uintptr_t)from;
+    ctx->from = (gnode_t *)lctx->prev_node;
+    lctx->prev_node = lctx->next_node ^ lnode_link(from);
+    return (gnode_t *)ctx->from;
 }
 
 gitr_vtable list_itr_vtable = {
@@ -123,7 +130,9 @@ gitr_t queue_gitr(queue_t *queue) {
 gitr_t astack_gitr(astack_t *stack) {
     return alist_gitr(&stack->buf);
 }
-//
+
+// circular_buffer
+// TEST : test it
 gitr_t carray_gitr(circular_array_t *carr) {
     if (!carr) return (gitr_t){0};
     itr_ctx_t *ctx = calloc(1, sizeof(*ctx));
@@ -135,10 +144,104 @@ gitr_t carray_gitr(circular_array_t *carr) {
     return (gitr_t){.context = (itr_ctx_t *)ctx, .vtable = &alist_itr_vtable};
 }
 
-// tree
 // heap
 // pqueue
-// circular_buffer
+
+// Tree
+void bf_order_h(ktree_t *tree, tnode_t *buffer[]) {
+    size_t   write_idx = 0, read_idx = 0;
+    tnode_t *front = tree->root;
+    buffer[write_idx++] = front;
+    while (write_idx < tree->size) {
+        front = buffer[read_idx++];
+        for (size_t k = 0; k < tree->k; k++) {
+            tnode_t *child = tnode_child(front, k);
+            if (child) buffer[write_idx++] = child;
+        }
+    }
+}
+
+void in_order_r(tnode_t *node, tnode_t *buffer[], size_t k, size_t *write_idx) {
+    if (node == NULL) return;
+    for (size_t n = 0; n < k; n++) {
+        in_order_r(tnode_child(node, n), buffer, k, write_idx);
+        if (n == (k - 1) / 2) buffer[(*write_idx)++] = node;
+    }
+}
+
+void in_order_h(ktree_t *tree, tnode_t *buffer[]) {
+    size_t write_idx = 0;
+    in_order_r(tree->root, buffer, tree->k, &write_idx);
+}
+
+void pre_order_r(tnode_t *node, tnode_t *buffer[], size_t k, size_t *write_idx) {
+    if (node == NULL) return;
+    buffer[(*write_idx)++] = node;
+    for (size_t n = 0; n < k; n++)
+        pre_order_r(tnode_child(node, n), buffer, k, write_idx);
+}
+
+void pre_order_h(ktree_t *tree, tnode_t *buffer[]) {
+    static size_t write_idx = 0;
+    pre_order_r(tree->root, buffer, tree->k, &write_idx);
+}
+
+void post_order_r(tnode_t *node, tnode_t *buffer[], size_t k, size_t *write_idx) {
+    if (node == NULL) return;
+    for (size_t n = 0; n < k; n++)
+        post_order_r(tnode_child(node, n), buffer, k, write_idx);
+    buffer[(*write_idx)++] = node;
+}
+
+void post_order_h(ktree_t *tree, tnode_t *buffer[]) {
+    size_t write_idx = 0;
+    post_order_r(tree->root, buffer, tree->k, &write_idx);
+}
+
+static gdata_t tr_next(gitr_t *itr) {
+    itr_ctx_t    *ctx = itr->context;
+    tr_itr_ctx_t *tctx = (tr_itr_ctx_t *)itr->context;
+    if (tctx->idx == tctx->tr->size - 1) return NULL;
+    return (ctx->from = tctx->buffer[++tctx->idx]);
+}
+
+static gdata_t tr_prev(gitr_t *itr) {
+    itr_ctx_t    *ctx = itr->context;
+    tr_itr_ctx_t *tctx = (tr_itr_ctx_t *)itr->context;
+    if (tctx->idx == 0) return tctx->buffer[0];
+    return (ctx->from = tctx->buffer[--tctx->idx]);
+}
+
+static gitr_vtable tr_itr_vtable = {
+    .next = tr_next,
+    .prev = tr_prev,
+};
+
+static void (*tr_helpers[])(ktree_t *, tnode_t *[]) = {
+    [BREADTH_FIRST_ORDER] = bf_order_h,
+    [PRE_ORDER] = pre_order_h,
+    [IN_ORDER] = in_order_h,
+    [POST_ORDER] = post_order_h,
+};
+
+gitr_t tr_gitr_o(ktree_t *tr, TRAVERSE_ORDER order) {
+    if (!tr || tr->size == 0) return (gitr_t){0};
+    tr_itr_ctx_t *ctx = calloc(1, sizeof(*ctx) + tr->size * sizeof(tnode_t *));
+    *ctx = (tr_itr_ctx_t){
+        .context = (itr_ctx_t){.end = NULL},
+        .tr = tr,
+        .idx = 0,
+    };
+    // TODO: add reverse order functions
+    tr_helpers[order](tr, ctx->buffer);
+    ctx->context.begin = ctx->buffer[0];
+
+    // Select the appropriate vtable based on the order
+    return (gitr_t){
+        .context = (itr_ctx_t *)ctx,
+        .vtable = &tr_itr_vtable,
+    };
+}
 
 // general
 void gitr_destroy(gitr_t *itr) {

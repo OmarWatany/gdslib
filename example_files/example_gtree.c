@@ -1,7 +1,7 @@
+#include "gds_types.h"
+#include "gitr.h"
 #include "gtree.h"
-#include <math.h>
 #include <stdio.h>
-#include <time.h>
 
 static int gcmp_int(gdata_t data1, gdata_t data2) {
     if (!(data1 && data2)) return 0;
@@ -54,35 +54,42 @@ void random_output() {
     for (size_t i = 0; i < 21; i++) {
         bst_add(&tree, &arr[i]);
     }
+    printf("MAX  : %d \n", *(int *)bst_max(&tree));
+    printf("MIN  : %d \n", *(int *)bst_min(&tree));
+    printf("SIZE : %ld \n", tree.size);
 
-    srand(time(0));
-    int j = 0;
-    for (size_t i = 0; i < 2000; i++) {
-        j = rand() % (1500) + 200;
-        bst_add(&tree, &j);
-    }
-
-    printf("MAX : %d \n", *(int *)bst_max(&tree));
-    printf("MIN : %d \n", *(int *)bst_min(&tree));
+    /* srand(time(0)); */
+    /* int j = 0; */
+    /* for (size_t i = 0; i < 2000; i++) { */
+    /*     j = rand() % (1500) + 200; */
+    /*     bst_add(&tree, &j); */
+    /* } */
 
     int d = 10000;
     bst_add(&tree, &d);
+    printf("MAX  : %d \n", *(int *)bst_max(&tree));
+    printf("MIN  : %d \n", *(int *)bst_min(&tree));
+    printf("SIZE : %ld \n", tree.size);
 
     // kt_for_each(&tree, IN_ORDER, iprintTree);
     // printf("__ BREADTH START __\n");
     // kt_for_each(&tree, BREADTH_FIRST_ORDER, iprintLvl);
     // printf("__ BREADTH END __\n");
 
-    size_t lvl = 4, lvlc = pow(tree.k, lvl);
-
-    tnode_t **childs = kt_grand_childrens(&tree, lvl);
-    printf("lvl: %ld , children count %ld \n", lvl, lvlc);
+    /* size_t    lvl = 4, lvlc = pow(tree.k, lvl); */
+    /* tnode_t **childs = kt_grand_childrens(&tree, lvl); */
+    /* printf("lvl: %ld , children count %ld \n", lvl, lvlc); */
 
     d = 345;
     if (bst_find(&tree, &d)) {
         bst_delete(&tree, &d);
         kt_for_each(&tree, IN_ORDER, iprintTree);
     }
+
+    printf("MAX  : %d \n", *(int *)bst_max(&tree));
+    printf("MIN  : %d \n", *(int *)bst_min(&tree));
+    printf("SIZE : %ld \n", tree.size);
+
     //  else {
     //     for (size_t j = 0; j < lvlc && childs; j++) {
     //         if (childs[j])
@@ -96,7 +103,25 @@ void random_output() {
     printf("BREADTH FIRST PRINT\n");
     kt_for_each(&tree, BREADTH_FIRST_ORDER, iprintLvl);
 
-    free(childs);
+    printf("------------------- \n");
+    printf("Tree iterator\n");
+    printf("SIZE : %ld \n", tree.size);
+    gitr_t   itr = tr_gitr_o(&tree, POST_ORDER);
+    gnode_t *temp = gitr_begin(&itr);
+
+    size_t idx = 0;
+    do {
+        printf("%3ld %5d - \n", ++idx, *(int *)gnode_data(temp));
+    } while ((temp = gitr_next(&itr)));
+
+    while (temp != gitr_begin(&itr)) {
+        temp = gitr_prev(&itr);
+        printf("%3ld %5d - \n", --idx, *(int *)gnode_data(temp));
+    }
+
+    gitr_destroy(&itr);
+
+    /* free(childs); */
     bst_destroy(&tree);
 }
 
@@ -154,8 +179,8 @@ void test_kheap(size_t k) {
 }
 
 int main() {
-    // random_output();
-    test_kheap(2);
+    random_output();
+    /* test_kheap(2); */
     // test_kheap(4);
 
     return 0;

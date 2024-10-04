@@ -9,6 +9,7 @@ static void for_each_h(tnode_t *node, size_t lvl, for_each_fn for_each_f) {
 }
 
 static void bf_order(ktree_t *tree, for_each_fn for_each) {
+    // TODO : if i wrote unit tests test it with ringbuffer
     queue_t lvlq = {0};
     queue_init(&lvlq, sizeof(tnode_t *));
 
@@ -128,7 +129,10 @@ static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
     int dir = -1;
     dir = res > 0 ? 0 : (res < 0 ? 1 : dir);
 
-    if (dir < 0) return;
+    if (dir < 0) {
+        tree->size--;
+        return;
+    }
     temp = tnode_child(node, dir);
 
     if (!temp) {
@@ -143,7 +147,7 @@ static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
 
 void bst_add(btree_t *tree, gdata_t data) {
     if (!tree->cmp_fun) {
-        fprintf(stderr, "Error: there isn't compare function\n");
+        fprintf(stderr, "[ERROR]: there isn't compare function\n");
         return;
     }
     if (!tree->root) {
@@ -153,9 +157,10 @@ void bst_add(btree_t *tree, gdata_t data) {
         } else
             tnode_set_data(new_node, default_allocator(tree->item_size, data));
         tree->root = new_node;
-    } else
+    } else {
         bst_add_h(tree, tree->root, data);
-    // tree->size++;
+    }
+    tree->size++;
 }
 
 static tnode_t *bst_min_max(tnode_t *node, size_t direction) {
@@ -213,7 +218,6 @@ static void bst_delete_node(tnode_t *parent, tnode_t *node, int dir) {
 }
 
 static void bst_delete_h(ktree_t *tree, tnode_t *node, gdata_t data) {
-
     tnode_t *parent = bst_find_parent(tree, node, data);
     if (!parent) return;
     tnode_t *child = bst_find_h(tree, parent, data);
@@ -247,6 +251,8 @@ static void bst_delete_h(ktree_t *tree, tnode_t *node, gdata_t data) {
 }
 
 void bst_delete(btree_t *tree, gdata_t data) {
+    if (tree->size == 0) return;
+    tree->size--;
     bst_delete_h(tree, tree->root, data);
 }
 

@@ -42,7 +42,7 @@ struct gitr_t {
 
 typedef struct {
     tnode_t *root;
-    size_t   item_size, k;
+    size_t   item_size, k, size;
     // function pointers
     cmp_fun         cmp_fun;
     allocator_fun_t allocator_fun;

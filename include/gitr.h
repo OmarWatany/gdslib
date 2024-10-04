@@ -18,6 +18,12 @@ gitr_t stack_gitr(stack_t *stack);
 gitr_t queue_gitr(queue_t *queue);
 gitr_t alist_gitr(alist_t *alist);
 gitr_t astack_gitr(astack_t *astack);
-void   gitr_destroy(gitr_t *itr);
+gitr_t tr_gitr_o(ktree_t *tr, TRAVERSE_ORDER order);
+
+#define heap_gitr(H)    (alist_gitr(&(H)->buf))
+#define pqueue_gitr(PQ) (heap_gitr(&(PQ)->h))
+#define tr_gitr(T)      (tr_gitr_o((T), IN_ORDER))
+
+void gitr_destroy(gitr_t *itr);
 
 #endif // !ITRERATOR_H_
