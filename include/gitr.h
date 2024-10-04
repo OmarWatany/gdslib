@@ -6,8 +6,8 @@
 // return NODE
 #define itr_next(itr)  ((!(itr)->vtable) ? NULL : (itr)->vtable->next((itr)))
 #define itr_prev(itr)  ((!(itr)->vtable) ? NULL : (itr)->vtable->prev((itr)))
-#define itr_begin(itr) ((!(itr)->context) ? NULL : (itr)->context->begin)
-#define itr_end(itr)   ((!(itr)->context) ? NULL : (itr)->context->end)
+#define itr_begin(itr) ((!(itr)->context) ? NULL : ((gnode_t *)(itr)->context->begin)->data)
+#define itr_end(itr)   NULL
 
 #define gitr_set_from(itr, F)                                                                      \
     do {                                                                                           \

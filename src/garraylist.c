@@ -102,8 +102,12 @@ int16_t alist_rm_at(alist_t *alist, size_t pos) {
 
     anode_t *node = &alist->buf[pos];
     if (node->data) {
-        /* alist->deallocator_fun(node->data); */
-        memset(node->data, 0, alist->item_size);
+        if (alist->allocator_fun == str_allocator) {
+            free(node->data);
+        } else {
+            /* alist->deallocator_fun(node->data); */
+            memset(node->data, 0, alist->item_size);
+        }
     }
     for (size_t i = pos + 1; i < alist->size; i++)
         alist->buf[i - 1] = alist->buf[i];

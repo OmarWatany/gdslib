@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define IDATA(N) (((gnode_t *)(N))->data)
+
 // list
 typedef struct {
     itr_ctx_t context;
@@ -36,7 +38,7 @@ gdata_t list_next(gitr_t *itr) {
     lctx->prev_node = (uintptr_t)from;
     ctx->from = (gnode_t *)lctx->next_node;
     lctx->next_node = lctx->prev_node ^ lnode_link(from);
-    return ctx->from ? ((lnode_t *)ctx->from)->data : NULL;
+    return ctx->from ? IDATA(ctx->from) : NULL;
 }
 
 gdata_t list_prev(gitr_t *itr) {
@@ -64,7 +66,7 @@ gdata_t list_prev(gitr_t *itr) {
     lctx->next_node = (uintptr_t)from;
     ctx->from = (gnode_t *)lctx->prev_node;
     lctx->prev_node = lctx->next_node ^ lnode_link(from);
-    return lctx->next_node != (uintptr_t)NULL ? ((lnode_t *)lctx->next_node)->data : NULL;
+    return lctx->next_node != (uintptr_t)NULL ? IDATA(lctx->next_node) : NULL;
 }
 
 gitr_vtable list_itr_vtable = {
@@ -78,7 +80,7 @@ gitr_t list_gitr(list_t *list) {
     *ctx = (list_itr_ctx_t){
         .list = list,
         .context.from = (gnode_t *)list->head,
-        .context.begin = (gnode_t *)list->head->data,
+        .context.begin = (gnode_t *)list->head,
     };
     return (gitr_t){.context = (itr_ctx_t *)ctx, .vtable = &list_itr_vtable};
 }
@@ -87,15 +89,15 @@ gitr_t list_gitr(list_t *list) {
 gdata_t alist_next(gitr_t *itr) {
     if (NULL == itr) return NULL;
     itr_ctx_t *ctx = itr->context;
-    if (ctx->from == ctx->end) return NULL;
-    return (ctx->from += sizeof(anode_t));
+    if (ctx->from == (ctx->end + sizeof(anode_t))) return NULL;
+    return IDATA((ctx->from += sizeof(anode_t)));
 }
 
 gdata_t alist_prev(gitr_t *itr) {
     if (NULL == itr) return NULL;
     itr_ctx_t *ctx = itr->context;
     if (ctx->from == ctx->begin) return NULL;
-    return (ctx->from -= sizeof(anode_t));
+    return IDATA(ctx->from -= sizeof(anode_t));
 }
 
 gitr_vtable alist_itr_vtable = {
@@ -109,6 +111,7 @@ gitr_t alist_gitr(alist_t *lst) {
     *ctx = (itr_ctx_t){
         .from = &lst->buf[0],
         .begin = &lst->buf[0],
+        .end = &lst->buf[lst->size - 1],
     };
     return (gitr_t){.context = (itr_ctx_t *)ctx, .vtable = &alist_itr_vtable};
 }
