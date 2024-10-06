@@ -29,7 +29,7 @@ int main() {
     dequeue(&names);
     if (queue_find(&names, "!", q_search_s)) queue_dump(&names, __print_s);
 
-    int deck_size = 1000000;
+    int deck_size = 100;
     printf("deck size : %d\n", deck_size);
     // scanf("%d", &deck_size);
     for (int i = 1; i <= deck_size; i++)

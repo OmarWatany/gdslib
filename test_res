@@ -1,9 +1,9 @@
-Testing ./bin/arraylist
-==570804== Memcheck, a memory error detector
-==570804== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==570804== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==570804== Command: ./bin/arraylist
-==570804== 
+Testing "$1"
+==[arraylist]== Memcheck, a memory error detector
+==[arraylist]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[arraylist]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[arraylist]== Command: ./bin/arraylist
+==[arraylist]== 
 __ funcs list __
 size: 2 - capacity: 2 
 3 - 4
@@ -47,44 +47,44 @@ size: 5 - capacity: 10
 ------------------- Integers giterator
 2 - 3 - 4 - 5 - 
 5 - 4 - 3 - 2 - 
-==570804== 
-==570804== HEAP SUMMARY:
-==570804==     in use at exit: 0 bytes in 0 blocks
-==570804==   total heap usage: 39 allocs, 39 frees, 4,882 bytes allocated
-==570804== 
-==570804== All heap blocks were freed -- no leaks are possible
-==570804== 
-==570804== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==[arraylist]== 
+==[arraylist]== HEAP SUMMARY:
+==[arraylist]==     in use at exit: 0 bytes in 0 blocks
+==[arraylist]==   total heap usage: 39 allocs, 39 frees, 4,882 bytes allocated
+==[arraylist]== 
+==[arraylist]== All heap blocks were freed -- no leaks are possible
+==[arraylist]== 
+==[arraylist]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
-Testing ./bin/arraystack
-==570829== Memcheck, a memory error detector
-==570829== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==570829== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==570829== Command: ./bin/arraystack
-==570829== 
+Testing "$1"
+==[arraystack]== Memcheck, a memory error detector
+==[arraystack]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[arraystack]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[arraystack]== Command: ./bin/arraystack
+==[arraystack]== 
 world
 hello
 world
 hello
 world
 hello
-==570829== 
-==570829== HEAP SUMMARY:
-==570829==     in use at exit: 0 bytes in 0 blocks
-==570829==   total heap usage: 9 allocs, 9 frees, 4,204 bytes allocated
-==570829== 
-==570829== All heap blocks were freed -- no leaks are possible
-==570829== 
-==570829== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==[arraystack]== 
+==[arraystack]== HEAP SUMMARY:
+==[arraystack]==     in use at exit: 0 bytes in 0 blocks
+==[arraystack]==   total heap usage: 9 allocs, 9 frees, 4,204 bytes allocated
+==[arraystack]== 
+==[arraystack]== All heap blocks were freed -- no leaks are possible
+==[arraystack]== 
+==[arraystack]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
-Testing ./bin/circular_array
-==570836== Memcheck, a memory error detector
-==570836== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==570836== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==570836== Command: ./bin/circular_array
-==570836== 
+Testing "$1"
+==[circular_array]== Memcheck, a memory error detector
+==[circular_array]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[circular_array]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[circular_array]== Command: ./bin/circular_array
+==[circular_array]== 
 carray size : 9
 carray cap : 10
 error : No buffer space available
@@ -112,22 +112,22 @@ carray cap : 10
 10 -> 0 
 carray size : 0
 carray cap : 10
-==570836== 
-==570836== HEAP SUMMARY:
-==570836==     in use at exit: 0 bytes in 0 blocks
-==570836==   total heap usage: 12 allocs, 12 frees, 4,216 bytes allocated
-==570836== 
-==570836== All heap blocks were freed -- no leaks are possible
-==570836== 
-==570836== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==[circular_array]== 
+==[circular_array]== HEAP SUMMARY:
+==[circular_array]==     in use at exit: 0 bytes in 0 blocks
+==[circular_array]==   total heap usage: 12 allocs, 12 frees, 4,216 bytes allocated
+==[circular_array]== 
+==[circular_array]== All heap blocks were freed -- no leaks are possible
+==[circular_array]== 
+==[circular_array]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
-Testing ./bin/linkedlist
-==570861== Memcheck, a memory error detector
-==570861== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==570861== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==570861== Command: ./bin/linkedlist
-==570861== 
+Testing "$1"
+==[linkedlist]== Memcheck, a memory error detector
+==[linkedlist]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[linkedlist]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[linkedlist]== Command: ./bin/linkedlist
+==[linkedlist]== 
 ------------------- fixed_strings
 strings -> print -> hello -> world -> print -> hello -> world -> print -> hello -> world -> print -> hello -> world -> print -> hello -> world -> print -> hello -> world -> print -> hello -> world -> ! -> ! -> ! -> ! -> ! -> ! -> ! -> 
 ------------------- Fixed_strings itrator
@@ -150,22 +150,22 @@ length = 3
 ------------------- Dynamic Strings
 strings -> dyn strings -> strings -> 
 strings -> dyn strings -> strings -> 
-==570861== 
-==570861== HEAP SUMMARY:
-==570861==     in use at exit: 0 bytes in 0 blocks
-==570861==   total heap usage: 84 allocs, 84 frees, 6,102 bytes allocated
-==570861== 
-==570861== All heap blocks were freed -- no leaks are possible
-==570861== 
-==570861== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==[linkedlist]== 
+==[linkedlist]== HEAP SUMMARY:
+==[linkedlist]==     in use at exit: 0 bytes in 0 blocks
+==[linkedlist]==   total heap usage: 84 allocs, 84 frees, 6,102 bytes allocated
+==[linkedlist]== 
+==[linkedlist]== All heap blocks were freed -- no leaks are possible
+==[linkedlist]== 
+==[linkedlist]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
-Testing ./bin/pqueue
-==570868== Memcheck, a memory error detector
-==570868== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==570868== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==570868== Command: ./bin/pqueue
-==570868== 
+Testing "$1"
+==[pqueue]== Memcheck, a memory error detector
+==[pqueue]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[pqueue]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[pqueue]== Command: ./bin/pqueue
+==[pqueue]== 
 -----------------------
 PQUEUE TEST 
 -----------------------
@@ -191,43 +191,43 @@ value 23 - priority 3
 value 29 - priority 4
 value 9 - priority -99999
 -----------------------
-==570868== 
-==570868== HEAP SUMMARY:
-==570868==     in use at exit: 0 bytes in 0 blocks
-==570868==   total heap usage: 16 allocs, 16 frees, 4,340 bytes allocated
-==570868== 
-==570868== All heap blocks were freed -- no leaks are possible
-==570868== 
-==570868== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==[pqueue]== 
+==[pqueue]== HEAP SUMMARY:
+==[pqueue]==     in use at exit: 0 bytes in 0 blocks
+==[pqueue]==   total heap usage: 16 allocs, 16 frees, 4,340 bytes allocated
+==[pqueue]== 
+==[pqueue]== All heap blocks were freed -- no leaks are possible
+==[pqueue]== 
+==[pqueue]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
-Testing ./bin/queue
-==570893== Memcheck, a memory error detector
-==570893== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==570893== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==570893== Command: ./bin/queue
-==570893== 
+Testing "$1"
+==[queue]== Memcheck, a memory error detector
+==[queue]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[queue]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[queue]== Command: ./bin/queue
+==[queue]== 
 hello ,world ,! ,
 world ,! ,
-deck size : 1000000
+deck size : 100
 is 8 there ? : yes
-remaining card : 951424
-==570893== 
-==570893== HEAP SUMMARY:
-==570893==     in use at exit: 0 bytes in 0 blocks
-==570893==   total heap usage: 6,000,008 allocs, 6,000,008 frees, 60,004,362 bytes allocated
-==570893== 
-==570893== All heap blocks were freed -- no leaks are possible
-==570893== 
-==570893== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+remaining card : 72
+==[queue]== 
+==[queue]== HEAP SUMMARY:
+==[queue]==     in use at exit: 0 bytes in 0 blocks
+==[queue]==   total heap usage: 608 allocs, 608 frees, 10,362 bytes allocated
+==[queue]== 
+==[queue]== All heap blocks were freed -- no leaks are possible
+==[queue]== 
+==[queue]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
-Testing ./bin/ringbuffer
-==571384== Memcheck, a memory error detector
-==571384== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==571384== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==571384== Command: ./bin/ringbuffer
-==571384== 
+Testing "$1"
+==[ringbuffer]== Memcheck, a memory error detector
+==[ringbuffer]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[ringbuffer]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[ringbuffer]== Command: ./bin/ringbuffer
+==[ringbuffer]== 
 Data Size : 6
 ----------
 Buffer Size  : 4096
@@ -248,41 +248,41 @@ Buffer write : 0
 Buffer read  : 0
 buffer data  : 
 ----------
-==571384== 
-==571384== HEAP SUMMARY:
-==571384==     in use at exit: 0 bytes in 0 blocks
-==571384==   total heap usage: 3 allocs, 3 frees, 4,573 bytes allocated
-==571384== 
-==571384== All heap blocks were freed -- no leaks are possible
-==571384== 
-==571384== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==[ringbuffer]== 
+==[ringbuffer]== HEAP SUMMARY:
+==[ringbuffer]==     in use at exit: 0 bytes in 0 blocks
+==[ringbuffer]==   total heap usage: 3 allocs, 3 frees, 4,573 bytes allocated
+==[ringbuffer]== 
+==[ringbuffer]== All heap blocks were freed -- no leaks are possible
+==[ringbuffer]== 
+==[ringbuffer]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
-Testing ./bin/stack
-==571392== Memcheck, a memory error detector
-==571392== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==571392== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==571392== Command: ./bin/stack
-==571392== 
+Testing "$1"
+==[stack]== Memcheck, a memory error detector
+==[stack]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[stack]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[stack]== Command: ./bin/stack
+==[stack]== 
 2
 3
 23
-==571392== 
-==571392== HEAP SUMMARY:
-==571392==     in use at exit: 0 bytes in 0 blocks
-==571392==   total heap usage: 8 allocs, 8 frees, 4,188 bytes allocated
-==571392== 
-==571392== All heap blocks were freed -- no leaks are possible
-==571392== 
-==571392== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==[stack]== 
+==[stack]== HEAP SUMMARY:
+==[stack]==     in use at exit: 0 bytes in 0 blocks
+==[stack]==   total heap usage: 8 allocs, 8 frees, 4,188 bytes allocated
+==[stack]== 
+==[stack]== All heap blocks were freed -- no leaks are possible
+==[stack]== 
+==[stack]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
-Testing ./bin/tree
-==571417== Memcheck, a memory error detector
-==571417== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==571417== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
-==571417== Command: ./bin/tree
-==571417== 
+Testing "$1"
+==[tree]== Memcheck, a memory error detector
+==[tree]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==[tree]== Using Valgrind-3.23.0 and LibVEX; rerun with -h for copyright info
+==[tree]== Command: ./bin/tree
+==[tree]== 
 MAX  : 389 
 MIN  : 9 
 SIZE : 21 
@@ -414,13 +414,13 @@ VALID HEAP
 
 ---------------
 
-==571417== 
-==571417== HEAP SUMMARY:
-==571417==     in use at exit: 0 bytes in 0 blocks
-==571417==   total heap usage: 125 allocs, 125 frees, 5,816 bytes allocated
-==571417== 
-==571417== All heap blocks were freed -- no leaks are possible
-==571417== 
-==571417== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==[tree]== 
+==[tree]== HEAP SUMMARY:
+==[tree]==     in use at exit: 0 bytes in 0 blocks
+==[tree]==   total heap usage: 125 allocs, 125 frees, 5,816 bytes allocated
+==[tree]== 
+==[tree]== All heap blocks were freed -- no leaks are possible
+==[tree]== 
+==[tree]== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ********************************************************************************
