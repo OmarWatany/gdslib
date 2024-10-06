@@ -91,6 +91,7 @@ void heapify_parent(heap_t *heap, size_t parent_p) {
 }
 
 static void for_each_h(anode_t *node, size_t lvl, for_each_fn for_each_f) {
+    // iprint(&(tree_for_data){node, lvl})
     for_each_f(&(tree_for_data){node, lvl});
 }
 
@@ -125,7 +126,7 @@ static void (*order_functions[])(heap_t *heap, size_t k, size_t lvl, for_each_fn
 };
 
 gdata_t heap_peak(heap_t *heap) {
-    return alist_at(&heap->buf, 0);
+    return heap->buf.buf[0].data;
 }
 
 heap_t *heap_create(size_t item_size, size_t k, HEAP_TYPE type) {
@@ -166,7 +167,7 @@ void heap_add(heap_t *heap, const gdata_t data) {
 }
 
 void heap_pop(heap_t *heap) {
-    ssize_t  last_pos = alist_size(&heap->buf) - 1;
+    ssize_t  last_pos = heap->buf.size - 1;
     anode_t *last = node_at(heap, last_pos);
     anode_swap_data(node_at(heap, 0), last);
     heap->buf.size--;
@@ -180,7 +181,7 @@ void heap_destroy(heap_t *heap) {
 void heap_for_each_order(heap_t *heap, TRAVERSE_ORDER order, for_each_fn function) {
     switch (order) {
     case BREADTH_FIRST_ORDER:
-        for (size_t j = 0; j < alist_size(&heap->buf); j++)
+        for (size_t j = 0; j < heap->buf.size; j++)
             for_each_h(&heap->buf.buf[j], 0, function);
         break;
     default:
@@ -189,5 +190,6 @@ void heap_for_each_order(heap_t *heap, TRAVERSE_ORDER order, for_each_fn functio
 }
 
 void heap_for_each(heap_t *heap, for_each_fn function) {
+    // iprint
     heap_for_each_order(heap, BREADTH_FIRST_ORDER, function);
 }

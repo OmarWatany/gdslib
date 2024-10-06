@@ -89,8 +89,9 @@ gitr_t list_gitr(list_t *list) {
 gdata_t alist_next(gitr_t *itr) {
     if (NULL == itr) return NULL;
     itr_ctx_t *ctx = itr->context;
+    ctx->from += sizeof(anode_t);
     if (ctx->from == (ctx->end + sizeof(anode_t))) return NULL;
-    return IDATA((ctx->from += sizeof(anode_t)));
+    return IDATA(ctx->from);
 }
 
 gdata_t alist_prev(gitr_t *itr) {

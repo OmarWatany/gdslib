@@ -180,7 +180,7 @@ void test_kheap(size_t k) {
 
 int main() {
     random_output();
-    /* test_kheap(2); */
+    test_kheap(2);
     // test_kheap(4);
 
     return 0;

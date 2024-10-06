@@ -1,3 +1,4 @@
+#include "gitr.h"
 #include "gpriority_queue.h"
 #include "gtree.h"
 #include <stdio.h>
@@ -29,8 +30,9 @@ void pq_set_allocator(pqueue_t *pqueue, allocator_fun_t allocator) {
 }
 
 pq_node *pq_peak_node(pqueue_t *pqueue) {
-    return ((pq_node *)heap_peak(&pqueue->h));
+    return (pq_node *)pqueue->h.buf.buf[0].data;
 }
+
 gdata_t pq_peak(pqueue_t *pqueue) {
     return ((pq_node *)pq_peak_node(pqueue))->data;
 }
@@ -60,21 +62,34 @@ int16_t pq_enqueue(pqueue_t *pqueue, long int priority, gdata_t data) {
 }
 
 int16_t pq_dequeue(pqueue_t *pqueue) {
-    free(pq_peak_node(pqueue)->data);
+    pq_node *p = pq_peak_node(pqueue);
+    free(p->data);
     heap_pop(&pqueue->h);
     return EXIT_SUCCESS;
 }
 
 static void heap_node_destroy(gdata_t node) {
-    pq_node *temp = (pq_node *)anode_data((anode_t *)node);
+    pq_node *temp = (pq_node *)gnode_data((gnode_t *)node);
     free(temp->data);
 }
 
+// iprint
 void pq_for_each(pqueue_t *pqueue, for_each_fn function) {
-    heap_for_each(&pqueue->h, function);
+    gitr_t   itr = pqueue_gitr(pqueue);
+    pq_node *n = itr_begin(&itr);
+    do {
+        function(n);
+    } while ((n = itr_next(&itr)));
+    gitr_destroy(&itr);
 }
 
 void pq_destroy(pqueue_t *pqueue) {
-    heap_for_each(&pqueue->h, heap_node_destroy);
+    pq_node *temp = NULL;
+    for (size_t i = 0; i < pqueue->h.buf.size; ++i) {
+        temp = pqueue->h.buf.buf[i].data;
+        free(temp->data);
+        temp->data = NULL;
+    }
+    /* heap_for_each(&pqueue->h, heap_node_destroy); */
     heap_destroy(&pqueue->h);
 }

@@ -2,10 +2,11 @@
 #include <stdio.h>
 
 // TODO : pq_node for_each system
-static void iprint(gdata_t node) {
-    if (!node) return;
-    int  value = *(int *)((pq_node *)tnode_data(node))->data;
-    long priority = ((pq_node *)tnode_data(node))->priority;
+static void iprint(gdata_t pq_node_p) {
+    if (!pq_node_p) return;
+    pq_node *n = pq_node_p;
+    int      value = *(int *)n->data;
+    long     priority = n->priority;
     printf("value %d - priority %ld\n", value, priority);
 }
 
@@ -44,6 +45,9 @@ void test_enq(pqueue_t *pq) {
 }
 
 int main() {
+    printf("-----------------------\n");
+    printf("PQUEUE TEST \n");
+    printf("-----------------------\n");
     pqueue_t qu = {0};
     pq_init(&qu, sizeof(int), MAX_HEAP);
     test_enq(&qu);
