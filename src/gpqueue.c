@@ -69,7 +69,7 @@ int16_t pq_dequeue(pqueue_t *pqueue) {
 }
 
 static void heap_node_destroy(gdata_t node) {
-    pq_node *temp = (pq_node *)gnode_data((gnode_t *)node);
+    pq_node *temp = (pq_node *)node_data((gnode_t *)node);
     free(temp->data);
 }
 

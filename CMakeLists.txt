@@ -16,7 +16,7 @@ set(BIN_D "${CMAKE_BINARY_DIR}/bin")
 
 
 # Compiler flags
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -g -fPIC -Wno-unused-function ")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -g -fPIC -pedantic -Wno-unused-function ")
 
 include_directories(${INC_D})
 

@@ -44,7 +44,7 @@ void test_enq(pqueue_t *pq) {
     pq_dump(pq);
 }
 
-int main() {
+int main(void) {
     printf("-----------------------\n");
     printf("PQUEUE TEST \n");
     printf("-----------------------\n");

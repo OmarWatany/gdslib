@@ -1,46 +1,12 @@
 #include "gnode.h"
+#include "gnode_macros.h"
 #include <math.h>
 #include <string.h>
 
-gdata_t gnode_data(gdata_t node) {
-    return ((gnode_t *)node)->data;
-}
-
 lnode_t *lnode_create() {
     lnode_t *new_node = (lnode_t *)malloc(sizeof(*new_node));
-    lnode_init(new_node);
+    node_init(new_node);
     return new_node;
-}
-
-int16_t lnode_init(lnode_t *node) {
-    node->data = 0;
-    return EXIT_SUCCESS;
-}
-
-gdata_t lnode_data(lnode_t *node) {
-    if (!node) return NULL;
-    return node->data;
-}
-
-int16_t lnode_set_data(lnode_t *node, gdata_t data) {
-    if (!node) return EXIT_FAILURE;
-    node->data = data;
-    return EXIT_SUCCESS;
-};
-
-size_t lnode_link(lnode_t *node) {
-    if (node == NULL) return 0;
-    return node->link;
-}
-
-void lnode_set_link(lnode_t *node, uintptr_t new_link) {
-    if (node == NULL) return;
-    node->link = new_link;
-}
-
-void lnode_destroy(lnode_t *node) {
-    if (!node) return;
-    free(node->data);
 }
 
 tnode_t *tnode_create(size_t links_count) {
@@ -56,27 +22,6 @@ int16_t tnode_init(tnode_t *node, size_t links_count) {
     node->links = malloc(size);
     memset(node->links, 0, size);
     return EXIT_SUCCESS;
-}
-
-gdata_t tnode_data(tnode_t *node) {
-    if (!node) return NULL;
-    return node->data;
-}
-
-int16_t tnode_set_data(tnode_t *node, gdata_t data) {
-    if (!node) return EXIT_FAILURE;
-    node->data = data;
-    return EXIT_SUCCESS;
-};
-
-tnode_t *tnode_child(tnode_t *node, size_t n) {
-    if (!node || !node->links) return NULL;
-    return node->links[n];
-}
-
-void tnode_set_child(tnode_t *node, size_t n, tnode_t *child) {
-    if (!node) return;
-    node->links[n] = child;
 }
 
 tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
@@ -109,10 +54,4 @@ tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
 
     free(lvlq);
     return childs;
-}
-
-void tnode_destroy(tnode_t *node) {
-    if (!node) return;
-    free(node->links);
-    free(node->data);
 }

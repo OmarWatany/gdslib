@@ -82,7 +82,7 @@ void kt_set_allocator(ktree_t *tree, allocator_fun_t allocator_fun) {
 
 static void kt_node_destroy(gdata_t for_data) {
     tree_for_data d = *(tree_for_data *)for_data;
-    tnode_destroy(d.node);
+    tnode_destroy((tnode_t *)d.node);
     free(d.node);
 }
 
@@ -125,7 +125,7 @@ void bt_init(ktree_t *tree, size_t item_size, int (*cmp_fun)(gdata_t data1, gdat
 static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
     tnode_t *temp = NULL;
 
-    int res = tree->cmp_fun(tnode_data(node), data);
+    int res = tree->cmp_fun(node_data(node), data);
     int dir = -1;
     dir = res > 0 ? 0 : (res < 0 ? 1 : dir);
 
@@ -137,7 +137,7 @@ static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
 
     if (!temp) {
         tnode_t *new_node = tnode_create(tree->k);
-        tnode_set_data(new_node, kt_alloc(tree, tree->item_size, data));
+        node_set_data(new_node, kt_alloc(tree, tree->item_size, data));
         tnode_set_child(node, dir, new_node);
         return;
     } else {
@@ -153,9 +153,9 @@ void bst_add(btree_t *tree, gdata_t data) {
     if (!tree->root) {
         tnode_t *new_node = tnode_create(tree->k);
         if (tree->allocator_fun) {
-            tnode_set_data(new_node, tree->allocator_fun(data));
+            node_set_data(new_node, tree->allocator_fun(data));
         } else
-            tnode_set_data(new_node, default_allocator(tree->item_size, data));
+            node_set_data(new_node, default_allocator(tree->item_size, data));
         tree->root = new_node;
     } else {
         bst_add_h(tree, tree->root, data);
@@ -176,31 +176,31 @@ static tnode_t *bst_right_min(tnode_t *node) {
 }
 
 gdata_t *bst_min(ktree_t *tree) {
-    return tnode_data(bst_min_max(tree->root, 0));
+    return node_data(bst_min_max(tree->root, 0));
 }
 
 gdata_t *bst_max(ktree_t *tree) {
-    return tnode_data(bst_min_max(tree->root, 1));
+    return node_data(bst_min_max(tree->root, 1));
 }
 
 // check on root outside this function so assume node is root's child
 static tnode_t *bst_find_parent(btree_t *heystack, tnode_t *parent, gdata_t needle) {
     if (!parent) return NULL;
-    int res = heystack->cmp_fun(tnode_data(parent), needle);
+    int res = heystack->cmp_fun(node_data(parent), needle);
     int dir = -1;
     dir = res > 0 ? 0 : (res < 0 ? 1 : -1);
     if (dir < 0) return parent;
 
     tnode_t *child = tnode_child(parent, dir);
     if (!child) return NULL;
-    res = heystack->cmp_fun(tnode_data(child), needle);
+    res = heystack->cmp_fun(node_data(child), needle);
     dir = res > 0 ? 0 : (res < 0 ? 1 : -1);
     return res == 0 ? parent : (dir < 0 ? NULL : bst_find_parent(heystack, child, needle));
 }
 
 static tnode_t *bst_find_h(btree_t *heystack, tnode_t *node, gdata_t needle) {
     if (!node) return 0;
-    int res = heystack->cmp_fun(tnode_data(node), needle);
+    int res = heystack->cmp_fun(node_data(node), needle);
     int dir = 0;
     dir = res > 0 ? 0 : (res < 0 ? 1 : -1);
     return res == 0 ? node : bst_find_h(heystack, tnode_child(node, dir), needle);

@@ -8,7 +8,7 @@ void heapify_child(heap_t *heap, size_t child_pos);
 void heapify_parent(heap_t *heap, size_t parent_p);
 
 static int aint(anode_t *node) {
-    return *(int *)anode_data(node);
+    return *(int *)node_data(node);
 }
 
 static void anode_swap_data(anode_t *from, anode_t *to) {
@@ -45,7 +45,7 @@ static ssize_t parent_pos(heap_t *heap, ssize_t pos) {
 }
 
 static bool check_heap_prop(heap_t *heap, anode_t *parent, anode_t *child) {
-    int result = heap->cmp_fun(anode_data(parent), anode_data(child));
+    int result = heap->cmp_fun(node_data(parent), node_data(child));
     return (heap->type == MAX_HEAP ? result >= 0 : result <= 0);
 }
 
@@ -167,8 +167,8 @@ void heap_add(heap_t *heap, const gdata_t data) {
 }
 
 void heap_pop(heap_t *heap) {
-    ssize_t  last_pos = heap->buf.size - 1;
-    anode_t *last = node_at(heap, last_pos);
+    alist_pop(&heap->buf);
+    anode_t *last = node_at(heap, heap->buf.size - 1);
     anode_swap_data(node_at(heap, 0), last);
     heap->buf.size--;
     heapify_parent(heap, 0);

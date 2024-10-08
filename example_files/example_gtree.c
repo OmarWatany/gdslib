@@ -12,13 +12,13 @@ static int gcmp_int(gdata_t data1, gdata_t data2) {
 static void inc(gdata_t for_data) {
     if (!for_data) return;
     tree_for_data *d = (tree_for_data *)for_data;
-    *(int *)tnode_data(d->node) += d->lvl + 3;
+    *(int *)node_data(d->node) += d->lvl + 3;
 }
 
 static void iprint(gdata_t for_data) {
     if (!for_data) return;
     tree_for_data *d = (tree_for_data *)for_data;
-    printf("%d - ", *(int *)gnode_data(d->node));
+    printf("%d - ", *(int *)node_data(d->node));
 }
 
 static void heap_iprint(gdata_t for_data) {
@@ -29,7 +29,7 @@ static void iprintLvl(gdata_t for_data) {
     if (!for_data) return;
     tree_for_data d = *(tree_for_data *)for_data;
     if (!d.node) return;
-    printf("%d - lvl %ld\n", *(int *)gnode_data(d.node), d.lvl);
+    printf("%d - lvl %ld\n", *(int *)node_data(d.node), d.lvl);
 }
 
 static void iprintTree(gdata_t for_data) {
@@ -37,7 +37,7 @@ static void iprintTree(gdata_t for_data) {
     printf(" ");
     for (size_t i = 0; i < d.lvl; i++)
         printf("    ");
-    printf("%d\n", *(int *)gnode_data(d.node));
+    printf("%d\n", *(int *)node_data(d.node));
 }
 
 void random_output() {
@@ -93,7 +93,7 @@ void random_output() {
     //  else {
     //     for (size_t j = 0; j < lvlc && childs; j++) {
     //         if (childs[j])
-    //             printf("child n : %ld lvl: %ld = %d\n", j, lvl, *(int *)tnode_data(childs[j]));
+    //             printf("child n : %ld lvl: %ld = %d\n", j, lvl, *(int *)node_data(childs[j]));
     //     }
     //     printf("size: %ld \n", tree.size);
     // }

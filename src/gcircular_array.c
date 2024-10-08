@@ -19,7 +19,7 @@ int16_t carray_init(circular_array_t *carray, size_t item_size, size_t capacity)
     // I can re allocate it after creating the carray
     // good use of batch_alloc or for each
     for (size_t i = 0; i < capacity; i++)
-        anode_init(&carray->buf[i]);
+        node_init(&carray->buf[i]);
     return EXIT_SUCCESS;
 }
 
@@ -35,13 +35,13 @@ int16_t carray_write_safe(circular_array_t *carray, size_t item_size, gdata_t da
         errno = ENOBUFS;
         return EXIT_FAILURE;
     }
-    gdata_t allocated = anode_data(&carray->buf[*wrptr]);
+    gdata_t allocated = node_data(&carray->buf[*wrptr]);
     if (!allocated) {
         allocated = carray_alloc(carray, item_size, data);
     } else
         memcpy(memset(allocated, 0, carray->item_size), data, item_size);
 
-    anode_set_data(&carray->buf[*wrptr], allocated);
+    node_set_data(&carray->buf[*wrptr], allocated);
     *wrptr = (*wrptr + 1) % carray->capacity;
     carray->size++;
     return EXIT_SUCCESS;
@@ -54,12 +54,12 @@ int16_t carray_write(circular_array_t *carray, gdata_t data) {
 int16_t carray_overwrite_safe(circular_array_t *carray, size_t item_size, gdata_t data) {
     size_t *wrptr = &carray->write_pointer;
 
-    gdata_t allocated = anode_data(&carray->buf[*wrptr]);
+    gdata_t allocated = node_data(&carray->buf[*wrptr]);
     if (!allocated) {
         allocated = carray_alloc(carray, item_size, data);
     } else
         memcpy(memset(allocated, 0, carray->item_size), data, item_size);
-    anode_set_data(&carray->buf[*wrptr], allocated);
+    node_set_data(&carray->buf[*wrptr], allocated);
     *wrptr = (*wrptr + 1) % carray->capacity;
 
     if (carray->size < carray->capacity)
@@ -81,7 +81,7 @@ gdata_t carray_read(circular_array_t *carray) {
         return NULL;
     }
     size_t *rdptr = &carray->read_pointer;
-    gdata_t data = anode_data(&carray->buf[*rdptr]);
+    gdata_t data = node_data(&carray->buf[*rdptr]);
     *rdptr = (*rdptr + 1) % carray->capacity;
     carray->size--;
     return data;
@@ -105,7 +105,7 @@ bool carray_empty(circular_array_t *carray) {
 
 void carray_destroy(circular_array_t *carray) {
     for (size_t i = 0; i < carray->capacity; i++) {
-        if (anode_data(&carray->buf[i])) anode_destroy(&carray->buf[i]);
+        if (node_data(&carray->buf[i])) node_destroy(&carray->buf[i]);
     }
     free(carray->buf);
 }

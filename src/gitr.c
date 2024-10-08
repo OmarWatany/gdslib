@@ -1,6 +1,6 @@
 #include "gitr.h"
 #include "gds_types.h"
-#include "gnode.h"
+#include "gnode_macros.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,16 +28,16 @@ gdata_t list_next(gitr_t *itr) {
     lnode_t        *from = (lnode_t *)ctx->from;
 
     if (!from) return NULL;
-    if (lnode_link(from) == 0) {
+    if (node_link(from) == 0) {
         return NULL;
     } else if (from == lctx->list->head) {
-        lctx->next_node = lnode_link(lctx->list->head);
+        lctx->next_node = node_link(lctx->list->head);
     } else {
-        lctx->next_node = lctx->prev_node ^ lnode_link(from);
+        lctx->next_node = lctx->prev_node ^ node_link(from);
     }
     lctx->prev_node = (uintptr_t)from;
     ctx->from = (gnode_t *)lctx->next_node;
-    lctx->next_node = lctx->prev_node ^ lnode_link(from);
+    lctx->next_node = lctx->prev_node ^ node_link(from);
     return ctx->from ? IDATA(ctx->from) : NULL;
 }
 
@@ -55,17 +55,17 @@ gdata_t list_prev(gitr_t *itr) {
             return NULL;
     }
 
-    if (lnode_link(from) == 0) {
+    if (node_link(from) == 0) {
         return from->data;
     } else if (from == lctx->list->tail) {
-        lctx->prev_node = lnode_link(lctx->list->tail);
+        lctx->prev_node = node_link(lctx->list->tail);
     } else {
-        lctx->prev_node = lctx->next_node ^ lnode_link(from);
+        lctx->prev_node = lctx->next_node ^ node_link(from);
     }
 
     lctx->next_node = (uintptr_t)from;
     ctx->from = (gnode_t *)lctx->prev_node;
-    lctx->prev_node = lctx->next_node ^ lnode_link(from);
+    lctx->prev_node = lctx->next_node ^ node_link(from);
     return lctx->next_node != (uintptr_t)NULL ? IDATA(lctx->next_node) : NULL;
 }
 
@@ -89,8 +89,8 @@ gitr_t list_gitr(list_t *list) {
 gdata_t alist_next(gitr_t *itr) {
     if (NULL == itr) return NULL;
     itr_ctx_t *ctx = itr->context;
-    ctx->from += sizeof(anode_t);
-    if (ctx->from == (ctx->end + sizeof(anode_t))) return NULL;
+    ctx->from = ((uint8_t *)ctx->from + sizeof(anode_t));
+    if (ctx->from == ((uint8_t *)ctx->end + sizeof(anode_t))) return NULL;
     return IDATA(ctx->from);
 }
 
@@ -98,7 +98,7 @@ gdata_t alist_prev(gitr_t *itr) {
     if (NULL == itr) return NULL;
     itr_ctx_t *ctx = itr->context;
     if (ctx->from == ctx->begin) return NULL;
-    return IDATA(ctx->from -= sizeof(anode_t));
+    return IDATA(ctx->from = ((uint8_t *)ctx->from - sizeof(anode_t)));
 }
 
 gitr_vtable alist_itr_vtable = {

@@ -75,10 +75,10 @@ int16_t alist_set_at_safe(alist_t *alist, size_t pos, size_t item_size, gdata_t 
     if (alist->size == alist->capacity) expand(alist, 5);
     if (pos >= alist->capacity) expand(alist, pos - alist->capacity + 1);
 
-    if (!anode_data(&alist->buf[pos])) {
+    if (!node_data(&alist->buf[pos])) {
         gdata_t allocated = alist_alloc(alist, item_size, data);
         alist->size++;
-        anode_set_data(&alist->buf[pos], allocated);
+        node_set_data(&alist->buf[pos], allocated);
     } else
         anode_copy_data(&alist->buf[pos], alist->item_size, item_size, data);
 
@@ -89,10 +89,10 @@ int16_t alist_rm_str_at(alist_t *alist, size_t pos) {
     if (alist == NULL || alist->buf == NULL || pos >= alist->size) return EXIT_FAILURE;
 
     anode_t *node = &alist->buf[pos];
-    anode_destroy(node);
+    node_destroy(node);
     for (size_t i = pos + 1; i < alist->size; i++)
         alist->buf[i - 1] = alist->buf[i];
-    anode_init(&alist->buf[alist->size - 1]);
+    node_init(&alist->buf[alist->size - 1]);
     alist->size--;
     return EXIT_SUCCESS;
 }
@@ -111,14 +111,14 @@ int16_t alist_rm_at(alist_t *alist, size_t pos) {
     }
     for (size_t i = pos + 1; i < alist->size; i++)
         alist->buf[i - 1] = alist->buf[i];
-    anode_init(&alist->buf[alist->size - 1]);
+    node_init(&alist->buf[alist->size - 1]);
     alist->size--;
     return EXIT_SUCCESS;
 }
 
 gdata_t alist_at(alist_t *alist, size_t pos) {
     if (alist == NULL || pos >= alist->size) return NULL;
-    return anode_data(&alist->buf[pos]);
+    return node_data(&alist->buf[pos]);
 }
 
 void alist_reserve(alist_t *alist, size_t size) {
@@ -153,7 +153,7 @@ void expand(alist_t *alist, size_t by) {
     anode_t *neobuf = (anode_t *)realloc(alist->buf, sizeof(anode_t) * alist->capacity);
     if (neobuf) alist->buf = neobuf;
     for (size_t i = alist->size; i < alist->capacity; i++) {
-        anode_init(&alist->buf[i]);
+        node_init(&alist->buf[i]);
     }
 }
 
@@ -161,8 +161,8 @@ void alist_purge(alist_t *alist) {
     if (alist == NULL) return;
     anode_t *temp = NULL;
     for (size_t i = 0; i < alist->capacity; i++) {
-        if (!anode_data((temp = &alist->buf[i]))) continue;
-        anode_destroy(temp);
+        if (!node_data((temp = &alist->buf[i]))) continue;
+        node_destroy(temp);
     }
 }
 

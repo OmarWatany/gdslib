@@ -27,14 +27,14 @@ int16_t push_front_safe(list_t *list, size_t item_size, gdata_t data) {
         // use default allocator
         allocated = default_allocator(item_size, data);
     }
-    lnode_set_data(new_node, allocated);
+    node_set_data(new_node, allocated);
 
     if (list->head == NULL) {
-        lnode_set_link(new_node, 0);
+        node_set_link(new_node, 0);
         list->tail = new_node;
     } else {
-        lnode_set_link(new_node, (uintptr_t)list->head);
-        lnode_set_link(list->head, lnode_link(list->head) ^ (uintptr_t)new_node);
+        node_set_link(new_node, (uintptr_t)list->head);
+        node_set_link(list->head, node_link(list->head) ^ (uintptr_t)new_node);
     }
     list->head = new_node;
     return EXIT_SUCCESS;
@@ -52,11 +52,11 @@ int16_t push_back_safe(list_t *list, size_t item_size, gdata_t data) {
         // use default allocator
         allocated = default_allocator(item_size, data);
     }
-    lnode_set_data(new_node, allocated);
+    node_set_data(new_node, allocated);
 
     if (list->tail) {
-        lnode_set_link(new_node, (uintptr_t)list->tail);
-        lnode_set_link(list->tail, lnode_link(list->tail) ^ (uintptr_t)new_node);
+        node_set_link(new_node, (uintptr_t)list->tail);
+        node_set_link(list->tail, node_link(list->tail) ^ (uintptr_t)new_node);
         list->tail = new_node;
     } else {
         push_front(list, data);
@@ -73,11 +73,11 @@ inline int16_t push_back(list_t *list, gdata_t data) {
 }
 
 inline gdata_t peak_front(list_t *list) {
-    return lnode_data(list->head);
+    return node_data(list->head);
 }
 
 inline gdata_t peak_back(list_t *list) {
-    return lnode_data(list->tail);
+    return node_data(list->tail);
 }
 
 int16_t pop_front_s(list_t *list, size_t size, void **buffer, bool str) {
@@ -94,9 +94,9 @@ int16_t pop_front_s(list_t *list, size_t size, void **buffer, bool str) {
     if (list->head == NULL) {
         list->tail = NULL;
     } else
-        lnode_set_link(list->head, lnode_link(list->head) ^ (uintptr_t)old_head);
+        node_set_link(list->head, node_link(list->head) ^ (uintptr_t)old_head);
 
-    if (!(buffer && str)) lnode_destroy(old_head);
+    if (!(buffer && str)) node_destroy(old_head);
     free(old_head);
     return EXIT_SUCCESS;
 }
@@ -118,9 +118,9 @@ int16_t pop_back_s(list_t *list, size_t size, void **buffer, bool str) {
     if (list->tail == NULL) {
         list->head = NULL;
     } else
-        lnode_set_link(list->tail, lnode_link(list->tail) ^ (uintptr_t)old_tail);
+        node_set_link(list->tail, node_link(list->tail) ^ (uintptr_t)old_tail);
 
-    if (!(buffer && str)) lnode_destroy(old_tail);
+    if (!(buffer && str)) node_destroy(old_tail);
     free(old_tail);
     return EXIT_SUCCESS;
 }

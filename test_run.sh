@@ -4,7 +4,6 @@ set -e
 
 files=`echo {arraylist,arraystack,circular_array,linkedlist,pqueue,queue,ringbuffer,stack,tree}`
 test_file() {
-    echo 'Testing "$1"'
     valgrind -s --track-origins=yes --leak-check=full ./bin/$1 2>&1
     printf "\n" 
     for j in {1..80} ; do printf "*" ; done
