@@ -24,7 +24,7 @@ struct tnode_t {
     tnode_t **links;
 };
 
-typedef gnode_t anode_t;
+typedef uint8_t anode_t;
 
 #ifdef __cplusplus
 }

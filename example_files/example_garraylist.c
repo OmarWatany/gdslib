@@ -47,7 +47,8 @@ void functoins_p_list() {
 void integers_list() {
     printf("----integers_list ----\n");
     alist_t ntgrs = alist_build_num(sizeof(int), 4, (gnum_t[4]){2, 3, 4, 5});
-    // alist_init(&ntgrs, sizeof(int));
+    /* alist_t ntgrs = {0}; */
+    /* alist_init(&ntgrs, sizeof(int)); */
 
     alist_t *integers = &ntgrs;
     // alist_push_i(integers, 0x45);
@@ -200,7 +201,7 @@ int main() {
     functoins_p_list();
     points_list();
     fixed_strings();
-    dyn_strings();
+    /* dyn_strings(); */
     integers_list();
 
     return 0;

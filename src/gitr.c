@@ -16,6 +16,11 @@ typedef struct {
 
 typedef struct {
     itr_ctx_t context;
+    alist_t  *alist;
+} alist_itr_ctx_t;
+
+typedef struct {
+    itr_ctx_t context;
     size_t    idx;
     ktree_t  *tr;
     tnode_t  *buffer[];
@@ -88,31 +93,41 @@ gitr_t list_gitr(list_t *list) {
 // arraylist
 gdata_t alist_next(gitr_t *itr) {
     if (NULL == itr) return NULL;
-    itr_ctx_t *ctx = itr->context;
-    ctx->from += sizeof(anode_t);
-    if (ctx->from == (ctx->end + sizeof(anode_t))) return NULL;
-    return IDATA(ctx->from);
+    itr_ctx_t       *ctx = itr->context;
+    alist_itr_ctx_t *actx = (alist_itr_ctx_t *)ctx;
+    ctx->from += actx->alist->item_size;
+    if (ctx->from == (ctx->end + actx->alist->item_size)) return NULL;
+    return ctx->from;
 }
 
 gdata_t alist_prev(gitr_t *itr) {
     if (NULL == itr) return NULL;
-    itr_ctx_t *ctx = itr->context;
+    itr_ctx_t       *ctx = itr->context;
+    alist_itr_ctx_t *actx = (alist_itr_ctx_t *)ctx;
     if (ctx->from == ctx->begin) return NULL;
-    return IDATA(ctx->from -= sizeof(anode_t));
+    return ctx->from -= actx->alist->item_size;
+}
+
+gdata_t alist_begin(gitr_t *itr) {
+    if (NULL == itr) return NULL;
+    itr_ctx_t *ctx = itr->context;
+    return ctx->begin;
 }
 
 gitr_vtable alist_itr_vtable = {
     .next = alist_next,
     .prev = alist_prev,
+    .begin = alist_begin,
 };
 
 gitr_t alist_gitr(alist_t *lst) {
     if (!lst) return (gitr_t){0};
-    itr_ctx_t *ctx = calloc(1, sizeof(*ctx));
-    *ctx = (itr_ctx_t){
-        .from = &lst->buf[0],
-        .begin = &lst->buf[0],
-        .end = &lst->buf[lst->size - 1],
+    alist_itr_ctx_t *ctx = calloc(1, sizeof(*ctx));
+    *ctx = (alist_itr_ctx_t){
+        .alist = lst,
+        .context.from = &lst->buf[0],
+        .context.begin = &lst->buf[0],
+        .context.end = &lst->buf[(lst->size - 1) * lst->item_size],
     };
     return (gitr_t){.context = (itr_ctx_t *)ctx, .vtable = &alist_itr_vtable};
 }

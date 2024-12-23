@@ -33,6 +33,7 @@ typedef struct gitr_t gitr_t;
 typedef struct {
     gdata_t (*next)(gitr_t *);
     gdata_t (*prev)(gitr_t *);
+    gdata_t (*begin)(gitr_t *);
 } gitr_vtable;
 
 struct gitr_t {

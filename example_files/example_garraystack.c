@@ -4,7 +4,8 @@
 int main() {
 
     astack_t stack = {0};
-    astack_init(&stack, 0);
+    astack_init(&stack, 10);
+    // Set allocator currently not working
     astack_set_allocator(&stack, str_allocator);
     astack_push(&stack, "hello");
     astack_push(&stack, "world");

@@ -30,7 +30,7 @@ void pq_set_allocator(pqueue_t *pqueue, allocator_fun_t allocator) {
 }
 
 pq_node *pq_peak_node(pqueue_t *pqueue) {
-    return (pq_node *)pqueue->h.buf.buf[0].data;
+    return (pq_node *)heap_peak(&pqueue->h);
 }
 
 gdata_t pq_peak(pqueue_t *pqueue) {
@@ -83,10 +83,11 @@ void pq_for_each(pqueue_t *pqueue, for_each_fn function) {
     gitr_destroy(&itr);
 }
 
+#define ALIST_AT(L, P) ((L)->item_size * (P) + (L)->buf)
 void pq_destroy(pqueue_t *pqueue) {
     pq_node *temp = NULL;
     for (size_t i = 0; i < pqueue->h.buf.size; ++i) {
-        temp = pqueue->h.buf.buf[i].data;
+        temp = (pq_node *)ALIST_AT(&pqueue->h.buf, i);
         free(temp->data);
         temp->data = NULL;
     }

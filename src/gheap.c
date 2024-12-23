@@ -8,20 +8,20 @@ void heapify_child(heap_t *heap, size_t child_pos);
 void heapify_parent(heap_t *heap, size_t parent_p);
 
 static int aint(anode_t *node) {
-    return *(int *)anode_data(node);
+    return *(int *)node;
 }
 
-static void anode_swap_data(anode_t *from, anode_t *to) {
-    gdata_t temp = NULL;
-    temp = to->data;
-    to->data = from->data;
-    from->data = temp;
+static void anode_swap_data(anode_t *from, anode_t *to, size_t size) {
+    anode_t temp[size + 1];
+    memcpy(temp, to, size);   /* temp = to; */
+    memcpy(to, from, size);   /* to = from; */
+    memcpy(from, temp, size); /* from = temp; */
 }
 
 static anode_t *node_at(heap_t *heap, ssize_t pos) {
     if (!heap) return NULL;
     if (pos < 0 || (size_t)pos >= alist_size(&heap->buf)) return NULL;
-    return &heap->buf.buf[pos];
+    return alist_at(&heap->buf, pos);
 }
 
 static anode_t *node_child(heap_t *heap, size_t n, ssize_t pos) {
@@ -45,7 +45,8 @@ static ssize_t parent_pos(heap_t *heap, ssize_t pos) {
 }
 
 static bool check_heap_prop(heap_t *heap, anode_t *parent, anode_t *child) {
-    int result = heap->cmp_fun(anode_data(parent), anode_data(child));
+
+    int result = heap->cmp_fun(parent, child);
     return (heap->type == MAX_HEAP ? result >= 0 : result <= 0);
 }
 
@@ -68,7 +69,7 @@ void heapify_child(heap_t *heap, size_t child_pos) {
     anode_t *parent = node_at(heap, parent_p);
     anode_t *child = node_at(heap, child_pos);
     if (!child || !parent || check_heap_prop(heap, parent, child)) return;
-    anode_swap_data(child, parent);
+    anode_swap_data(child, parent, heap->buf.item_size);
     heapify_child(heap, parent_p);
 }
 
@@ -86,7 +87,7 @@ void heapify_parent(heap_t *heap, size_t parent_p) {
         child_p = child_pos(heap, n, largest_pos);
     }
     if (largest_pos == parent_p) return;
-    anode_swap_data(node_at(heap, largest_pos), parent);
+    anode_swap_data(node_at(heap, largest_pos), parent, heap->buf.item_size);
     heapify_parent(heap, largest_pos);
 }
 
@@ -126,7 +127,7 @@ static void (*order_functions[])(heap_t *heap, size_t k, size_t lvl, for_each_fn
 };
 
 gdata_t heap_peak(heap_t *heap) {
-    return heap->buf.buf[0].data;
+    return alist_at(&heap->buf, 0);
 }
 
 heap_t *heap_create(size_t item_size, size_t k, HEAP_TYPE type) {
@@ -169,7 +170,7 @@ void heap_add(heap_t *heap, const gdata_t data) {
 void heap_pop(heap_t *heap) {
     ssize_t  last_pos = heap->buf.size - 1;
     anode_t *last = node_at(heap, last_pos);
-    anode_swap_data(node_at(heap, 0), last);
+    anode_swap_data(node_at(heap, 0), last, heap->buf.item_size);
     heap->buf.size--;
     heapify_parent(heap, 0);
 }
@@ -182,7 +183,7 @@ void heap_for_each_order(heap_t *heap, TRAVERSE_ORDER order, for_each_fn functio
     switch (order) {
     case BREADTH_FIRST_ORDER:
         for (size_t j = 0; j < heap->buf.size; j++)
-            for_each_h(&heap->buf.buf[j], 0, function);
+            for_each_h(node_at(heap, j), 0, function);
         break;
     default:
         order_functions[order](heap, 0, 0, function);

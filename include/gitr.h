@@ -4,10 +4,14 @@
 #include "gds_types.h"
 
 // return NODE
-#define itr_next(itr)  ((!(itr)->vtable) ? NULL : (itr)->vtable->next((itr)))
-#define itr_prev(itr)  ((!(itr)->vtable) ? NULL : (itr)->vtable->prev((itr)))
-#define itr_begin(itr) ((!(itr)->context) ? NULL : ((gnode_t *)(itr)->context->begin)->data)
-#define itr_end(itr)   NULL
+#define itr_next(itr)       ((!(itr)->vtable) ? NULL : (itr)->vtable->next((itr)))
+#define itr_prev(itr)       ((!(itr)->vtable) ? NULL : (itr)->vtable->prev((itr)))
+#define itr_begin_data(itr) ((!(itr)->context) ? NULL : ((gnode_t *)(itr)->context->begin)->data)
+#define itr_begin(itr)                                                                             \
+    ((!(itr)->vtable)                                                                              \
+         ? NULL                                                                                    \
+         : ((!(itr)->vtable->begin) ? itr_begin_data((itr)) : (itr)->vtable->begin((itr))))
+#define itr_end(itr) NULL
 
 #define gitr_set_from(itr, F)                                                                      \
     do {                                                                                           \
