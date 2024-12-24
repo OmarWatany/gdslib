@@ -26,6 +26,23 @@ hello
 fixed string
 dynamic string
 size 4 - capacity 5 
+
+__ dynamic size strings list __
+size: 4 - capacity: 4
+size: 4 - capacity: 10
+0 - hello
+1 - world
+2 - hello
+3 - world
+4 - f string
+5 - d string
+__ after remove __
+0 - hello
+2 - hello
+3 - world
+4 - f string
+5 - d string
+size: 6 - capacity: 10
 ----integers_list ----
 2 - 3 - 4 - 5 - 
 ------------------- Integers giterator
@@ -34,7 +51,7 @@ size 4 - capacity 5
 ==[arraylist]== 
 ==[arraylist]== HEAP SUMMARY:
 ==[arraylist]==     in use at exit: 0 bytes in 0 blocks
-==[arraylist]==   total heap usage: 15 allocs, 15 frees, 4,669 bytes allocated
+==[arraylist]==   total heap usage: 25 allocs, 25 frees, 4,864 bytes allocated
 ==[arraylist]== 
 ==[arraylist]== All heap blocks were freed -- no leaks are possible
 ==[arraylist]== 
@@ -47,10 +64,16 @@ Testing arraystack
 ==[arraystack]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
 ==[arraystack]== Command: ./bin/arraystack
 ==[arraystack]== 
+world
+hello
+world
+hello
+world
+hello
 ==[arraystack]== 
 ==[arraystack]== HEAP SUMMARY:
 ==[arraystack]==     in use at exit: 0 bytes in 0 blocks
-==[arraystack]==   total heap usage: 1 allocs, 1 frees, 20 bytes allocated
+==[arraystack]==   total heap usage: 3 allocs, 3 frees, 4,186 bytes allocated
 ==[arraystack]== 
 ==[arraystack]== All heap blocks were freed -- no leaks are possible
 ==[arraystack]== 

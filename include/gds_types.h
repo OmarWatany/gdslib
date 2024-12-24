@@ -59,6 +59,7 @@ typedef struct {
     size_t   item_size, capacity, size;
     // function pointers
     allocator_fun_t allocator_fun;
+    Gallocator_t   *gallocator;
 } alist_t;
 
 typedef struct {

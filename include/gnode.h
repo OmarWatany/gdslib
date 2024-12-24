@@ -10,7 +10,7 @@ extern "C" {
 #include <stdlib.h>
 
 gdata_t gnode_data(gdata_t node);
-gdata_t anode_data(anode_t *node);
+#define anode_data(node) ((node))
 
 lnode_t *lnode_create();
 int16_t  lnode_init(lnode_t *node);

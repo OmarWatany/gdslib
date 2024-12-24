@@ -8,6 +8,10 @@ extern "C" {
 #include "gds_types.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
+
+#define astack_push_str(L, S) (astack_push_safe((L), strlen((S)), (S)))
+// #define astack_dpush_str(L, S) (alist_dpush_safe((L), strlen((S)), (S)))
 
 astack_t *astack_create(size_t item_size);
 

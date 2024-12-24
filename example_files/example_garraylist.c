@@ -46,7 +46,7 @@ void functoins_p_list() {
 
 void integers_list() {
     printf("----integers_list ----\n");
-    alist_t ntgrs = alist_build_num(sizeof(int), 4, (gnum_t[4]){2, 3, 4, 5});
+    alist_t ntgrs = alist_build_num(sizeof(int), 4, (size_t[4]){2, 3, 4, 5});
     /* alist_t ntgrs = {0}; */
     /* alist_init(&ntgrs, sizeof(int)); */
 
@@ -132,22 +132,22 @@ void dyn_strings() {
                                           });
     alist_t *dyn_strings_sizes = &dstrings;
 
-    printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes),
+    printf("size: %ld - capacity: %ld\n", alist_size(dyn_strings_sizes),
            alist_capacity(dyn_strings_sizes));
     alist_reserve(dyn_strings_sizes, 10);
-    printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes),
+    printf("size: %ld - capacity: %ld\n", alist_size(dyn_strings_sizes),
            alist_capacity(dyn_strings_sizes));
 
     char *fs = "f string";
     char *ds = strdup("d string");
-    alist_push(dyn_strings_sizes, fs);
-    alist_push(dyn_strings_sizes, ds);
+    alist_dpush_str(dyn_strings_sizes, fs);
+    alist_dpush_str(dyn_strings_sizes, ds);
 
     for (size_t i = 0; i < alist_size(dyn_strings_sizes); i++) {
         char *s = alist_at(dyn_strings_sizes, i);
         if (s) printf("%ld - %s\n", i, s);
     }
-    alist_rm_str_at(dyn_strings_sizes, 1);
+    alist_rm_at(dyn_strings_sizes, 1);
 
     printf("__ after remove __\n");
     /* alist_set_at(dyn_strings_sizes, 1, "new hello"); */
@@ -156,7 +156,7 @@ void dyn_strings() {
         if (s) printf("%ld - %s\n", i, s);
     }
 
-    printf("size: %ld - capacity: %ld \n", alist_size(dyn_strings_sizes),
+    printf("size: %ld - capacity: %ld\n", alist_size(dyn_strings_sizes),
            alist_capacity(dyn_strings_sizes));
     alist_destroy(dyn_strings_sizes);
     free(ds);
@@ -186,7 +186,7 @@ void fixed_strings() {
         printf("%s\n", (char *)alist_at(strings, i));
     }
 
-    alist_rm_str_at(strings, 1);
+    alist_rm_at(strings, 1);
     for (size_t i = 0; i < alist_size(strings); i++) {
         printf("%s\n", (char *)alist_at(strings, i));
     }
@@ -201,7 +201,7 @@ int main() {
     functoins_p_list();
     points_list();
     fixed_strings();
-    /* dyn_strings(); */
+    dyn_strings();
     integers_list();
 
     return 0;
