@@ -1,5 +1,7 @@
 #include "gringbuffer.h"
 #include <errno.h>
+#include <libloaderapi.h>
+#include <memoryapi.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -78,44 +80,104 @@ void *ringbuffer_alloc(size_t *MinSize) {
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-void *buffer_alloc(size_t *MinSize) {
+// copied from casey muratori's video
+#define KERNEL_MEMORY_DLL_PATH L"kernelbase.dll"
+
+#ifndef MEM_REPLACE_PLACEHOLDER
+
+#define MEM_REPLACE_PLACEHOLDER               0x4000
+#define MEM_PRESERVE_PLACEHOLDER              0x40000
+#define MEM_PRESERVE_PLACEHOLDER              0x2
+#define MemExtendedParameterAddressRequiement 1
+
+struct MEM_EXTENDED_PARAMETER;
+#endif
+
+typedef PVOID virtual_alloc_2(HANDLE, PVOID, SIZE_T, ULONG, ULONG, MEM_EXTENDED_PARAMETER *, ULONG);
+typedef PVOID map_view_of_file_3(HANDLE, HANDLE, PVOID, ULONG64, SIZE_T, ULONG, ULONG,
+                                 MEM_EXTENDED_PARAMETER *, ULONG);
+
+void *ringbuffer_alloc(size_t *MinSize) {
     SYSTEM_INFO sys_info;
     GetSystemInfo(&sys_info);
-    size_t pageSize = sys_info.dwPageSize;
+    size_t pageSize = sys_info.dwAllocationGranularity;
 
     // Round the requested size to the nearest multiple of the page size
     size_t sz = ((*MinSize + pageSize - 1) & ~(pageSize - 1));
     *MinSize = sz;
 
-    // Create a file mapping object backed by the system pagefile
-    HANDLE hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sz, NULL);
-    if (hMapFile == NULL) {
+    HANDLE hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE,
+                                        (DWORD)(sz >> 32), (DWORD)(sz & 0xFFFFFFFF), NULL);
+    if (hMapFile == INVALID_HANDLE_VALUE) {
         printf("Failed to create file mapping: %lu\n", GetLastError());
         return NULL;
     }
 
-    // Map the memory once (first half of the buffer)
-    void *buffer = MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, sz);
-    if (buffer == NULL) {
-        printf("Failed to map view of file (first mapping): %lu\n", GetLastError());
-        CloseHandle(hMapFile);
-        return NULL;
-    }
+    HMODULE             Kernel = LoadLibraryW(KERNEL_MEMORY_DLL_PATH);
+    virtual_alloc_2    *VirtualAlloc2 = (virtual_alloc_2 *)GetProcAddress(Kernel, "VirtualAlloc2");
+    map_view_of_file_3 *MapViewOfFile3 =
+        (map_view_of_file_3 *)GetProcAddress(Kernel, "MapViewOfFile3");
 
-    // Map the same memory again (second half of the buffer) in another address space
-    void *buffer2 =
-        MapViewOfFileEx(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, sz, (LPVOID)((uintptr_t)buffer + sz));
-    if (buffer2 == NULL) {
-        printf("Failed to map view of file (second mapping): %lu\n", GetLastError());
-        UnmapViewOfFile(buffer); // Clean up first mapping
-        CloseHandle(hMapFile);
-        return NULL;
-    }
+    if (VirtualAlloc2 && MapViewOfFile3) {
+        // Reserve a contiguous block of virtual memory twice the size of the buffer
+        void *reserved = VirtualAlloc2(NULL, NULL, sz << 1 /* sz*2^1 */,
+                                       MEM_RESERVE | MEM_RESERVE_PLACEHOLDER, PAGE_NOACCESS, 0, 0);
+        if (reserved == NULL) {
+            printf("Failed to reserve virtual memory: %lu\n", GetLastError());
+            CloseHandle(hMapFile);
+            return NULL;
+        }
 
-    // Close the file mapping handle, we don't need it anymore
+        // Create a file mapping object backed by the system pagefile
+        VirtualFree(reserved + 0 * sz, sz, MEM_RELEASE | MEM_PRESERVE_PLACEHOLDER);
+        void *buffer = MapViewOfFile3(hMapFile, 0, reserved + 0 * sz, 0, sz,
+                                      MEM_REPLACE_PLACEHOLDER, PAGE_READWRITE, 0, 0);
+        if (!buffer) {
+            printf("Failed to map view of file (first mapping): %lu\n", GetLastError());
+            CloseHandle(hMapFile);
+            VirtualFree(reserved, 0, MEM_RELEASE); // Clean up reserved memory
+            return NULL;
+        }
+        VirtualFree(reserved + 1 * sz, sz, MEM_RELEASE | MEM_PRESERVE_PLACEHOLDER);
+        void *buffer2 = MapViewOfFile3(hMapFile, 0, reserved + 1 * sz, 0, sz,
+                                       MEM_REPLACE_PLACEHOLDER, PAGE_READWRITE, 0, 0);
+        if (!buffer2) {
+            printf("Failed to map view of file (second mapping): %lu\n", GetLastError());
+            UnmapViewOfFile(buffer); // Clean up first mapping
+            CloseHandle(hMapFile);
+            VirtualFree(reserved, 0, MEM_RELEASE); // Clean up reserved memory
+            return NULL;
+        }
+        return reserved;
+    } else {
+        for (int Attempt = 0; Attempt < 100; Attempt++) {
+            void *reserved = VirtualAlloc(NULL, sz << 1 /* sz*2^1 */, MEM_RESERVE, PAGE_NOACCESS);
+
+            // Commit the first half of the reserved memory to make it accessible
+            void *buffer =
+                MapViewOfFileEx(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, sz, reserved + 0 * sz);
+            if (!buffer) {
+                printf("Failed to map view of file (first mapping): %lu\n", GetLastError());
+                CloseHandle(hMapFile);
+                VirtualFree(reserved, 0, MEM_RELEASE); // Clean up reserved memory
+                return NULL;
+            }
+            void *buffer2 =
+                MapViewOfFileEx(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, sz, reserved + 1 * sz);
+            if (!buffer2) {
+                printf("Failed to map view of file (second mapping): %lu\n", GetLastError());
+                UnmapViewOfFile(buffer); // Clean up first mapping
+                CloseHandle(hMapFile);
+                VirtualFree(reserved, 0, MEM_RELEASE); // Clean up reserved memory
+                return NULL;
+            }
+            // Close the file mapping handle, as it's no longer needed
+            CloseHandle(hMapFile);
+            return reserved;
+        }
+    }
     CloseHandle(hMapFile);
-
-    return buffer;
+    return NULL;
 }
 
 #elif BUFFER_BACKEND == BUFFER_BACKEND_LIBC_MALLOC
@@ -196,6 +258,7 @@ void ring_destroy(ringbuffer *buffer) {
     // Unmap both views of the memory
     UnmapViewOfFile(buffer->buffer);
     UnmapViewOfFile(buffer->buffer + buffer->size);
+    VirtualFree(buffer, 0, MEM_RELEASE);
 #elif BUFFER_BACKEND == BUFFER_BACKEND_LIBC_MALLOC
     free(buffer->buffer);
 #endif
