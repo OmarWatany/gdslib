@@ -1,7 +1,5 @@
 #include "gringbuffer.h"
 #include <errno.h>
-#include <libloaderapi.h>
-#include <memoryapi.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -78,6 +76,8 @@ void *ringbuffer_alloc(size_t *MinSize) {
 #endif
 
 #define WIN32_LEAN_AND_MEAN
+#include <libloaderapi.h>
+#include <memoryapi.h>
 #include <windows.h>
 
 // copied from casey muratori's video
