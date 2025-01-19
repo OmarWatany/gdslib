@@ -43,7 +43,7 @@ alist_t alist_build_num(size_t item_size, size_t arr_size, size_t arr[arr_size])
 alist_t alist_build_str(size_t arr_size, char *arr[arr_size]) {
     alist_t alist = {0};
     alist_init(&alist, sizeof(char *));
-    alist_set_allocator(&alist, str_allocator);
+    alist_set_allocator(&alist, malloc);
     alist.gallocator = default_gallocator;
     for (size_t j = 0; j < arr_size; j++)
         alist_dpush_str(&alist, arr[j]);
@@ -78,8 +78,7 @@ int16_t alist_pop(alist_t *alist) {
 
 gdata_t alist_alloc(alist_t *alist, size_t item_size, gdata_t data) {
     if (alist == NULL || alist->buf == NULL) return NULL;
-    return alist->allocator_fun ? alist->allocator_fun(data)
-                                : default_safe_allocator(alist->item_size, item_size, data);
+    return alist->allocator_fun ? alist->allocator_fun(item_size) : default_allocator(item_size);
 }
 
 int16_t alist_set_at(alist_t *alist, size_t pos, gdata_t data) {
@@ -111,11 +110,9 @@ int16_t alist_dset_at_safe(alist_t *alist, size_t pos, size_t item_size, gdata_t
         expand(alist, alist->capacity);
         return alist_dset_at_safe(alist, pos, item_size, data);
     }
-    gdata_t allocated = NULL;
-    if (!alist->allocator_fun) {
-        allocated = default_allocator(item_size, data);
-    } else
-        allocated = alist->allocator_fun(data);
+    gdata_t allocated =
+        !alist->allocator_fun ? default_allocator(item_size) : alist->allocator_fun(item_size);
+    memcpy(allocated, data, item_size);
     intptr_t *node = (intptr_t *)ALIST_AT(alist, pos);
     *node = (intptr_t)allocated;
     return EXIT_SUCCESS;
@@ -124,12 +121,9 @@ int16_t alist_dset_at_safe(alist_t *alist, size_t pos, size_t item_size, gdata_t
 int16_t alist_rm_at(alist_t *alist, size_t pos) {
     if (alist == NULL || alist->buf == NULL || pos >= alist->size) return EXIT_FAILURE;
     gdata_t node = ALIST_AT(alist, pos);
-    if (!alist->gallocator || !alist->gallocator->deallocator) {
-        memset(node, 0, alist->item_size);
-    } else {
+    if (alist->gallocator && alist->gallocator->deallocator)
         alist->gallocator->deallocator(NODE_DDATA(node));
-        memset(node, 0, alist->item_size);
-    }
+    memset(node, 0, alist->item_size);
     return EXIT_SUCCESS;
 }
 
@@ -146,7 +140,7 @@ void alist_reserve(alist_t *alist, size_t size) {
     if (alist->capacity < size) expand(alist, size - alist->capacity);
 }
 
-void alist_set_allocator(alist_t *alist, gdata_t (*allocator_fun)(gdata_t data)) {
+void alist_set_allocator(alist_t *alist, allocator_fun_t allocator_fun) {
     alist->allocator_fun = allocator_fun;
 }
 
@@ -176,10 +170,10 @@ void expand(alist_t *alist, size_t by) {
 }
 
 void alist_purge(alist_t *alist) {
-    if (alist == NULL) return;
-    if (alist->gallocator && alist->gallocator->deallocator)
+    if (alist->gallocator && alist->gallocator->deallocator) {
         for (size_t p = 0; p < alist->size; p++)
             alist_rm_at(alist, p);
+    }
     alist->size = 0;
     memset(alist->buf, 0, ALIST_BUF_SIZE(alist));
 }

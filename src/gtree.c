@@ -57,8 +57,9 @@ static void (*order_functions[])(tnode_t *, size_t k, size_t lvl, for_each_fn) =
 
 static gdata_t kt_alloc(ktree_t *tree, size_t item_size, gdata_t data) {
     if (tree == NULL || tree == NULL) return NULL;
-    return tree->allocator_fun ? tree->allocator_fun(data)
-                               : default_safe_allocator(tree->item_size, item_size, data);
+    gdata_t allocated =
+        tree->allocator_fun ? tree->allocator_fun(item_size) : default_allocator(item_size);
+    return memcpy(allocated, data, item_size);
 }
 
 ktree_t *kt_create(size_t item_size, size_t k) {
@@ -152,10 +153,7 @@ void bst_add(btree_t *tree, gdata_t data) {
     }
     if (!tree->root) {
         tnode_t *new_node = tnode_create(tree->k);
-        if (tree->allocator_fun) {
-            tnode_set_data(new_node, tree->allocator_fun(data));
-        } else
-            tnode_set_data(new_node, default_allocator(tree->item_size, data));
+        tnode_set_data(new_node, kt_alloc(tree, tree->item_size, data));
         tree->root = new_node;
     } else {
         bst_add_h(tree, tree->root, data);

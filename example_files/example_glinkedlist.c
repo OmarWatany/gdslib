@@ -37,15 +37,15 @@ void fixed_strings() {
     list_t *fixed_strings = list_create(30);
 
     for (int i = 0; i < 7; i++) {
-        push_front(fixed_strings, "world");
-        push_front(fixed_strings, "hello");
-        push_front(fixed_strings, "print");
-        push_back(fixed_strings, "!");
+        push_sfront(fixed_strings, "world");
+        push_sfront(fixed_strings, "hello");
+        push_sfront(fixed_strings, "print");
+        push_sback(fixed_strings, "!");
     }
     /* char *s = strdup("strings"); */
     /*  push_front(fixed_strings, s); */
     char *fs = "strings";
-    push_front(fixed_strings, fs);
+    push_sfront(fixed_strings, fs);
 
     printf("------------------- ");
     printf("fixed_strings\n");
@@ -95,13 +95,13 @@ void fixed_strings() {
 
 void dyn_strings() {
     list_t *dyn_strings = list_create(3);
-    list_set_allocator(dyn_strings, str_allocator);
+    /* list_set_allocator(dyn_strings, str_allocator); */
 
-    push_front(dyn_strings, "dyn strings");
+    push_sfront(dyn_strings, "dyn strings");
 
     char *s = strdup("strings");
-    push_front(dyn_strings, s);
-    push_back(dyn_strings, s);
+    push_sfront(dyn_strings, s);
+    push_sback(dyn_strings, s);
 
     printf("------------------- ");
     printf("Dynamic Strings\n");

@@ -19,14 +19,11 @@ int16_t push_front_safe(list_t *list, size_t item_size, gdata_t data) {
     lnode_t *new_node = lnode_create();
     if (!new_node) return EXIT_FAILURE;
 
-    gdata_t allocated = NULL;
-    if (list->allocator_fun) {
-        // use custom allocator
-        allocated = list->allocator_fun(data);
-    } else {
-        // use default allocator
-        allocated = default_allocator(item_size, data);
-    }
+    gdata_t allocated =
+        list->allocator_fun ? list->allocator_fun(item_size) : default_allocator(item_size);
+    // TODO: if it's a string pass len as item_size
+    memcpy(allocated, data, item_size);
+
     lnode_set_data(new_node, allocated);
 
     if (list->head == NULL) {
@@ -44,14 +41,11 @@ int16_t push_back_safe(list_t *list, size_t item_size, gdata_t data) {
     lnode_t *new_node = lnode_create();
     if (!new_node) return EXIT_FAILURE;
 
-    gdata_t allocated = NULL;
-    if (list->allocator_fun) {
-        // use custom allocator
-        allocated = list->allocator_fun(data);
-    } else {
-        // use default allocator
-        allocated = default_allocator(item_size, data);
-    }
+    gdata_t allocated =
+        list->allocator_fun ? list->allocator_fun(item_size) : default_allocator(item_size);
+    // TODO: if it's a string pass len as item_size
+    memcpy(allocated, data, item_size);
+
     lnode_set_data(new_node, allocated);
 
     if (list->tail) {
@@ -154,7 +148,7 @@ void list_destroy(list_t *list) {
     list_purge(list);
 }
 
-inline void list_set_allocator(list_t *list, gdata_t (*allocator_fun)(gdata_t data)) {
+inline void list_set_allocator(list_t *list, allocator_fun_t allocator_fun) {
     list->allocator_fun = allocator_fun;
 }
 

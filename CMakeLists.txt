@@ -16,9 +16,9 @@ set(BIN_D "${CMAKE_BINARY_DIR}/bin")
 
 
 # Compiler flags
-if(CMAKE_C_COMPILER_ID EQUAL "Clang" OR CMAKE_C_COMPILER_ID EQUAL "GNU")
+# if(CMAKE_C_COMPILER_ID EQUAL "Clang" OR CMAKE_C_COMPILER_ID EQUAL "GNU" OR CMAKE_C_COMPILER_ID EQUAL "Gnu")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -g -fPIC")
-endif()
+# endif()
 
 include_directories(${INC_D})
 
@@ -66,7 +66,7 @@ add_custom_target(test
 
 # Valgrind run target
 add_custom_target(run
-    COMMAND valgrind ${BIN_D}/ring
+    COMMAND valgrind ${BIN_D}/ringbuffer
 )
 
 add_custom_target(malloc

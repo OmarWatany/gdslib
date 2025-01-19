@@ -39,8 +39,9 @@ gdata_t pq_peak(pqueue_t *pqueue) {
 
 static gdata_t pq_alloc(pqueue_t *q, size_t item_size, gdata_t data) {
     if (!q) return NULL;
-    return q->h.buf.allocator_fun ? q->h.buf.allocator_fun(data)
-                                  : default_safe_allocator(q->item_size, item_size, data);
+    gdata_t allocated =
+        q->h.buf.allocator_fun ? q->h.buf.allocator_fun(item_size) : default_allocator(item_size);
+    return memcpy(allocated, data, q->item_size);
 }
 
 // TODO: return error

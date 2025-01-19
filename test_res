@@ -154,7 +154,7 @@ strings -> dyn strings -> strings ->
 ==[linkedlist]== 
 ==[linkedlist]== HEAP SUMMARY:
 ==[linkedlist]==     in use at exit: 0 bytes in 0 blocks
-==[linkedlist]==   total heap usage: 84 allocs, 84 frees, 6,102 bytes allocated
+==[linkedlist]==   total heap usage: 84 allocs, 84 frees, 5,380 bytes allocated
 ==[linkedlist]== 
 ==[linkedlist]== All heap blocks were freed -- no leaks are possible
 ==[linkedlist]== 

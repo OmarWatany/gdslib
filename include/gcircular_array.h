@@ -22,7 +22,7 @@ int16_t carray_overwrite(circular_array_t *list, gdata_t data);
 gdata_t carray_read(circular_array_t *list);
 size_t  carray_size(circular_array_t *list);
 size_t  carray_capacity(circular_array_t *list);
-void    carray_set_allocator(circular_array_t *ringbfr, gdata_t (*allocator_fun)(gdata_t data));
+void    carray_set_allocator(circular_array_t *ringbfr, allocator_fun_t allocator_fun);
 bool    carray_empty(circular_array_t *list);
 void    carray_destroy(circular_array_t *list);
 

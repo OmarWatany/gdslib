@@ -15,6 +15,8 @@ typedef struct {
     size_t  lvl;
 } tree_for_data;
 
+#define kt_add_str(T, S) kt_add_safe(ktree_t *tree, gdata_t data)
+
 ktree_t *kt_create(size_t item_size, size_t k);
 
 void kt_init(ktree_t *tree, size_t item_size, size_t k);

@@ -12,6 +12,9 @@ extern "C" {
 void    list_init(list_t *list, size_t item_size);
 list_t *list_create(size_t item_size);
 
+#define push_sfront(L, S) push_front_safe((L), strlen((char *)(S)) + 1, (S))
+#define push_sback(L, S)  push_back_safe((L), strlen((char *)(S)) + 1, (S))
+
 int16_t push_front_safe(list_t *list, size_t item_size, gdata_t data);
 int16_t push_back_safe(list_t *list, size_t item_size, gdata_t data);
 int16_t push_front(list_t *list, gdata_t data);
@@ -27,7 +30,7 @@ int16_t pop_back(list_t *list, void *buffer);
 char *strpop_front(list_t *list);
 char *strpop_back(list_t *list);
 
-void list_set_allocator(list_t *list, gdata_t (*allocator_fun)(gdata_t data));
+void list_set_allocator(list_t *list, allocator_fun_t allocator_fun);
 
 void list_purge(list_t *list);
 void list_destroy(list_t *list);

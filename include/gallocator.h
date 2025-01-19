@@ -8,7 +8,7 @@ extern "C" {
 #include <stdlib.h>
 
 typedef void *gdata_t;
-typedef gdata_t (*allocator_fun_t)(gdata_t data);
+typedef gdata_t (*allocator_fun_t)(size_t sz);
 typedef int (*deallocator_fun_t)(gdata_t data);
 
 typedef struct {
@@ -18,10 +18,10 @@ typedef struct {
 
 extern Gallocator_t *default_gallocator;
 
-gdata_t default_allocator(size_t item_size, gdata_t data);
-gdata_t default_safe_allocator(size_t allocation_size, size_t item_size, gdata_t data);
-gdata_t str_allocator(gdata_t str);
-int     default_deallocator(gdata_t data);
+gdata_t default_allocator(size_t item_size);
+// gdata_t default_safe_allocator(size_t allocation_size, size_t item_size, gdata_t data);
+// gdata_t str_allocator(gdata_t str);
+int default_deallocator(gdata_t data);
 
 #ifdef __cplusplus
 }

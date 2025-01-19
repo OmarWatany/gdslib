@@ -15,6 +15,7 @@ int16_t carray_init(circular_array_t *carray, size_t item_size, size_t capacity)
     if (!carray) return EXIT_FAILURE;
     carray->capacity = capacity;
     carray->item_size = item_size;
+    // TODO: add the ability to use different allocator
     carray->buf = (anode_t *)calloc(capacity, item_size);
     if (!carray->buf) return EXIT_FAILURE;
     // I can re allocate it after creating the carray
@@ -24,8 +25,7 @@ int16_t carray_init(circular_array_t *carray, size_t item_size, size_t capacity)
 
 gdata_t carray_alloc(circular_array_t *carray, size_t item_size, gdata_t data) {
     if (carray == NULL || carray->buf == NULL) return NULL;
-    return carray->allocator_fun ? carray->allocator_fun(data)
-                                 : default_safe_allocator(carray->item_size, item_size, data);
+    return carray->allocator_fun ? carray->allocator_fun(item_size) : default_allocator(item_size);
 }
 
 int16_t carray_write_safe(circular_array_t *carray, size_t item_size, gdata_t data) {
@@ -84,7 +84,7 @@ size_t carray_capacity(circular_array_t *carray) {
     return carray->capacity;
 }
 
-void carray_set_allocator(circular_array_t *carray, gdata_t (*allocator_fun)(gdata_t data)) {
+void carray_set_allocator(circular_array_t *carray, allocator_fun_t allocator_fun) {
     carray->allocator_fun = allocator_fun;
 }
 

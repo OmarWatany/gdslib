@@ -1,5 +1,4 @@
 #include "gnode.h"
-#include <math.h>
 #include <string.h>
 
 gdata_t gnode_data(gdata_t node) {
@@ -79,8 +78,15 @@ void tnode_set_child(tnode_t *node, size_t n, tnode_t *child) {
     node->links[n] = child;
 }
 
+long lpow(long a, long b) {
+    long qc = a;
+    for (long i = 1L; i < b; i++)
+        qc *= a;
+    return qc;
+}
+
 tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
-    int qc = pow(nk, lvl);
+    int qc = (int)lpow(nk, lvl);
     int qfront = 0, qback = 0;
 
     tnode_t **childs = malloc(qc * sizeof(tnode_t *));
@@ -92,7 +98,7 @@ tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
     if (temp) lvlq[qback] = temp;
     qback = (qback + 1) % (qc);
     for (size_t i = 1; i <= lvl; i++) {
-        for (size_t j = 0; j < pow(nk, i - 1); j++) {
+        for (size_t j = 0; j < lpow(nk, i - 1); j++) {
             temp = lvlq[qfront];
             qfront = (qfront + 1) % (qc);
             for (int k = 0; k < nk; k++) {

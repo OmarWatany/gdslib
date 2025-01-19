@@ -11,10 +11,10 @@ extern "C" {
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define alist_push_str(L, S)       (alist_push_safe((L), strlen((S)), (S)))
-#define alist_set_at_str(L, P, S)  (alist_set_at_safe((L), (P), strlen((S)), (S)))
-#define alist_dpush_str(L, S)      (alist_dpush_safe((L), strlen((S)), (S)))
-#define alist_dset_at_str(L, P, S) (alist_dset_at_safe((L), (P), strlen((S)), (S)))
+#define alist_push_str(L, S)       (alist_push_safe((L), strlen((char *)(S)) + 1, (S)))
+#define alist_set_at_str(L, P, S)  (alist_set_at_safe((L), (P), strlen((char *)(S)) + 1, (S)))
+#define alist_dpush_str(L, S)      (alist_dpush_safe((L), strlen((char *)(S)) + 1, (S)))
+#define alist_dset_at_str(L, P, S) (alist_dset_at_safe((L), (P), strlen((char *)(S)) + 1, (S)))
 
 alist_t *alist_create(size_t item_size);
 int16_t  alist_init(alist_t *alist, size_t item_size);
@@ -46,7 +46,7 @@ size_t  alist_size(alist_t *list);
 size_t  alist_item_size(alist_t *list);
 size_t  alist_capacity(alist_t *list);
 void    alist_reserve(alist_t *list, size_t size);
-void    alist_set_allocator(alist_t *alist, gdata_t (*allocator_fun)(gdata_t data));
+void    alist_set_allocator(alist_t *alist, allocator_fun_t);
 bool    alist_empty(alist_t *list);
 void    alist_purge(alist_t *list);
 void    alist_destroy(alist_t *list);
