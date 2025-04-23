@@ -6,22 +6,23 @@ extern "C" {
 #endif // cpp
 
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef void *gdata_t;
 
 typedef struct {
-    gdata_t data;
+  gdata_t data;
 } gnode_t;
 
 typedef struct {
-    gnode_t  *data;
-    uintptr_t link;
+  gnode_t *data;
+  uintptr_t link;
 } lnode_t;
 
 typedef struct tnode_t tnode_t;
 struct tnode_t {
-    gnode_t  *data;
-    tnode_t **links;
+  gnode_t *data;
+  tnode_t **links;
 };
 
 typedef uint8_t anode_t;

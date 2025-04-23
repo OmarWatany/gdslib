@@ -1,4 +1,5 @@
 #include "gtree.h"
+#include "gnode.h"
 #include "gqueue.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -111,6 +112,31 @@ static void tnode_swap_data(tnode_t *from, tnode_t *to) {
 
 // Binary tree
 
+void tnode_rotate_left(tnode_t **node, size_t k) {
+    tnode_t *right_child = tnode_child(*node, k - 1);
+    if (!right_child) return;
+    tnode_t *rchild_left_child = tnode_child(right_child, 0);
+    tnode_set_child(*node, k - 1, NULL);
+    tnode_set_child(right_child, 0, *node);
+    if (rchild_left_child) {
+        tnode_set_child(*node, k - 1, rchild_left_child);
+    }
+    *node = right_child;
+}
+
+void tnode_rotate_right(tnode_t **node, size_t k) {
+    tnode_t *left_child = tnode_child(*node, 0);
+    if (!left_child) return;
+    tnode_t *lchild_right_child = tnode_child(left_child, 1);
+    tnode_set_child(*node, 0, NULL);
+    tnode_set_child(left_child, k - 1, *node);
+    if (lchild_right_child) {
+        tnode_set_child(*node, 0, lchild_right_child);
+    }
+    *node = left_child;
+    // *parent = left_child;
+}
+
 btree_t *bt_create(size_t item_size) {
     ktree_t *tree = kt_create(item_size, 2);
     return tree;
@@ -162,6 +188,8 @@ void bst_add(btree_t *tree, gdata_t data) {
 }
 
 static tnode_t *bst_min_max(tnode_t *node, size_t direction) {
+    // if direction == 0 return left most (minimum) child
+    // if direction == 1 return right most (maximum) child
     tnode_t *temp = tnode_child(node, direction);
     if (temp) {
         return bst_min_max(temp, direction);
@@ -170,6 +198,7 @@ static tnode_t *bst_min_max(tnode_t *node, size_t direction) {
 }
 
 static tnode_t *bst_right_min(tnode_t *node) {
+    // return right child's max node
     return bst_min_max(tnode_child(node, 1), 0);
 }
 

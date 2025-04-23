@@ -11,8 +11,8 @@ extern "C" {
 #include <stdbool.h>
 
 typedef struct {
-    gdata_t node;
-    size_t  lvl;
+  gdata_t node;
+  size_t lvl;
 } tree_for_data;
 
 #define kt_add_str(T, S) kt_add_safe(ktree_t *tree, gdata_t data)
@@ -37,7 +37,8 @@ void heap_add_safe(heap_t *heap, size_t item_size, gdata_t data);
 void heap_add(heap_t *heap, gdata_t data);
 void heap_pop(heap_t *heap);
 bool valid_heap(heap_t *heap, size_t pos);
-void heap_for_each_order(heap_t *heap, TRAVERSE_ORDER order, for_each_fn function);
+void heap_for_each_order(heap_t *heap, TRAVERSE_ORDER order,
+                         for_each_fn function);
 void heap_for_each(heap_t *heap, for_each_fn function);
 void heap_destroy(heap_t *heap);
 
@@ -45,6 +46,8 @@ gdata_t heap_peak(heap_t *heap);
 
 btree_t *bt_create(size_t item_size);
 
+void tnode_rotate_right(tnode_t **node, size_t k);
+void tnode_rotate_left(tnode_t **node, size_t k);
 void bt_init(btree_t *tree, size_t item_size, cmp_fun cmp);
 void bst_add(btree_t *tree, gdata_t data);
 bool bst_find(btree_t *heystack, gdata_t needle);

@@ -57,6 +57,28 @@ static void heap_iprintTree(gdata_t for_data) {
     printf("%d\n", *(int *)d.node);
 }
 
+void test_rotation() {
+    btree_t tree = {0};
+    bt_init(&tree, sizeof(int), gcmp_int);
+    int arr[] = {5, 3, 2, 4, 7, 6, 8};
+    for (size_t i = 0; i < sizeof(arr) / sizeof(int); i++) {
+        bst_add(&tree, &arr[i]);
+    }
+    printf("MAX  : %d \n", *(int *)bst_max(&tree));
+    printf("MIN  : %d \n", *(int *)bst_min(&tree));
+    printf("SIZE : %ld \n", tree.size);
+    printf("----- original tree -------------------------\n");
+    kt_for_each(&tree, IN_ORDER, iprintTree);
+    tnode_rotate_left(&tree.root, tree.k);
+    printf("----- rotated left tree ---------------------\n");
+    kt_for_each(&tree, IN_ORDER, iprintTree);
+    printf("----- rotated right tree --------------------\n");
+    tnode_rotate_right(&tree.root, tree.k);
+    tnode_rotate_right(&tree.root, tree.k);
+    kt_for_each(&tree, IN_ORDER, iprintTree);
+    bst_destroy(&tree);
+}
+
 void random_output() {
     btree_t tree = {0};
     bt_init(&tree, sizeof(int), gcmp_int);
@@ -198,6 +220,7 @@ void test_kheap(size_t k) {
 int main() {
     random_output();
     test_kheap(2);
+    test_rotation();
     // test_kheap(4);
 
     return 0;

@@ -116,7 +116,7 @@ carray cap : 10
 ==[circular_array]== 
 ==[circular_array]== HEAP SUMMARY:
 ==[circular_array]==     in use at exit: 0 bytes in 0 blocks
-==[circular_array]==   total heap usage: 2 allocs, 2 frees, 4,136 bytes allocated
+==[circular_array]==   total heap usage: 4 allocs, 4 frees, 4,158 bytes allocated
 ==[circular_array]== 
 ==[circular_array]== All heap blocks were freed -- no leaks are possible
 ==[circular_array]== 
@@ -415,10 +415,37 @@ VALID HEAP
 
 ---------------
 
+MAX  : 8 
+MIN  : 2 
+SIZE : 7 
+----- original tree -------------------------
+         2
+     3
+         4
+ 5
+         6
+     7
+         8
+----- rotated left tree ---------------------
+             2
+         3
+             4
+     5
+         6
+ 7
+     8
+----- rotated right tree --------------------
+     2
+ 3
+         4
+     5
+             6
+         7
+             8
 ==[tree]== 
 ==[tree]== HEAP SUMMARY:
 ==[tree]==     in use at exit: 0 bytes in 0 blocks
-==[tree]==   total heap usage: 113 allocs, 113 frees, 5,684 bytes allocated
+==[tree]==   total heap usage: 134 allocs, 134 frees, 6,400 bytes allocated
 ==[tree]== 
 ==[tree]== All heap blocks were freed -- no leaks are possible
 ==[tree]== 

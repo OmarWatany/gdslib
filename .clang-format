@@ -1,5 +1,5 @@
 ---
-Language: Cpp
+Language: C
 # BasedOnStyle: LLVM
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
@@ -213,7 +213,7 @@ StatementAttributeLikeMacros:
 StatementMacros:
   - Q_UNUSED
   - QT_REQUIRE_VERSION
-TabWidth: 8
+TabWidth: 4
 UseTab: Never
 WhitespaceSensitiveMacros:
   - BOOST_PP_STRINGIZE
