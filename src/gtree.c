@@ -99,6 +99,10 @@ void kt_for_each(ktree_t *tree, TRAVERSE_ORDER order, for_each_fn function) {
         order_functions[order](tree->root, tree->k, 0, function);
 }
 
+ssize_t kt_height(ktree_t *tree) {
+    return tree->root ? tree->root->height : -1;
+}
+
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl) {
     return tnode_grand_children(tree->root, tree->k, lvl);
 }
@@ -112,6 +116,27 @@ static void tnode_swap_data(tnode_t *from, tnode_t *to) {
 
 // Binary tree
 
+static size_t tnode_calc_height(tnode_t *node, size_t k) {
+    if (!node) return EXIT_FAILURE;
+    ssize_t  children_max_height = -1;
+    tnode_t *child = NULL;
+    for (size_t i = 0; i < k; i++) {
+        child = tnode_child(node, i);
+        if (child && (ssize_t)child->height > children_max_height) {
+            children_max_height = child->height;
+        }
+    }
+    node->height = 1 + children_max_height;
+    return EXIT_SUCCESS;
+}
+
+static void tnode_calc_height_r(tnode_t *node, size_t k) {
+    if (!node) return;
+    for (size_t n = 0; n < k; n++)
+        tnode_calc_height_r(tnode_child(node, n), k);
+    tnode_calc_height(node, k);
+}
+
 void tnode_rotate_left(tnode_t **node, size_t k) {
     tnode_t *right_child = tnode_child(*node, k - 1);
     if (!right_child) return;
@@ -122,6 +147,7 @@ void tnode_rotate_left(tnode_t **node, size_t k) {
         tnode_set_child(*node, k - 1, rchild_left_child);
     }
     *node = right_child;
+    tnode_calc_height_r(*node, k);
 }
 
 void tnode_rotate_right(tnode_t **node, size_t k) {
@@ -134,7 +160,7 @@ void tnode_rotate_right(tnode_t **node, size_t k) {
         tnode_set_child(*node, 0, lchild_right_child);
     }
     *node = left_child;
-    // *parent = left_child;
+    tnode_calc_height_r(*node, k);
 }
 
 btree_t *bt_create(size_t item_size) {
@@ -166,10 +192,10 @@ static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
         tnode_t *new_node = tnode_create(tree->k);
         tnode_set_data(new_node, kt_alloc(tree, tree->item_size, data));
         tnode_set_child(node, dir, new_node);
-        return;
     } else {
         bst_add_h(tree, temp, data);
     }
+    tnode_calc_height(node, tree->k);
 }
 
 void bst_add(btree_t *tree, gdata_t data) {
@@ -178,10 +204,17 @@ void bst_add(btree_t *tree, gdata_t data) {
         return;
     }
     if (!tree->root) {
+        // if tree's root isn't initialized
+        // create root
+        // NOTE: tnode_create allocate space for node
+        // and kt_alloc allocate space for data why does nodes manage it's own memory ?
+        // Shouldn't the tree manage it ?
         tnode_t *new_node = tnode_create(tree->k);
+        // NOTE: kt_alloc uses the old api that the allocator copies data
         tnode_set_data(new_node, kt_alloc(tree, tree->item_size, data));
         tree->root = new_node;
     } else {
+        // if root exist add it recursively
         bst_add_h(tree, tree->root, data);
     }
     tree->size++;

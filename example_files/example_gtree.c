@@ -46,7 +46,8 @@ static void iprintTree(gdata_t for_data) {
     printf(" ");
     for (size_t i = 0; i < d.lvl; i++)
         printf("    ");
-    printf("%d\n", *(int *)gnode_data(d.node));
+    tnode_t *node = d.node;
+    printf("(%d,%zu)\n", *(int *)gnode_data(d.node), node->height);
 }
 
 static void heap_iprintTree(gdata_t for_data) {
@@ -205,7 +206,7 @@ void test_kheap(size_t k) {
     if (valid_heap(&hp, 0))
         printf("VALID HEAP\n");
     else
-        printf("UNVALID HEAP\n");
+        printf("INVALID HEAP\n");
     heap_for_each(&hp, heap_iprint);
     printf("\n");
 

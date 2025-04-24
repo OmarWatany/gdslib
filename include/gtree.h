@@ -25,6 +25,7 @@ void kt_add_safe(ktree_t *tree, gdata_t data); // TODO: implement
 void kt_add(ktree_t *tree, gdata_t data);
 void kt_destroy(ktree_t *tree);
 void kt_for_each(ktree_t *tree, TRAVERSE_ORDER order, for_each_fn function);
+ssize_t kt_height(ktree_t *tree);
 
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl);
 

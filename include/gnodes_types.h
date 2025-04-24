@@ -23,6 +23,7 @@ typedef struct tnode_t tnode_t;
 struct tnode_t {
   gnode_t *data;
   tnode_t **links;
+  size_t size, height;
 };
 
 typedef uint8_t anode_t;
