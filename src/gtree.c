@@ -100,7 +100,7 @@ void kt_for_each(ktree_t *tree, TRAVERSE_ORDER order, for_each_fn function) {
 }
 
 ssize_t kt_height(ktree_t *tree) {
-    return tree->root ? tree->root->height : -1;
+    return tree->root ? (ssize_t)tree->root->height : -1;
 }
 
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl) {
@@ -115,6 +115,26 @@ static void tnode_swap_data(tnode_t *from, tnode_t *to) {
 }
 
 // Binary tree
+
+static size_t tnode_calc_size(tnode_t *node, size_t k) {
+    if (!node) return EXIT_FAILURE;
+    size_t   size = 1;
+    tnode_t *child = NULL;
+    for (size_t i = 0; i < k; i++) {
+        child = tnode_child(node, i);
+        if (child) size += child->size;
+    }
+
+    node->size = size;
+    return EXIT_SUCCESS;
+}
+
+static void tnode_calc_size_r(tnode_t *node, size_t k) {
+    if (!node) return;
+    for (size_t n = 0; n < k; n++)
+        tnode_calc_size_r(tnode_child(node, n), k);
+    tnode_calc_size(node, k);
+}
 
 static size_t tnode_calc_height(tnode_t *node, size_t k) {
     if (!node) return EXIT_FAILURE;
@@ -148,6 +168,7 @@ void tnode_rotate_left(tnode_t **node, size_t k) {
     }
     *node = right_child;
     tnode_calc_height_r(*node, k);
+    tnode_calc_size_r(*node, k);
 }
 
 void tnode_rotate_right(tnode_t **node, size_t k) {
@@ -161,6 +182,7 @@ void tnode_rotate_right(tnode_t **node, size_t k) {
     }
     *node = left_child;
     tnode_calc_height_r(*node, k);
+    tnode_calc_size_r(*node, k);
 }
 
 btree_t *bt_create(size_t item_size) {
@@ -196,6 +218,7 @@ static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
         bst_add_h(tree, temp, data);
     }
     tnode_calc_height(node, tree->k);
+    tnode_calc_size(node, tree->k);
 }
 
 void bst_add(btree_t *tree, gdata_t data) {

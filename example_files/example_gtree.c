@@ -47,7 +47,7 @@ static void iprintTree(gdata_t for_data) {
     for (size_t i = 0; i < d.lvl; i++)
         printf("    ");
     tnode_t *node = d.node;
-    printf("(%d,%zu)\n", *(int *)gnode_data(d.node), node->height);
+    printf("(%d,%zu,%zu)\n", *(int *)gnode_data(d.node), node->height, node->size);
 }
 
 static void heap_iprintTree(gdata_t for_data) {
@@ -117,7 +117,7 @@ void random_output() {
     // printf("__ BREADTH END __\n");
 
     /* size_t    lvl = 4, lvlc = pow(tree.k, lvl); */
-    /* tnode_t **childs = kt_grand_childrens(&tree, lvl); */
+    /* tnode_t **children = kt_grand_childrens(&tree, lvl); */
     /* printf("lvl: %ld , children count %ld \n", lvl, lvlc); */
 
     d = 345;
@@ -131,9 +131,9 @@ void random_output() {
     printf("SIZE : %ld \n", tree.size);
 
     //  else {
-    //     for (size_t j = 0; j < lvlc && childs; j++) {
-    //         if (childs[j])
-    //             printf("child n : %ld lvl: %ld = %d\n", j, lvl, *(int *)tnode_data(childs[j]));
+    //     for (size_t j = 0; j < lvlc && children; j++) {
+    //         if (children[j])
+    //             printf("child n : %ld lvl: %ld = %d\n", j, lvl, *(int *)tnode_data(children[j]));
     //     }
     //     printf("size: %ld \n", tree.size);
     // }
@@ -161,7 +161,7 @@ void random_output() {
 
     gitr_destroy(&itr);
 
-    /* free(childs); */
+    /* free(children); */
     bst_destroy(&tree);
 }
 
@@ -184,7 +184,7 @@ void test_kheap(size_t k) {
     if (valid_heap(&hp, 0))
         printf("VALID HEAP\n");
     else
-        printf("UNVALID HEAP\n");
+        printf("INVALID HEAP\n");
 
     printf("BREADTH FIRST PRINT\n");
     heap_for_each(&hp, heap_iprint);

@@ -53,6 +53,7 @@ int16_t tnode_init(tnode_t *node, size_t links_count) {
     size_t size = links_count * sizeof(tnode_t *);
     node->data = NULL;
     node->links = malloc(size);
+    node->size = 1;
     memset(node->links, 0, size);
     return EXIT_SUCCESS;
 }
@@ -89,16 +90,16 @@ tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
     int qc = (int)lpow(nk, lvl);
     int qfront = 0, qback = 0;
 
-    tnode_t **childs = malloc(qc * sizeof(tnode_t *));
+    tnode_t **children = malloc(qc * sizeof(tnode_t *));
     tnode_t **lvlq = malloc(qc * sizeof(tnode_t *));
-    memset(childs, 0, sizeof(tnode_t *) * qc);
+    memset(children, 0, sizeof(tnode_t *) * qc);
     memset(lvlq, 0, sizeof(tnode_t *) * qc);
 
     tnode_t *temp = node;
     if (temp) lvlq[qback] = temp;
     qback = (qback + 1) % (qc);
     for (size_t i = 1; i <= lvl; i++) {
-        for (size_t j = 0; j < lpow(nk, i - 1); j++) {
+        for (size_t j = 0; j < (size_t)lpow(nk, i - 1); j++) {
             temp = lvlq[qfront];
             qfront = (qfront + 1) % (qc);
             for (int k = 0; k < nk; k++) {
@@ -109,12 +110,12 @@ tnode_t **tnode_grand_children(tnode_t *node, int nk, size_t lvl) {
     }
 
     for (int j = 0; j < qc; j++) {
-        childs[j] = lvlq[qfront];
+        children[j] = lvlq[qfront];
         qfront = (qfront + 1) % (qc);
     }
 
     free(lvlq);
-    return childs;
+    return children;
 }
 
 void tnode_destroy(tnode_t *node) {
