@@ -5,12 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void for_each_h(tnode_t *node, size_t lvl, for_each_fn for_each_f) {
+static inline void for_each_h(tnode_t *node, size_t lvl, for_each_fn for_each_f) {
     for_each_f(&(tree_for_data){node, lvl});
 }
 
 static void bf_order(ktree_t *tree, for_each_fn for_each) {
-    // TODO : if i wrote unit tests test it with ringbuffer
     queue_t lvlq = {0};
     queue_init(&lvlq, sizeof(tnode_t *));
 
@@ -99,6 +98,10 @@ void kt_for_each(ktree_t *tree, TRAVERSE_ORDER order, for_each_fn function) {
         order_functions[order](tree->root, tree->k, 0, function);
 }
 
+ssize_t kt_height(ktree_t *tree) {
+    return tree->root ? (ssize_t)tree->root->height : -1;
+}
+
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl) {
     return tnode_grand_children(tree->root, tree->k, lvl);
 }
@@ -112,29 +115,76 @@ static void tnode_swap_data(tnode_t *from, tnode_t *to) {
 
 // Binary tree
 
+static size_t tnode_calc_properties(tnode_t *node, size_t k) {
+    if (!node) return EXIT_FAILURE;
+    size_t   size = 1;
+    ssize_t  children_max_height = -1;
+    tnode_t *child = NULL;
+    for (size_t i = 0; i < k; i++) {
+        child = tnode_child(node, i);
+        if (child) {
+            if ((ssize_t)child->height > children_max_height) children_max_height = child->height;
+            size += child->size;
+        }
+    }
+
+    node->size = size;
+    node->height = 1 + children_max_height;
+    return EXIT_SUCCESS;
+}
+
+static void tnode_calc_properties_r(tnode_t *node, size_t k) {
+    if (!node) return;
+    for (size_t n = 0; n < k; n++)
+        tnode_calc_properties_r(tnode_child(node, n), k);
+    tnode_calc_properties(node, k);
+}
+
 void tnode_rotate_left(tnode_t **node, size_t k) {
     tnode_t *right_child = tnode_child(*node, k - 1);
     if (!right_child) return;
     tnode_t *rchild_left_child = tnode_child(right_child, 0);
-    tnode_set_child(*node, k - 1, NULL);
+    tnode_set_child(*node, k - 1, NULL); // right child
     tnode_set_child(right_child, 0, *node);
-    if (rchild_left_child) {
-        tnode_set_child(*node, k - 1, rchild_left_child);
-    }
+    if (rchild_left_child) tnode_set_child(*node, k - 1, rchild_left_child);
     *node = right_child;
+    tnode_calc_properties_r(*node, k);
 }
 
 void tnode_rotate_right(tnode_t **node, size_t k) {
     tnode_t *left_child = tnode_child(*node, 0);
     if (!left_child) return;
-    tnode_t *lchild_right_child = tnode_child(left_child, 1);
+    tnode_t *lchild_right_child = tnode_child(left_child, k - 1);
     tnode_set_child(*node, 0, NULL);
     tnode_set_child(left_child, k - 1, *node);
-    if (lchild_right_child) {
-        tnode_set_child(*node, 0, lchild_right_child);
-    }
+    if (lchild_right_child) tnode_set_child(*node, 0, lchild_right_child);
     *node = left_child;
-    // *parent = left_child;
+    tnode_calc_properties_r(*node, k);
+}
+
+static void tnode_balance(tnode_t **node, size_t k) {
+    if (!node) return;
+
+#define tnode_height(N) ((N) ? (N)->height : -1)
+
+    tnode_t *lchild = tnode_child(*node, 0), *rchild = tnode_child(*node, k - 1);
+    bool     dir = (long)(tnode_height(lchild)) > (long)(tnode_height(rchild));
+    long     diff = dir ? tnode_height(lchild) - tnode_height(rchild)
+                        : tnode_height(rchild) - tnode_height(lchild);
+
+    if (diff >= 2) {
+        if (dir)
+            tnode_rotate_right(node, k);
+        else
+            tnode_rotate_left(node, k);
+    }
+}
+
+void tnode_balance_r(tnode_t **node, size_t k) {
+    if (!*node) return;
+    tnode_balance(node, k);
+    for (size_t n = 0; n < k; n++)
+        tnode_balance_r(&(*node)->links[n], k);
 }
 
 btree_t *bt_create(size_t item_size) {
@@ -142,17 +192,22 @@ btree_t *bt_create(size_t item_size) {
     return tree;
 }
 
-void bt_init(ktree_t *tree, size_t item_size, int (*cmp_fun)(gdata_t data1, gdata_t data2)) {
+void bt_init(btree_t *tree, size_t item_size, int (*cmp_fun)(gdata_t data1, gdata_t data2)) {
     kt_init(tree, item_size, 2);
     tree->cmp_fun = cmp_fun;
 }
 
+/*
+void bt_insert_at(btree_t *tree,size_t idx)
+void bt_delete_at(btree_t *tree,size_t idx)
+*/
+
 // BST
 
-static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
+static void bst_add_h(ktree_t *tree, tnode_t **node, gdata_t data) {
     tnode_t *temp = NULL;
 
-    int res = tree->cmp_fun(tnode_data(node), data);
+    int res = tree->cmp_fun(tnode_data(*node), data);
     int dir = -1;
     dir = res > 0 ? 0 : (res < 0 ? 1 : dir);
 
@@ -160,16 +215,17 @@ static void bst_add_h(ktree_t *tree, tnode_t *node, gdata_t data) {
         tree->size--;
         return;
     }
-    temp = tnode_child(node, dir);
+    temp = tnode_child(*node, dir);
 
     if (!temp) {
         tnode_t *new_node = tnode_create(tree->k);
         tnode_set_data(new_node, kt_alloc(tree, tree->item_size, data));
-        tnode_set_child(node, dir, new_node);
-        return;
+        tnode_set_child(*node, dir, new_node);
     } else {
-        bst_add_h(tree, temp, data);
+        bst_add_h(tree, &((*node)->links[dir]), data);
+        tnode_balance(node, tree->k);
     }
+    tnode_calc_properties(*node, tree->k);
 }
 
 void bst_add(btree_t *tree, gdata_t data) {
@@ -178,11 +234,18 @@ void bst_add(btree_t *tree, gdata_t data) {
         return;
     }
     if (!tree->root) {
+        // if tree's root isn't initialized
+        // create root
+        // NOTE: tnode_create allocate space for node
+        // and kt_alloc allocate space for data why does nodes manage it's own memory ?
+        // Shouldn't the tree manage it ?
         tnode_t *new_node = tnode_create(tree->k);
+        // NOTE: kt_alloc uses the old api that the allocator copies data
         tnode_set_data(new_node, kt_alloc(tree, tree->item_size, data));
         tree->root = new_node;
     } else {
-        bst_add_h(tree, tree->root, data);
+        // if root exist add it recursively
+        bst_add_h(tree, &tree->root, data);
     }
     tree->size++;
 }
@@ -263,7 +326,7 @@ static void bst_delete_h(ktree_t *tree, tnode_t *node, gdata_t data) {
         tnode_t *rep_parent = bst_find_parent(tree, child, replacement->data);
         tnode_swap_data(replacement, child);
         dir = replacement == tnode_child(rep_parent, 0) ? 0 : 1;
-        bst_delete_h(tree, rep_parent, data);
+        bst_delete_node(rep_parent, replacement, dir);
     } else if (count == 1) {
         if (child->links[0])
             tnode_set_child(parent, dir, tnode_child(child, 0));

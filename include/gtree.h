@@ -25,6 +25,7 @@ void kt_add_safe(ktree_t *tree, gdata_t data); // TODO: implement
 void kt_add(ktree_t *tree, gdata_t data);
 void kt_destroy(ktree_t *tree);
 void kt_for_each(ktree_t *tree, TRAVERSE_ORDER order, for_each_fn function);
+ssize_t kt_height(ktree_t *tree);
 
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl);
 
@@ -48,6 +49,7 @@ btree_t *bt_create(size_t item_size);
 
 void tnode_rotate_right(tnode_t **node, size_t k);
 void tnode_rotate_left(tnode_t **node, size_t k);
+void tnode_balance_r(tnode_t **node, size_t k);
 void bt_init(btree_t *tree, size_t item_size, cmp_fun cmp);
 void bst_add(btree_t *tree, gdata_t data);
 bool bst_find(btree_t *heystack, gdata_t needle);
