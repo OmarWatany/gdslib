@@ -49,6 +49,7 @@ btree_t *bt_create(size_t item_size);
 
 void tnode_rotate_right(tnode_t **node, size_t k);
 void tnode_rotate_left(tnode_t **node, size_t k);
+void tnode_balance_r(tnode_t **node, size_t k);
 void bt_init(btree_t *tree, size_t item_size, cmp_fun cmp);
 void bst_add(btree_t *tree, gdata_t data);
 bool bst_find(btree_t *heystack, gdata_t needle);

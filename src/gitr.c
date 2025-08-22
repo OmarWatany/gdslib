@@ -242,10 +242,7 @@ static void (*tr_helpers[])(ktree_t *, tnode_t *[]) = {
 gitr_t tr_gitr_o(ktree_t *tr, TRAVERSE_ORDER order) {
     if (!tr || tr->size == 0) return (gitr_t){0};
     tr_itr_ctx_t *ctx = calloc(1, sizeof(*ctx) + tr->size * sizeof(tnode_t *));
-    *ctx = (tr_itr_ctx_t){
-        .tr = tr,
-        .idx = 0,
-    };
+    ctx->tr = tr;
     // TODO: add reverse order functions
     tr_helpers[order](tr, ctx->buffer);
     ctx->context.begin = ctx->buffer[0];
