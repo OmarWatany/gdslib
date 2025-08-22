@@ -1,7 +1,7 @@
 Testing arraylist
 ==[arraylist]== Memcheck, a memory error detector
 ==[arraylist]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[arraylist]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[arraylist]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[arraylist]== Command: ./bin/arraylist
 ==[arraylist]== 
 __ funcs list __
@@ -61,7 +61,7 @@ size: 6 - capacity: 10
 Testing arraystack
 ==[arraystack]== Memcheck, a memory error detector
 ==[arraystack]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[arraystack]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[arraystack]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[arraystack]== Command: ./bin/arraystack
 ==[arraystack]== 
 world
@@ -83,7 +83,7 @@ hello
 Testing circular_array
 ==[circular_array]== Memcheck, a memory error detector
 ==[circular_array]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[circular_array]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[circular_array]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[circular_array]== Command: ./bin/circular_array
 ==[circular_array]== 
 carray size : 9
@@ -126,7 +126,7 @@ carray cap : 10
 Testing linkedlist
 ==[linkedlist]== Memcheck, a memory error detector
 ==[linkedlist]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[linkedlist]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[linkedlist]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[linkedlist]== Command: ./bin/linkedlist
 ==[linkedlist]== 
 ------------------- fixed_strings
@@ -164,7 +164,7 @@ strings -> dyn strings -> strings ->
 Testing pqueue
 ==[pqueue]== Memcheck, a memory error detector
 ==[pqueue]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[pqueue]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[pqueue]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[pqueue]== Command: ./bin/pqueue
 ==[pqueue]== 
 -----------------------
@@ -205,7 +205,7 @@ value 9 - priority -99999
 Testing queue
 ==[queue]== Memcheck, a memory error detector
 ==[queue]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[queue]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[queue]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[queue]== Command: ./bin/queue
 ==[queue]== 
 hello ,world ,! ,
@@ -226,7 +226,7 @@ remaining card : 72
 Testing ringbuffer
 ==[ringbuffer]== Memcheck, a memory error detector
 ==[ringbuffer]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[ringbuffer]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[ringbuffer]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[ringbuffer]== Command: ./bin/ringbuffer
 ==[ringbuffer]== 
 Data Size : 6
@@ -262,7 +262,7 @@ buffer data  :
 Testing stack
 ==[stack]== Memcheck, a memory error detector
 ==[stack]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[stack]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[stack]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[stack]== Command: ./bin/stack
 ==[stack]== 
 2
@@ -281,7 +281,7 @@ Testing stack
 Testing tree
 ==[tree]== Memcheck, a memory error detector
 ==[tree]== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
-==[tree]== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==[tree]== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
 ==[tree]== Command: ./bin/tree
 ==[tree]== 
 MAX  : 389 
