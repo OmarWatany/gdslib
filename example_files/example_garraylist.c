@@ -24,8 +24,8 @@ int16_t alist_push_i(alist_t *list, int i) {
 
 #define fnw point (**)(int, int)
 
-void functoins_p_list() {
-    point (**a)(int, int) = malloc(sizeof(point(*)(int, int)));
+void functions_p_list() {
+    point (**a)(int, int) = malloc(sizeof(point (*)(int, int)));
     *a = create_point;
 
     alist_t  funptrs = alist_build_addr(sizeof(fnw), 2, (gdata_t[]){a, a});
@@ -34,7 +34,7 @@ void functoins_p_list() {
     printf("__ funcs list __\n");
     printf("size: %ld - capacity: %ld \n", alist_size(funws), alist_capacity(funws));
 
-    // convert to fpwrapper pointer then derefrence it then use it
+    // convert to fpwrapper pointer then dereference it then use it
     point p = (*(fnw)alist_at(funws, 0))(3, 4);
     printf("%ld - %ld\n", p.x, p.y);
     p = (*(fnw)alist_at(funws, 1))(5, 3);
@@ -93,11 +93,11 @@ void points_list() {
     a->x = 9;
     a->y = 5;
 
-    // copys points data
+    // copies points data
     alist_push(points, &(point){8, 4});
-    // copys the point refrenced by a
+    // copies the point referenced by a
     alist_push(points, a);
-    // copys 'a' address
+    // copies 'a' address
     alist_push_safe(points, sizeof(point *), &a);
     alist_push(p_refs, &a);
 
@@ -175,7 +175,7 @@ void fixed_strings() {
     char *fs = "fixed string";
     alist_reserve(strings, 5);
 
-    // alist_push(strings, "buffer overflow"); //-> causes buffer overflow (copys 30 bytes not
+    // alist_push(strings, "buffer overflow"); //-> causes buffer overflow (copies 30 bytes not
     // string length).
     alist_push_safe(strings, strlen("hello") + 1, "hello");
     alist_push_safe(strings, strlen("world") + 1, "world");
@@ -198,7 +198,7 @@ void fixed_strings() {
 
 int main() {
 
-    functoins_p_list();
+    functions_p_list();
     points_list();
     fixed_strings();
     dyn_strings();
