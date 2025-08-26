@@ -92,7 +92,6 @@ typedef struct {
 
 typedef struct {
   alist_t buf;
-  size_t k;
   HEAP_TYPE type;
   // function pointers
   cmp_fun cmp_fun;

@@ -20,7 +20,7 @@ pqueue_t *pq_create(size_t item_size, HEAP_TYPE type) {
 }
 
 void pq_init(pqueue_t *pqueue, size_t item_size, HEAP_TYPE type) {
-    heap_init(&pqueue->h, sizeof(pq_node), 2, type);
+    heap_init(&pqueue->h, sizeof(pq_node), type);
     heap_set_cmp_fun(&pqueue->h, cmp_pq_node);
     pqueue->item_size = item_size;
 }
@@ -67,11 +67,6 @@ int16_t pq_dequeue(pqueue_t *pqueue) {
     free(p->data);
     heap_pop(&pqueue->h);
     return EXIT_SUCCESS;
-}
-
-static void heap_node_destroy(gdata_t node) {
-    pq_node *temp = (pq_node *)gnode_data((gnode_t *)node);
-    free(temp->data);
 }
 
 // iprint

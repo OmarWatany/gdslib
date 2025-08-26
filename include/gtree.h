@@ -29,9 +29,9 @@ ssize_t kt_height(ktree_t *tree);
 
 tnode_t **kt_grand_childrens(ktree_t *tree, size_t lvl);
 
-heap_t *heap_create(size_t item_size, size_t k, HEAP_TYPE type);
+heap_t *heap_create(size_t item_size, HEAP_TYPE type);
 
-void heap_init(heap_t *heap, size_t item_size, size_t k, HEAP_TYPE type);
+void heap_init(heap_t *heap, size_t item_size, HEAP_TYPE type);
 void heap_set_allocator(heap_t *heap, allocator_fun_t allocator_fun);
 void heap_set_cmp_fun(heap_t *heap, cmp_fun cmp);
 void heap_add_safe(heap_t *heap, size_t item_size, gdata_t data);

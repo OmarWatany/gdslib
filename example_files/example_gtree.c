@@ -174,7 +174,7 @@ void test_kheap(size_t k) {
     int arr_size = sizeof(arr) / sizeof(arr[0]);
     // should print perfect tree and BREADTH print should print it
     heap_t hp = {0};
-    heap_init(&hp, sizeof(int), k, MAX_HEAP);
+    heap_init(&hp, sizeof(int), MAX_HEAP);
     heap_set_cmp_fun(&hp, gcmp_int);
 
     for (int i = 0; i < arr_size; i++) {
